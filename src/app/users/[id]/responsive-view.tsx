@@ -293,7 +293,7 @@ export function ResponsiveProfileView({ profile, isOwner, matchBreakdown }: Resp
                                                 <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-green-600">📞</div>
                                                 <div>
                                                     <p className="text-xs font-bold text-green-800 uppercase">Phone</p>
-                                                    <p className="font-semibold text-gray-900">+91 {profile.phone || "Not set"}</p>
+                                                    <p className="font-semibold text-gray-900">Not Shared</p>
                                                 </div>
                                             </div>
                                             <div className="flex items-center gap-4 p-4 bg-green-50/50 rounded-xl border border-green-100">
