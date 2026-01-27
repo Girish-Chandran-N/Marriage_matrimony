@@ -1,0 +1,334 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+  VERIFIER
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum VerificationAction {
+  VIEWED
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String?
+  name          String?
+  role          Role      @default(USER)
+  status        AccountStatus @default(ACTIVE)
+  profileImage  String?   // Main profile image
+  galleryImages String[]  // Additional profile images
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Online Presence
+  lastSeen      DateTime?
+  isOnline      Boolean   @default(false)
+
+  // Profile Sections
+  personalDetails   PersonalDetails?
+  familyDetails     FamilyDetails?
+  educationDetails  EducationDetails?
+  careerProfile     CareerProfile?
+  lifestyleDetails  LifestyleDetails?
+  
+  // Existing Relations
+  verificationRequests VerificationRequest[]
+  matchPreferences     MatchPreferences?
+
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
+  
+  conversations    Conversation[] @relation("UserConversations")
+  
+  // Admin Relations
+  banLogs          BanLog[]  @relation("BannedUser")
+  issuedBans       BanLog[]  @relation("AdminUser")
+  verificationLogs VerificationLog[] @relation("AdminVerifier")
+  
+  // Advanced Admin Relations
+  activityLogs     ActivityLog[]
+  filedReports     Report[]      @relation("Reporter")
+  receivedReports  Report[]      @relation("Reported")
+  
+  // Blocking Relations
+  sentBlocks     Block[] @relation("BlockingUsers")
+  receivedBlocks Block[] @relation("BlockedUsers")
+
+  // Payment & Subscription
+  subscription   Subscription?
+}
+
+enum MembershipTier {
+  FREE
+  GOLD
+  PLATINUM
+}
+
+model Subscription {
+  id              String         @id @default(cuid())
+  userId          String         @unique
+  user            User           @relation(fields: [userId], references: [id])
+  plan            MembershipTier @default(FREE)
+  startDate       DateTime       @default(now())
+  endDate         DateTime
+  razorpayOrderId String?
+  razorpayPaymentId String?
+  status          String         @default("active") // active, expired, cancelled
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model BanLog {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation("BannedUser", fields: [userId], references: [id])
+  adminId     String
+  admin       User      @relation("AdminUser", fields: [adminId], references: [id])
+  reason      String
+  notes       String?
+  status      AccountStatus // The status applied (SUSPENDED or BANNED)
+  createdAt   DateTime  @default(now())
+}
+
+model VerificationRequest {
+  id              String        @id @default(cuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  careerProfileId String
+  careerProfile   CareerProfile @relation(fields: [careerProfileId], references: [id])
+  status          RequestStatus @default(PENDING)
+  documentUrls    String[]
+  adminNotes      String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  logs            VerificationLog[]
+}
+
+model VerificationLog {
+  id        String             @id @default(cuid())
+  requestId String
+  request   VerificationRequest @relation(fields: [requestId], references: [id])
+  adminId   String
+  admin     User               @relation("AdminVerifier", fields: [adminId], references: [id])
+  action    VerificationAction
+  notes     String?
+  createdAt DateTime           @default(now())
+}
+
+model PersonalDetails {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  dateOfBirth   DateTime?
+  gender        String?
+  height        Float?   // in cm or feet
+  weight        Float?   // in kg
+  bloodGroup    String?
+  bodyType      String?  // Athletic, Average, Slim, Heavy
+  complexion    String?  // Fair, Wheatish, Dark
+  maritalStatus String?  // Single, Divorced, Widowed
+  religion      String?
+  caste         String?
+  motherTongue   String?
+  knownLanguages String[]
+  bio           String?  @db.Text
+  // location      String?  // Deprecated in favor of structured fields
+  city          String?
+  district      String?
+  state         String?
+  country       String?  @default("India")
+  
+  updatedAt     DateTime @updatedAt
+}
+
+model FamilyDetails {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  familyStatus     String?  // Middle Class, Upper Middle, Rich
+  familyType       String?  // Nuclear, Joint
+  fatherOccupation String?
+  motherOccupation String?
+  siblingsCount    Int?
+  brothers         Int?     @default(0)
+  sisters          Int?     @default(0)
+  
+  updatedAt        DateTime @updatedAt
+}
+
+model EducationDetails {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  highestQualification String?  // Bachelors, Masters, PhD, etc.
+  institutionName      String?
+  collegeName          String?
+  stream               String?  // CS, Arts, Commerce
+  passingYear          Int?
+  
+  updatedAt            DateTime @updatedAt
+}
+
+model CareerProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  jobTitle        String
+  companyName     String
+  employmentType  String? // Full-time, Freelance, Business
+  incomeRange     String? // e.g. "10-15 LPA"
+  workLocation    String? // City, Country
+  industry        String?
+  yearsExperience Int?
+  linkedinUrl     String?
+  
+  isVerified      Boolean  @default(false)
+  updatedAt       DateTime @updatedAt
+  
+  verificationRequests VerificationRequest[]
+}
+
+model LifestyleDetails {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  diet          String?  // Veg, Non-Veg, Eggitarian
+  drinking      String?  // No, Occasionally, Yes
+  smoking       String?  // No, Occasionally, Yes
+  hobbies       String[]
+  
+  updatedAt     DateTime @updatedAt
+}
+
+
+
+model MatchPreferences {
+  id                  String   @id @default(cuid())
+  userId              String   @unique
+  user                User     @relation(fields: [userId], references: [id])
+  preferredIndustries String[]
+  minExperience       Int?
+  maxExperience       Int?
+  preferredLocations  String[]
+  
+  minAge              Int?
+  maxAge              Int?
+  minIncome           String?
+  maxIncome           String?
+  maritalStatus       String[]
+  minHeight           Float?
+  maxHeight           Float?
+  preferredReligions  String[]
+  preferredCastes     String[]
+  preferredMotherTongues String[]
+
+  updatedAt           DateTime @updatedAt
+}
+
+model Message {
+  id         String   @id @default(cuid())
+  senderId   String
+  receiverId String
+  content    String
+  isRead     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  conversationId String?
+  conversation   Conversation? @relation(fields: [conversationId], references: [id])
+
+  sender   User @relation("SentMessages", fields: [senderId], references: [id])
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id])
+
+  isLastMessageOf Conversation? @relation("LastMessage")
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  participants    User[]    @relation("UserConversations")
+  messages        Message[]
+  
+  lastMessageId   String?   @unique
+  lastMessage     Message?  @relation("LastMessage", fields: [lastMessageId], references: [id])
+}
+
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+    @@unique([email, token])
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action    String
+  details   String? // Store simple JSON or text
+  createdAt DateTime @default(now())
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+  DISMISSED
+}
+
+model Report {
+  id          String       @id @default(cuid())
+  reporterId  String
+  reporter    User         @relation("Reporter", fields: [reporterId], references: [id])
+  reportedId  String
+  reported    User         @relation("Reported", fields: [reportedId], references: [id])
+  reason      String
+  status      ReportStatus @default(PENDING)
+  adminNotes  String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Block {
+  id        String   @id @default(cuid())
+  blockerId String
+  blockedId String
+  createdAt DateTime @default(now())
+
+  blocker   User     @relation("BlockingUsers", fields: [blockerId], references: [id], onDelete: Cascade)
+  blocked   User     @relation("BlockedUsers", fields: [blockedId], references: [id], onDelete: Cascade)
+
+  @@unique([blockerId, blockedId])
+}
