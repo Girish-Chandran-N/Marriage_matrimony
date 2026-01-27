@@ -160,6 +160,7 @@ export function MatchCard({ user, score }: MatchCardProps) {
             {/* Gallery Dialog */}
             <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
                 <DialogContent className="max-w-5xl w-full h-[85vh] p-0 bg-black/95 border-none overflow-hidden focus:outline-none">
+                    <DialogTitle className="sr-only">Profile Gallery</DialogTitle>
                     <div className="absolute top-4 left-4 z-50 flex items-center gap-3">
                         <Avatar className="w-10 h-10 border-2 border-white/20">
                             <AvatarImage src={user.profileImage} />
@@ -177,24 +178,24 @@ export function MatchCard({ user, score }: MatchCardProps) {
                         <X className="w-6 h-6" />
                     </button>
 
-                    <div className="flex-1 w-full h-full flex items-center justify-center relative">
-                        {allImages.length > 1 && (
-                            <>
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
-                                    className="absolute left-4 p-4 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-all"
-                                >
-                                    <ChevronLeft className="w-8 h-8" />
-                                </button>
-                                <button
-                                    onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
-                                    className="absolute right-4 p-4 text-white/50 hover:text-white hover:bg-white/10 rounded-full transition-all"
-                                >
-                                    <ChevronRight className="w-8 h-8" />
-                                </button>
-                            </>
-                        )}
+                    {allImages.length > 1 && (
+                        <>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
+                                className="absolute left-4 top-1/2 -translate-y-1/2 p-3 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-full transition-all z-[60]"
+                            >
+                                <ChevronLeft className="w-8 h-8" />
+                            </button>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-full transition-all z-[60]"
+                            >
+                                <ChevronRight className="w-8 h-8" />
+                            </button>
+                        </>
+                    )}
 
+                    <div className="flex-1 w-full h-full flex items-center justify-center relative">
                         {allImages.length > 0 ? (
                             <img
                                 src={allImages[currentImageIndex]}

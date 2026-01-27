@@ -158,7 +158,7 @@ export default function ChatWindow({
         startTransition(async () => {
             const result = await sendMessage(formData);
             if (result.error) {
-                console.error("Failed to send");
+                console.error("Failed to send:", result.error);
                 // Ideally revert optimistic update here, skipping for simplicity
             } else {
                 // Refresh to get real ID

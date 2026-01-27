@@ -26,6 +26,15 @@ export async function sendMessage(formData: FormData) {
     const { receiverId, content } = validation.data;
     const senderId = session.user.id;
 
+    // Verify both users exist before transaction
+    const [senderExists, receiverExists] = await Promise.all([
+        db.user.findUnique({ where: { id: senderId }, select: { id: true } }),
+        db.user.findUnique({ where: { id: receiverId }, select: { id: true } })
+    ]);
+
+    if (!senderExists) return { error: "Sender account not found" };
+    if (!receiverExists) return { error: `Receiver account (ID: ${receiverId}) not found` };
+
     try {
         // Use a transaction to ensure Conversation existence and Message creation happen atomically
         const message = await db.$transaction(async (tx) => {
@@ -99,7 +108,7 @@ export async function sendMessage(formData: FormData) {
         return { success: true };
     } catch (error) {
         console.error("Failed to send message:", error);
-        return { error: "Failed to send message" };
+        return { error: "Failed to send message: " + (error instanceof Error ? error.message : String(error)) };
     }
 }
 
