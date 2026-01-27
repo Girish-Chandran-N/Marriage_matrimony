@@ -4,7 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { logActivity } from "@/lib/logging-actions";
-import { banUser } from "@/lib/admin-actions";
+// banUser import removed
 
 export async function submitReport(formData: FormData) {
     const session = await auth();
