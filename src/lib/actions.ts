@@ -51,8 +51,9 @@ export async function register(prevState: any, formData: FormData) {
             },
         });
     } catch (error) {
+        console.error("Registration error:", error);
         return {
-            message: "Database Error: Failed to Create User.",
+            message: "Database Error: " + (error instanceof Error ? error.message : String(error)),
         };
     }
 
