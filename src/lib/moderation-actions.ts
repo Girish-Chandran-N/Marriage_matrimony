@@ -53,7 +53,7 @@ export async function getReports(status: "PENDING" | "RESOLVED" | "DISMISSED" = 
 
 export async function resolveReport(reportId: string, outcome: "DISMISS" | "BAN") {
     const session = await auth();
-    if (session?.user?.role !== "ADMIN") {
+    if (session?.user?.role !== "ADMIN" || !session?.user?.id) {
         return { success: false, message: "Unauthorized" };
     }
 
