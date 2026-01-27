@@ -260,6 +260,25 @@ export async function updateUserStatus(userId: string, status: AccountStatus, re
     }
 }
 
+export async function updateUserRole(userId: string, role: Role) {
+    const session = await auth();
+    if (session?.user?.role !== Role.ADMIN) return { success: false, message: "Unauthorized" };
+
+    try {
+        await db.user.update({
+            where: { id: userId },
+            data: { role }
+        });
+
+        revalidatePath(`/admin/users/${userId}`);
+        revalidatePath("/admin/users");
+        return { success: true, message: `User role updated to ${role}` };
+    } catch (error) {
+        console.error("Failed to update user role:", error);
+        return { success: false, message: "Failed to update role" };
+    }
+}
+
 
 
 const verificationRequestDetails = Prisma.validator<Prisma.VerificationRequestDefaultArgs>()({

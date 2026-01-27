@@ -26,7 +26,7 @@ export default async function UserDetailPage({ params }: { params: Promise<{ id:
                     <Link href="/admin/users">
                         <Button variant="ghost">Back to List</Button>
                     </Link>
-                    <UserActions userId={user.id} currentStatus={user.status as AccountStatus} />
+                    <UserActions userId={user.id} currentStatus={user.status as AccountStatus} currentRole={user.role as import("@prisma/client").Role} />
                 </div>
             </div>
 
