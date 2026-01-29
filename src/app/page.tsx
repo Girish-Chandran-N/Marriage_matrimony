@@ -63,7 +63,7 @@ export default function Home() {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
-            className="order-2 lg:order-1 lg:col-span-8 relative h-[450px] lg:h-[85vh] max-h-[1000px] w-full rounded-[30px] overflow-hidden shadow-2xl shadow-rose-900/10 group cursor-pointer"
+            className="order-1 lg:col-span-8 relative h-[550px] lg:h-[85vh] max-h-[1000px] w-full rounded-[30px] overflow-hidden shadow-2xl shadow-rose-900/10 group cursor-pointer"
           >
             <div className="absolute inset-0 bg-slate-900/20 z-10"></div>
             <Image
@@ -118,20 +118,20 @@ export default function Home() {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-            className="order-1 lg:order-2 lg:col-span-4 w-full max-w-xl mx-auto pl-0 lg:pl-8"
+            className="order-2 lg:col-span-4 w-full max-w-xl mx-auto pl-0 lg:pl-8 -mt-12 lg:mt-0 relative z-30"
           >
-            <div className="bg-white p-8 lg:p-10 rounded-[30px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 relative overflow-hidden backdrop-blur-3xl">
+            <div className="bg-white p-6 lg:p-10 rounded-[30px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 relative overflow-hidden backdrop-blur-3xl">
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-rose-100 to-purple-100 rounded-full blur-3xl -z-10 opacity-60"></div>
 
-              <div className="mb-8 space-y-2">
+              <div className="mb-6 lg:mb-8 space-y-2">
                 <div className="inline-flex items-center gap-2 mb-2">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-lg shadow-rose-500/20">
                     <Heart className="h-5 w-5 text-white fill-white" />
                   </div>
                   <span className="text-xl font-bold text-slate-900 tracking-tight">Career Matrimony</span>
                 </div>
-                <h2 className="text-3xl font-black text-slate-900 tracking-tight">Create Account</h2>
-                <p className="text-slate-500 font-medium text-lg">Your perfect match is waiting.</p>
+                <h2 className="text-2xl lg:text-3xl font-black text-slate-900 tracking-tight">Create Account</h2>
+                <p className="text-slate-500 font-medium text-base lg:text-lg">Your perfect match is waiting.</p>
               </div>
 
               <RegistrationForm />
