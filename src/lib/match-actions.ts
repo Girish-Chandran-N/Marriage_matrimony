@@ -163,7 +163,7 @@ export async function getMatches(filters?: MatchFilters) {
     const candidates = await db.user.findMany({
         where: {
             id: { notIn: Array.from(excludedIds) },
-            careerProfile: { isNot: null }
+            // Removed strict careerProfile requirement
         },
         include: {
             careerProfile: true,
@@ -179,9 +179,11 @@ export async function getMatches(filters?: MatchFilters) {
 
     if (filters) {
         filteredCandidates = candidates.filter((c: any) => {
-            const cp = c.careerProfile;
-            const pd = c.personalDetails;
-            if (!cp || !pd) return false;
+            const cp = c.careerProfile || {}; // Default to empty object if null
+            const pd = c.personalDetails || {};
+
+            // Only return false if CRITICAL personal details are missing for Age/Height filtering
+            // But we'll allow partial data generally
 
             if (filters.industry) {
                 const term = filters.industry.toLowerCase();

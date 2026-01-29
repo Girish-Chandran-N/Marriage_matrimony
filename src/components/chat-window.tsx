@@ -10,6 +10,7 @@ import {
     DialogContent,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { pusherClient } from "@/lib/pusher-client";
 
 export default function ChatWindow({
     initialMessages,
@@ -31,6 +32,8 @@ export default function ChatWindow({
     const [inputText, setInputText] = useState("");
     const [isPending, startTransition] = useTransition();
     const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
+    const [connectionStatus, setConnectionStatus] = useState("disconnected");
+    const [lastError, setLastError] = useState<any>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const router = useRouter();
@@ -49,23 +52,55 @@ export default function ChatWindow({
 
     // Pusher Real-time Subscription
     useEffect(() => {
-        // Dynamic import to avoid server-side module issues if any
-        const { pusherClient } = require("@/lib/pusher-client");
+        // Use the exported client instance
+        // Use the exported client instance directly
+        // const { pusherClient } = require("@/lib/pusher-client");
 
         // Deterministic Channel ID for shared conversation
         const sortedIds = [currentUserId, receiverId].sort();
         const channelName = `private-chat-${sortedIds[0]}-${sortedIds[1]}`;
 
-        console.log(`[ChatWindow] Subscribing to channel: ${channelName}`);
+        console.log(`[ChatWindow] Initializing subscription to: ${channelName}`);
+
+        // Sync initial state immediately
+        setConnectionStatus(pusherClient.connection.state);
+
+        // Log connection state changes
+        pusherClient.connection.bind("state_change", (states: any) => {
+            console.log("[ChatWindow] Pusher connection state:", states.current);
+            setConnectionStatus(states.current);
+        });
+
+        pusherClient.connection.bind("error", (err: any) => {
+            console.error("[ChatWindow] Pusher connection error:", JSON.stringify(err, null, 2));
+            console.error("[ChatWindow] Error details:", err?.error?.data || err?.message || "No details");
+            // Capture all possible error info
+            setLastError({
+                message: err?.error?.data?.message || err?.message || "Unknown Connection Error",
+                type: err?.type,
+                data: err?.error?.data || err?.data
+            });
+        });
+
+        // Explicitly connect if disconnected
+        if (pusherClient.connection.state === 'disconnected') {
+            pusherClient.connect();
+        }
 
         const channel = pusherClient.subscribe(channelName);
 
         channel.bind("pusher:subscription_succeeded", () => {
             console.log(`[ChatWindow] Successfully subscribed to ${channelName}`);
+            setLastError(null);
         });
 
         channel.bind("pusher:subscription_error", (status: any) => {
             console.error(`[ChatWindow] Subscription error for ${channelName}:`, status);
+            setLastError({ type: "subscription_error", ...status });
+            // Check if it's a 403 or 500
+            if (status?.status === 403) {
+                console.error("Auth failed. Check if user is logged in and authorized.");
+            }
         });
 
         const messageHandler = (data: any) => {
@@ -92,7 +127,6 @@ export default function ChatWindow({
         };
 
         const typingHandler = (data: { userId: string }) => {
-            // console.log("[ChatWindow] Received client-typing:", data);
             if (data.userId === receiverId) {
                 setIsOtherUserTyping(true);
                 if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
@@ -120,11 +154,11 @@ export default function ChatWindow({
             channel.unbind("client-typing", typingHandler);
             channel.unbind("message-read", readHandler);
             pusherClient.unsubscribe(channelName);
+            // Do not disconnect globally as other components might use it
         };
     }, [currentUserId, receiverId]);
 
     const handleTyping = () => {
-        const { pusherClient } = require("@/lib/pusher-client");
         const sortedIds = [currentUserId, receiverId].sort();
         const channelName = `private-chat-${sortedIds[0]}-${sortedIds[1]}`;
         const channel = pusherClient.subscribe(channelName);
@@ -169,92 +203,114 @@ export default function ChatWindow({
     };
 
     return (
-        <div className="flex flex-col h-[calc(100vh-140px)] md:h-[600px] bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+
+        <div className="flex flex-col h-full bg-slate-50/50">
             {/* Messages Area */}
-            <div ref={scrollRef} className="flex-1 p-6 overflow-y-auto space-y-4 bg-gray-50">
+            <div ref={scrollRef} className="flex-1 min-h-0 p-4 md:p-6 overflow-y-auto space-y-6">
                 {messages.length === 0 && (
-                    <p className="text-center text-gray-400 text-sm my-10">Start the conversation!</p>
+                    <div className="flex flex-col items-center justify-center h-full text-center opacity-60">
+                        <div className="w-16 h-16 bg-indigo-100/50 rounded-full flex items-center justify-center mb-4">
+                            <span className="text-2xl">👋</span>
+                        </div>
+                        <p className="text-slate-500 font-medium">Say hello to start the conversation!</p>
+                    </div>
                 )}
 
                 {messages.map((msg: any) => {
                     const isMe = msg.senderId === currentUserId;
-                    const profileLink = isMe ? "/profile" : `/profile/${msg.senderId}`;
                     const profileImage = msg.sender?.profileImage || "/placeholder-user.jpg";
                     const senderName = msg.sender?.name || "User";
 
                     return (
-                        <div key={msg.id} className={`flex gap-3 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
-                            {/* Avatar - Click to View Image */}
-                            <div className="relative">
-                                <Dialog>
-                                    <DialogTrigger className="flex-shrink-0 self-end mb-1 focus:outline-none">
-                                        <div className="w-8 h-8 rounded-full overflow-hidden border border-gray-200 hover:opacity-80 transition-opacity">
-                                            <img
-                                                src={profileImage}
-                                                alt={senderName}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        </div>
-                                    </DialogTrigger>
-                                    <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-transparent border-0 shadow-none">
-                                        <img
-                                            src={profileImage}
-                                            alt={senderName}
-                                            className="w-full h-auto max-h-[80vh] object-contain rounded-md"
-                                        />
-                                    </DialogContent>
-                                </Dialog>
-                                {!isMe && <OnlineIndicator userId={msg.senderId} size="sm" />}
-                            </div>
+                        <div key={msg.id} className={`flex gap-3 group ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
+                            {/* Avatar */}
+                            {!isMe && (
+                                <div className="flex-shrink-0 self-end mb-1">
+                                    <Dialog>
+                                        <DialogTrigger className="focus:outline-none transition-transform hover:scale-105">
+                                            <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-white shadow-sm">
+                                                <img src={profileImage} alt={senderName} className="w-full h-full object-cover" />
+                                            </div>
+                                        </DialogTrigger>
+                                        <DialogContent className="p-0 bg-transparent border-0 shadow-none">
+                                            <img src={profileImage} alt={senderName} className="w-full h-auto rounded-xl" />
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
+                            )}
 
-                            <div className={`flex flex-col max-w-[70%] ${isMe ? 'items-end' : 'items-start'}`}>
-                                {/* Name Label - Click to Visit Profile */}
+                            <div className={`flex flex-col max-w-[75%] md:max-w-[65%] ${isMe ? 'items-end' : 'items-start'}`}>
+                                {/* Name Label */}
                                 {!isMe && (
-                                    <a href={profileLink} className="text-xs text-gray-500 mb-1 hover:underline ml-1">
+                                    <span className="text-[10px] font-semibold text-slate-400 mb-1 ml-1">
                                         {senderName}
-                                    </a>
+                                    </span>
                                 )}
 
-                                <div className={`px-4 py-2 text-sm rounded-2xl shadow-sm ${isMe
-                                    ? 'bg-blue-600 text-white rounded-br-none'
-                                    : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none'
+                                {/* Message Bubble */}
+                                <div className={`px-5 py-3 text-[15px] shadow-sm relative leading-relaxed ${isMe
+                                    ? 'bg-gradient-to-br from-purple-600 to-indigo-600 text-white rounded-[20px] rounded-tr-sm'
+                                    : 'bg-white border border-slate-100 text-slate-800 rounded-[20px] rounded-tl-sm'
                                     }`}>
                                     <p>{msg.content}</p>
-                                    <p suppressHydrationWarning className={`text-[10px] mt-1 text-right ${isMe ? 'text-blue-200' : 'text-gray-400'}`}>
-                                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        {isMe && msg.isRead && " • Read"}
-                                    </p>
+
+                                    {/* Timestamp & Status */}
+                                    <div className={`text-[10px] mt-1.5 flex items-center gap-1 ${isMe ? 'text-purple-100/80 justify-end' : 'text-slate-400 justify-start'
+                                        }`}>
+                                        <span suppressHydrationWarning>
+                                            {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </span>
+                                        {isMe && (
+                                            <span className={msg.isRead ? "text-blue-200" : "opacity-70"}>
+                                                {msg.isRead ? "✓✓" : "✓"}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     );
                 })}
+
+                {/* Typing Indicator */}
+                {isOtherUserTyping && (
+                    <div className="flex gap-3 items-end animate-in fade-in duration-300">
+                        <div className="w-8 h-8 rounded-full bg-slate-200/50 flex-shrink-0" />
+                        <div className="bg-white border border-slate-100 px-4 py-3 rounded-[20px] rounded-tl-sm shadow-sm flex gap-1 items-center">
+                            <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                            <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                            <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>
+                        </div>
+                    </div>
+                )}
+
+                <div className="h-4" /> {/* Spacer */}
             </div>
 
-            {/* Typing Indicator */}
-            {isOtherUserTyping && (
-                <div className="px-6 py-2 text-xs text-gray-400 italic animate-pulse">
-                    {messages.find((m: any) => m.senderId === receiverId)?.sender?.name || "User"} is typing...
-                </div>
-            )}
-
             {/* Input Area */}
-            <form onSubmit={handleSend} className="p-4 bg-white border-t flex gap-2">
-                <Input
-                    value={inputText}
-                    onChange={(e) => {
-                        setInputText(e.target.value);
-                        handleTyping();
-                    }}
-                    placeholder="Type a message..."
-                    className="flex-1"
-                    disabled={isPending}
-                />
-                <Button type="submit" disabled={isPending || !inputText.trim()}>
-                    Send
-                </Button>
-            </form>
-
+            <div className="p-4 bg-white/80 backdrop-blur-md border-t border-slate-100 z-20">
+                <form onSubmit={handleSend} className="max-w-4xl mx-auto relative flex items-center gap-3">
+                    <Input
+                        value={inputText}
+                        onChange={(e) => {
+                            setInputText(e.target.value);
+                            handleTyping();
+                        }}
+                        placeholder="Type a message..."
+                        className="flex-1 bg-slate-50 border-slate-200 focus:bg-white focus:border-purple-300 transition-all rounded-full h-12 pl-6 pr-12 shadow-inner text-base"
+                        disabled={isPending}
+                    />
+                    <Button
+                        type="submit"
+                        disabled={isPending || !inputText.trim()}
+                        className="rounded-full w-12 h-12 p-0 flex items-center justify-center bg-purple-600 hover:bg-purple-700 text-white shadow-lg shadow-purple-200 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:shadow-none bg-gradient-to-r from-purple-600 to-indigo-600"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 ml-0.5">
+                            <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
+                        </svg>
+                    </Button>
+                </form>
+            </div>
         </div>
     );
 }

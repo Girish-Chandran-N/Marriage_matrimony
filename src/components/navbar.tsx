@@ -35,7 +35,7 @@ export async function Navbar() {
                     ) : (
                         <>
                             <NavLink href="/">Home</NavLink>
-                            <NavLink href="/about">Process</NavLink>
+                            <NavLink href="/pricing">Pricing</NavLink>
                             <NavLink href="/stories">Success Stories</NavLink>
                         </>
                     )}

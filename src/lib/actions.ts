@@ -10,8 +10,24 @@ import crypto from "crypto";
 
 const RegisterSchema = z.object({
     name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-    email: z.string().email({ message: "Invalid email address." }),
+    email: z
+        .string()
+        .email({ message: "Invalid email address." })
+        .refine((email) => {
+            const allowedDomains = [
+                "gmail.com",
+                "outlook.com",
+                "yahoo.com",
+                "hotmail.com",
+                "icloud.com",
+                "protonmail.com",
+            ];
+            const domain = email.split("@")[1];
+            return allowedDomains.includes(domain);
+        }, { message: "Please use a valid email provider (Gmail, Outlook, Yahoo, etc.)" }),
     password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+    phoneNumber: z.string().regex(/^\d{10}$/, { message: "Mobile number must be exactly 10 digits." }),
+    gender: z.enum(["Male", "Female", "Other"], { message: "Please select a gender." }),
 });
 
 export async function register(prevState: any, formData: FormData) {
@@ -19,6 +35,8 @@ export async function register(prevState: any, formData: FormData) {
         name: formData.get("name"),
         email: formData.get("email"),
         password: formData.get("password"),
+        phoneNumber: formData.get("phoneNumber"),
+        gender: formData.get("gender"),
     });
 
     if (!validatedFields.success) {
@@ -28,7 +46,7 @@ export async function register(prevState: any, formData: FormData) {
         };
     }
 
-    const { name, email, password } = validatedFields.data;
+    const { name, email, password, phoneNumber, gender } = validatedFields.data;
 
     try {
         const existingUser = await db.user.findUnique({
@@ -48,6 +66,21 @@ export async function register(prevState: any, formData: FormData) {
                 name,
                 email,
                 passwordHash: hashedPassword,
+                phoneNumber,
+                personalDetails: {
+                    create: {
+                        gender,
+                    },
+                },
+                careerProfile: {
+                    create: {
+                        jobTitle: "",
+                        companyName: "",
+                    }
+                },
+                educationDetails: { create: {} },
+                lifestyleDetails: { create: {} },
+                familyDetails: { create: {} },
             },
         });
     } catch (error) {

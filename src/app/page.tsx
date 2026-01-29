@@ -1,228 +1,371 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import { CheckCircle2, Shield, Heart, Briefcase, ArrowRight, Star, Sparkles, Users } from "lucide-react";
+import { CheckCircle2, Shield, Heart, Briefcase, ArrowRight, Star, Sparkles, Users, Lock, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { RegistrationForm } from "@/components/auth/registration-form";
+import { motion, useScroll, useTransform, Variants } from "framer-motion";
+
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "circOut" } }
+};
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2
+    }
+  }
+};
+
+const scaleIn: Variants = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } }
+};
 
 export default function Home() {
+  const { scrollYProgress } = useScroll();
+  const yStats = useTransform(scrollYProgress, [0, 0.3], [100, 0]);
+
   return (
-    <main className="flex min-h-screen flex-col bg-white overflow-hidden">
+    <main className="flex min-h-screen flex-col bg-slate-50 overflow-hidden">
 
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center text-center overflow-hidden">
-        {/* Animated Background */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute top-0 left-0 w-full h-full bg-slate-50"></div>
-          <div className="absolute -top-20 -right-20 w-[600px] h-[600px] bg-purple-300/30 rounded-full mix-blend-multiply filter blur-[128px] animate-blob opacity-70"></div>
-          <div className="absolute top-40 -left-20 w-[600px] h-[600px] bg-blue-300/30 rounded-full mix-blend-multiply filter blur-[128px] animate-blob animation-delay-2000 opacity-70"></div>
-          <div className="absolute -bottom-40 right-40 w-[600px] h-[600px] bg-pink-300/30 rounded-full mix-blend-multiply filter blur-[128px] animate-blob animation-delay-4000 opacity-70"></div>
-          {/* Grid Pattern Overlay */}
-          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+      <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center overflow-hidden py-12 lg:py-8">
+        {/* Animated Background Patterns */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <motion.div
+            animate={{
+              scale: [1, 1.2, 1],
+              rotate: [0, 90, 0],
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            className="absolute -top-[20%] -right-[10%] w-[800px] h-[800px] bg-rose-200/30 rounded-full blur-[100px] mix-blend-multiply"
+          />
+          <motion.div
+            animate={{
+              scale: [1.2, 1, 1.2],
+              rotate: [0, -90, 0],
+            }}
+            transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            className="absolute -bottom-[20%] -left-[10%] w-[600px] h-[600px] bg-purple-200/30 rounded-full blur-[100px] mix-blend-multiply"
+          />
         </div>
 
-        {/* Content Container - Centered */}
-        <div className="relative z-10 max-w-5xl px-4 space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+        <div className="relative z-10 w-full max-w-[95%] mx-auto grid lg:grid-cols-12 gap-8 items-center">
 
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 backdrop-blur-md border border-white/50 shadow-sm text-sm font-semibold text-slate-600 mb-4 hover:scale-105 transition-transform cursor-default">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-            </span>
-            India's #1 Career-Focused Matrimony
-          </div>
+          {/* Left Column: Hero Image with Overlay */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="order-2 lg:order-1 lg:col-span-8 relative h-[600px] lg:h-[85vh] max-h-[1000px] w-full rounded-[30px] overflow-hidden shadow-2xl shadow-rose-900/10 group cursor-pointer"
+          >
+            <div className="absolute inset-0 bg-slate-900/20 z-10"></div>
+            <Image
+              src="/auth-hero.png"
+              alt="Happy Couple"
+              fill
+              className="object-cover transition-transform duration-[2s] group-hover:scale-105"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-20"></div>
 
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-tight text-slate-900 drop-shadow-sm">
-            Find Your <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500">Equal</span>.
-          </h1>
-
-          <p className="text-xl md:text-2xl text-slate-600 max-w-2xl mx-auto font-medium leading-relaxed">
-            Where ambitious professionals find love. Connect with someone who understands your drive, your goals, and your heart.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-5 justify-center mt-10">
-            <Button asChild size="lg" className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white text-lg px-10 py-8 h-auto rounded-full font-bold shadow-2xl transition-all hover:scale-105 border border-white/20">
-              <Link href="/register">Start Your Journey <ArrowRight className="ml-2 h-6 w-6" /></Link>
-            </Button>
-            <Button asChild variant="outline" size="lg" className="text-lg px-10 py-8 h-auto rounded-full border-2 border-slate-200 bg-white/50 backdrop-blur-sm text-slate-700 hover:bg-white hover:border-purple-200 hover:text-purple-600 transition-all font-bold">
-              <Link href="/matches">Explore Matches</Link>
-            </Button>
-          </div>
-        </div>
-
-        {/* Floating UI Elements Decor - MOVED OUTSIDE CONTENT CONTAINER */}
-        {/* Left Card */}
-        <div className="absolute top-1/2 -translate-y-1/2 left-4 xl:left-8 hidden 2xl:block animate-bounce duration-[3000ms] z-20 pointer-events-none">
-          <div className="bg-white p-4 rounded-3xl shadow-2xl shadow-pink-200/50 border-2 border-pink-100 rotate-[-8deg] hover:rotate-0 transition-transform duration-300 w-64">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-pink-100 flex items-center justify-center text-xl">👩‍💻</div>
-              <div className="flex -ml-4 w-10 h-10 rounded-full bg-blue-100 items-center justify-center text-xl border-2 border-white">👨‍⚕️</div>
-              <div>
-                <h3 className="font-bold text-slate-900 text-sm">Perfect Match!</h3>
-                <p className="text-[10px] text-slate-500">Software Eng. & Doctor</p>
-              </div>
-            </div>
-            <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-              <div className="bg-gradient-to-r from-pink-500 to-purple-600 h-2 rounded-full w-full"></div>
-            </div>
-            <p className="text-right text-[9px] font-bold text-pink-600 mt-1">100% Compatible</p>
-          </div>
-        </div>
-
-        {/* Right Card */}
-        <div className="absolute top-1/2 -translate-y-1/2 right-4 xl:right-8 hidden 2xl:block animate-bounce duration-[4000ms] z-20 pointer-events-none">
-          <div className="bg-white p-4 rounded-3xl shadow-2xl shadow-blue-200/50 border-2 border-blue-100 rotate-[8deg] hover:rotate-0 transition-transform duration-300 w-64">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center text-xl animate-pulse">
-                💍
-              </div>
-              <div>
-                <h3 className="font-bold text-slate-900 text-sm">She said Yes!</h3>
-                <p className="text-[10px] text-slate-500">Just happened</p>
-              </div>
-            </div>
-            <div className="flex gap-1 mt-2 justify-center">
-              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-            </div>
-          </div>
-        </div>
-
-      </section>
-
-      {/* Trust Stats Bar */}
-      <section className="bg-white border-y border-slate-100 py-12 relative z-10">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8">
-          {[
-            { label: "Active Profiles", value: "10k+", icon: Users, color: "text-blue-600" },
-            { label: "Success Stories", value: "500+", icon: Heart, color: "text-pink-600" },
-            { label: "Verified Careers", value: "100%", icon: Shield, color: "text-green-600" },
-            { label: "Cities Covered", value: "50+", icon: Sparkles, color: "text-purple-600" },
-          ].map((stat, i) => (
-            <div key={i} className="flex flex-col items-center text-center group cursor-default">
-              <div className={`mb-3 p-3 rounded-2xl bg-slate-50 group-hover:scale-110 transition-transform ${stat.color} bg-opacity-10`}>
-                <stat.icon className={`h-6 w-6 ${stat.color}`} />
-              </div>
-              <p className="text-3xl font-extrabold text-slate-900 mb-1">{stat.value}</p>
-              <p className="text-slate-500 font-medium text-sm">{stat.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-24 bg-slate-50/50 relative">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16 max-w-3xl mx-auto">
-            <h2 className="text-3xl md:text-5xl font-bold text-slate-900 mb-6 tracking-tight">Why professionals choose us.</h2>
-            <p className="text-lg text-slate-600 leading-relaxed">
-              We go beyond basic details. Our platform is designed for professionals who value transparency, ambition, and authentic connections.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "100% Verified Profiles",
-                desc: "Every profile is manually verified. We strictly check career credentials to ensure you meet real professionals.",
-                icon: Shield,
-                color: "blue",
-                delay: "0"
-              },
-              {
-                title: "Career Compatibility",
-                desc: "Our algorithm matches you not just on personal preferences, but on professional goals, industry, and lifestyle.",
-                icon: Briefcase,
-                color: "purple",
-                delay: "200"
-              },
-              {
-                title: "Privacy First",
-                desc: "Control who sees your photos and contact details. Your privacy is our top priority, always.",
-                icon: Heart,
-                color: "pink",
-                delay: "400"
-              }
-            ].map((feature, i) => (
-              <div key={i} className="bg-white p-8 rounded-[32px] shadow-lg shadow-slate-200/50 border border-slate-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 group">
-                <div className={`h-14 w-14 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform bg-${feature.color}-50`}>
-                  <feature.icon className={`h-7 w-7 text-${feature.color}-600`} />
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.8 }}
+              className="absolute bottom-0 left-0 right-0 p-8 lg:p-16 z-30 text-white"
+            >
+              <div className="flex items-center gap-4 mb-8">
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 10 }}
+                  className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20"
+                >
+                  <CheckCircle2 className="w-7 h-7 text-white" />
+                </motion.div>
+                <div>
+                  <p className="font-bold text-xl tracking-tight">Trusted by Millions</p>
+                  <p className="text-white/80 text-base font-medium">Verified profiles only</p>
                 </div>
-                <h3 className="text-2xl font-bold mb-4 text-slate-900">{feature.title}</h3>
-                <p className="text-slate-600 leading-relaxed">
-                  {feature.desc}
+              </div>
+
+              <h1 className="text-5xl lg:text-7xl font-black tracking-tight leading-[1.05] mb-6 drop-shadow-lg">
+                Find Your <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-pink-400 to-orange-400 animate-gradient-x">Equal Partner.</span>
+              </h1>
+              <p className="text-xl lg:text-2xl text-white/90 font-medium max-w-lg leading-relaxed mb-10 drop-shadow-md">
+                Connect with compatible professionals who share your values, lifestyle, and ambition.
+              </p>
+
+              <div className="flex flex-wrap gap-5">
+                <Button asChild className="bg-white text-slate-900 hover:bg-slate-100 rounded-full font-bold px-10 h-14 text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+                  <Link href="/matches">Explore Matches <ChevronRight className="ml-1 w-5 h-5" /></Link>
+                </Button>
+                <Button asChild variant="outline" className="border-white/40 text-white hover:bg-white/20 hover:text-white rounded-full font-bold px-10 h-14 text-lg bg-transparent backdrop-blur-sm transition-all hover:-translate-y-1">
+                  <Link href="/stories">Success Stories</Link>
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Right Column: Registration Form */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
+            className="order-1 lg:order-2 lg:col-span-4 w-full max-w-xl mx-auto pl-0 lg:pl-8"
+          >
+            <div className="bg-white p-8 lg:p-10 rounded-[30px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 relative overflow-hidden backdrop-blur-3xl">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-rose-100 to-purple-100 rounded-full blur-3xl -z-10 opacity-60"></div>
+
+              <div className="mb-8 space-y-2">
+                <div className="inline-flex items-center gap-2 mb-2">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-lg shadow-rose-500/20">
+                    <Heart className="h-5 w-5 text-white fill-white" />
+                  </div>
+                  <span className="text-xl font-bold text-slate-900 tracking-tight">Career Matrimony</span>
+                </div>
+                <h2 className="text-3xl font-black text-slate-900 tracking-tight">Create Account</h2>
+                <p className="text-slate-500 font-medium text-lg">Your perfect match is waiting.</p>
+              </div>
+
+              <RegistrationForm />
+
+              <div className="mt-8 text-center">
+                <p className="text-sm text-slate-500 font-medium">
+                  Already have an account?{" "}
+                  <Link href="/login" className="font-bold text-rose-600 hover:text-rose-700 hover:underline transition-all">
+                    Sign in here
+                  </Link>
                 </p>
               </div>
-            ))}
-          </div>
+            </div>
+
+            {/* Trusted By Ticker */}
+            <div className="mt-8 overflow-hidden relative">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest text-center mb-4">Trusted By Professionals From</p>
+              <div className="flex relative w-full overflow-hidden mask-linear-fade">
+                <motion.div
+                  animate={{ x: "-50%" }}
+                  transition={{ duration: 20, ease: "linear", repeat: Infinity }}
+                  className="flex gap-12 whitespace-nowrap"
+                >
+                  {/* Duplicate list for seamless loop */}
+                  {[...Array(2)].map((_, i) => (
+                    <div key={i} className="flex gap-12 items-center">
+                      {['Google', 'Microsoft', 'Amazon', 'Apple', 'Meta', 'Netflix', 'Tesla', 'Adobe'].map(company => (
+                        <span key={company} className="text-sm font-bold text-slate-400 hover:text-rose-500 transition-colors cursor-default">{company}</span>
+                      ))}
+                    </div>
+                  ))}
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+
         </div>
       </section>
 
-      {/* Success Stories */}
-      <section className="py-24 bg-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-50 rounded-full blur-3xl opacity-50 -z-10"></div>
-
+      {/* Stats Bar */}
+      <motion.section
+        style={{ y: yStats }}
+        className="bg-white border-y border-slate-100 py-16 relative z-10"
+      >
         <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-16">
-            <span className="text-purple-600 font-bold tracking-wider uppercase text-sm mb-2 block">Real Results</span>
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">Love Stories</h2>
-            <p className="text-slate-600">Real couples who found love on Career Matrimony</p>
-          </div>
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-slate-100"
+          >
+            {[
+              { label: "Active Profiles", value: "10k+", icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
+              { label: "Success Stories", value: "500+", icon: Heart, color: "text-rose-600", bg: "bg-rose-50" },
+              { label: "Verified Careers", value: "100%", icon: Shield, color: "text-green-600", bg: "bg-green-50" },
+              { label: "Cities Covered", value: "50+", icon: Sparkles, color: "text-purple-600", bg: "bg-purple-50" },
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                variants={fadeInUp}
+                className="flex flex-col items-center text-center group cursor-default p-4"
+              >
+                <motion.div
+                  whileHover={{ scale: 1.1, rotate: 5 }}
+                  className={`w-12 h-12 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center mb-4 transition-colors`}
+                >
+                  <stat.icon className="w-6 h-6" />
+                </motion.div>
+                <p className="text-4xl lg:text-5xl font-black text-slate-900 mb-2">{stat.value}</p>
+                <span className="text-slate-500 font-bold text-sm lg:text-base uppercase tracking-wider">{stat.label}</span>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </motion.section>
 
-          <div className="grid md:grid-cols-2 gap-8">
+      {/* Features Section */}
+      <section className="py-32 bg-slate-50 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-20 max-w-3xl mx-auto"
+          >
+            <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Designed for <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-purple-600">Ambition</span>.</h2>
+            <p className="text-xl text-slate-600 leading-relaxed">
+              We understand that your career is a huge part of who you are. Our platform matches you based on professional compatibility, lifestyle standards, and future goals.
+            </p>
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid md:grid-cols-3 gap-8"
+          >
             {[
               {
-                names: "Rahul & Priya",
-                jobs: "Software Engineers, Bangalore",
-                quote: "We both work in IT and understand the busy schedules. Finding someone who 'gets it' was impossible until I joined here.",
-                image: "/assets/success_story_couple_1_1769432525072.png"
+                title: "Elite Verification",
+                desc: "Every profile undergoes a strict manual verification process to ensure authenticity.",
+                icon: Shield,
+                gradient: "from-blue-500 to-indigo-600"
               },
               {
-                names: "Arjun & Sneha",
-                jobs: "Doctor & Architect, Mumbai",
-                quote: "I was looking for someone ambitious yet family-oriented. The detailed career profiles helped me find my perfect match.",
-                image: "/assets/success_story_couple_2_1769432540813.png"
+                title: "Smart Compatibility",
+                desc: "Our AI-driven matching connects you with partners who share your drive and vision.",
+                icon: Briefcase,
+                gradient: "from-purple-500 to-pink-600"
+              },
+              {
+                title: "Privacy Controls",
+                desc: "You have complete control over who sees your photos, career details, and contact info.",
+                icon: Lock,
+                gradient: "from-rose-500 to-orange-600"
+              }
+            ].map((feature, i) => (
+              <motion.div
+                key={i}
+                variants={fadeInUp}
+                whileHover={{ y: -10 }}
+                className="bg-white p-10 rounded-[40px] shadow-xl shadow-slate-200/50 hover:shadow-2xl hover:shadow-rose-100/50 transition-all duration-300 group border border-slate-100 cursor-default"
+              >
+                <div className={`h-16 w-16 rounded-2xl flex items-center justify-center mb-8 bg-gradient-to-br ${feature.gradient} text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                  <feature.icon className="h-8 w-8" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4 text-slate-900">{feature.title}</h3>
+                <p className="text-lg text-slate-600 leading-relaxed mb-6">
+                  {feature.desc}
+                </p>
+                <div className="w-12 h-1 bg-slate-100 rounded-full group-hover:w-full group-hover:bg-slate-900 transition-all duration-500"></div>
+              </motion.div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Success Stories Masonry */}
+      <section className="py-32 bg-white relative">
+        <div className="max-w-7xl mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8"
+          >
+            <div className="max-w-2xl">
+              <span className="text-rose-500 font-bold tracking-widest uppercase text-sm mb-4 block">Proven Success</span>
+              <h2 className="text-4xl md:text-6xl font-black text-slate-900 leading-tight">Matched for <span className="italic font-serif text-rose-500">Life</span>.</h2>
+            </div>
+            <Button asChild variant="outline" className="rounded-full px-8 h-12 border-slate-300 hover:border-slate-900 hover:bg-slate-900 hover:text-white transition-all group">
+              <Link href="/stories">View All Stories <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" /></Link>
+            </Button>
+          </motion.div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {[
+              {
+                names: "Anjali & Vikram",
+                jobs: "Investment Banker & Corporate Lawyer",
+                quote: "We were both so busy with our careers, we thought we'd never find 'the one'. This platform changed everything.",
+                image: "https://images.unsplash.com/photo-1623190731213-9097e1781229?w=800&q=80",
+                height: "h-[400px]"
+              },
+              {
+                names: "Dr. Rohan & Dr. Meera",
+                jobs: "Cardiologist & Neurologist",
+                quote: "Finding someone who understands the medical field's demands was crucial. We matched instantly.",
+                image: "https://images.unsplash.com/photo-1591604466107-ec97de577aff?w=800&q=80",
+                height: "h-[500px]"
+              },
+              {
+                names: "Karthik & Sneha",
+                jobs: "Tech Lead & Product Manager",
+                quote: "Our shared passion for technology and travel brought us together. The matching algorithm is spot on!",
+                image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80",
+                height: "h-[400px]"
               }
             ].map((story, i) => (
-              <div key={i} className="flex flex-col md:flex-row gap-6 items-center bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/50 border border-slate-100 hover:border-purple-100 transition-colors">
-                <div className="relative w-32 h-32 md:w-40 md:h-40 shrink-0 overflow-hidden rounded-2xl">
-                  <Image
-                    src={story.image}
-                    alt="Success Story"
-                    fill
-                    className="object-cover hover:scale-110 transition-transform duration-700"
-                  />
-                </div>
-                <div>
-                  <div className="flex text-yellow-400 mb-3 gap-0.5">
-                    {[1, 2, 3, 4, 5].map(star => <Star key={star} className="w-4 h-4 fill-current" />)}
+              <motion.div
+                key={i}
+                variants={scaleIn}
+                whileHover={{ y: -5 }}
+                className={`group relative rounded-[32px] overflow-hidden ${story.height} ${i === 1 ? 'md:-mt-12 shadow-2xl' : 'shadow-xl'}`}
+              >
+                <Image src={story.image} alt={story.names} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-8 text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                  <div className="flex gap-1 mb-3 text-yellow-400">
+                    {[1, 2, 3, 4, 5].map(s => <Star key={s} className="w-4 h-4 fill-current" />)}
                   </div>
-                  <p className="text-slate-700 italic mb-4 text-lg leading-relaxed">"{story.quote}"</p>
-                  <div>
-                    <p className="font-bold text-slate-900 text-lg">{story.names}</p>
-                    <p className="text-sm text-slate-500 font-medium">{story.jobs}</p>
-                  </div>
+                  <p className="text-lg italic mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">"{story.quote}"</p>
+                  <h3 className="text-2xl font-bold">{story.names}</h3>
+                  <p className="text-white/80 font-medium text-sm">{story.jobs}</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="py-32 relative overflow-hidden">
-        <div className="absolute inset-0 bg-slate-900 z-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/50 to-blue-900/50"></div>
+        <div className="absolute inset-0 bg-slate-900">
+          <Image src="https://images.unsplash.com/photo-1563823023249-14a05f15949e?w=1600&q=80" alt="Background" fill className="object-cover opacity-20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-900/60"></div>
         </div>
 
-        <div className="max-w-4xl mx-auto px-4 space-y-8 text-center relative z-10">
-          <h2 className="text-4xl md:text-6xl font-black text-white tracking-tight">Ready to find your partner?</h2>
-          <p className="text-blue-100 text-xl max-w-2xl mx-auto leading-relaxed">Join thousands of professionals who have found their soulmate, their best friend, and their equal here.</p>
-          <Button asChild size="lg" className="bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white text-lg px-10 py-8 h-auto rounded-full font-bold shadow-2xl transition-all hover:scale-105 border border-white/20">
-            <Link href="/register">Get Started For Free <ArrowRight className="ml-2 h-6 w-6" /></Link>
-          </Button>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="max-w-4xl mx-auto px-4 space-y-10 text-center relative z-10"
+        >
+          <h2 className="text-5xl md:text-7xl font-black text-white tracking-tight leading-tight">
+            Your <span className="text-rose-500">Equal</span> is waiting.
+          </h2>
+          <p className="text-slate-300 text-xl max-w-2xl mx-auto leading-relaxed font-light">
+            Don't leave your life partner to chance. Join the community of India's most eligible and ambitious singles today.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg" className="bg-rose-600 hover:bg-rose-700 text-white text-lg px-12 py-8 h-auto rounded-full font-bold shadow-2xl shadow-rose-600/30 transition-all hover:scale-105">
+              <Link href="/register">Start Your Journey</Link>
+            </Button>
+          </div>
+        </motion.div>
       </section>
     </main>
   );

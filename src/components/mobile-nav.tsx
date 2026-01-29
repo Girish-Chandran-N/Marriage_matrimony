@@ -64,11 +64,11 @@ export function MobileNav({ user }: { user?: any }) {
                     ) : (
                         <>
                             <Link
-                                href="/about"
+                                href="/pricing"
                                 className="text-sm font-medium transition-colors hover:text-purple-600"
                                 onClick={toggle}
                             >
-                                About Us
+                                Pricing
                             </Link>
                             <Link href="/login" onClick={toggle}>
                                 <Button variant="ghost" className="w-full justify-start">Login</Button>

@@ -4,42 +4,91 @@ import { authenticate } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
+import Image from "next/image";
 
 export default function LoginPage() {
     const [errorMessage, action, isPending] = useActionState(authenticate, undefined);
+    const [email, setEmail] = useState("");
+    const [emailError, setEmailError] = useState("");
+
+    const validateEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setEmail(value);
+
+        if (!value) {
+            setEmailError("");
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(value)) {
+            setEmailError("Please enter a valid email address.");
+            return;
+        }
+
+        const allowedDomains = [
+            "gmail.com",
+            "outlook.com",
+            "yahoo.com",
+            "hotmail.com",
+            "icloud.com",
+            "protonmail.com",
+        ];
+        const domain = value.split("@")[1];
+
+        if (domain && !allowedDomains.includes(domain)) {
+            setEmailError("Please use a common email provider (Gmail, Outlook, Yahoo, etc.)");
+        } else {
+            setEmailError("");
+        }
+    };
 
     return (
-        <main className="flex min-h-screen items-center justify-center relative overflow-hidden bg-slate-50">
-            {/* Animated Background */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
-                <div className="absolute top-0 left-0 w-full h-full bg-slate-50"></div>
-                <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-purple-300/30 rounded-full mix-blend-multiply filter blur-[100px] animate-blob opacity-70"></div>
-                <div className="absolute top-40 -left-40 w-[600px] h-[600px] bg-blue-300/30 rounded-full mix-blend-multiply filter blur-[100px] animate-blob animation-delay-2000 opacity-70"></div>
-                <div className="absolute -bottom-40 left-1/2 w-[600px] h-[600px] bg-pink-300/30 rounded-full mix-blend-multiply filter blur-[100px] animate-blob animation-delay-4000 opacity-70"></div>
-                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
+        <main className="flex min-h-screen bg-white">
+            {/* Left Side - Image */}
+            <div className="hidden lg:block lg:w-2/3 relative">
+                <div className="absolute inset-0 bg-slate-900/10 z-10"></div>
+                <Image
+                    src="/auth-hero.png"
+                    alt="Happy Couple"
+                    fill
+                    className="object-cover"
+                    priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent z-20"></div>
+                <div className="absolute bottom-32 left-12 right-12 z-30 text-white">
+                    <h2 className="text-4xl font-black mb-4 leading-tight">Match Your Career,<br />Find Your Life Partner.</h2>
+                    <p className="text-lg text-white/90 font-medium max-w-xl">
+                        Join the exclusive community where professionals meet their perfect match. Verified profiles, career-centric matchmaking, and premium features.
+                    </p>
+                </div>
             </div>
 
-            <div className="w-full max-w-lg p-4 relative z-10 animate-in fade-in zoom-in-95 duration-700">
-                <div className="bg-white/80 backdrop-blur-xl border border-white/60 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)] rounded-[32px] p-8 md:p-12">
-                    <div className="text-center space-y-2 mb-10">
-                        <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 mb-4 shadow-lg shadow-indigo-200">
-                            <Sparkles className="h-6 w-6 text-white" />
-                        </div>
-                        <h2 className="text-3xl font-black text-slate-900 tracking-tight">
+            {/* Right Side - Form */}
+            <div className="w-full lg:w-1/3 flex justify-center p-8 lg:p-12 relative z-10">
+                <div className="w-full max-w-md space-y-8">
+                    <div className="space-y-2">
+                        <Link href="/" className="inline-flex items-center gap-2 mb-8">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                                <Sparkles className="h-5 w-5 text-white" />
+                            </div>
+                            <span className="text-xl font-bold text-slate-900 tracking-tight">Career Matrimony</span>
+                        </Link>
+                        <h1 className="text-3xl font-black text-slate-900 tracking-tight">
                             Welcome Back
-                        </h2>
+                        </h1>
                         <p className="text-slate-500 font-medium">
-                            Enter your credentials to access your account.
+                            Please enter your details to sign in.
                         </p>
                     </div>
 
                     <form action={action} className="space-y-6">
-                        <div className="space-y-4">
+                        <div className="space-y-5">
                             <div>
-                                <label htmlFor="email" className="block text-sm font-bold text-slate-700 mb-2 pl-1">
+                                <label htmlFor="email" className="block text-sm font-bold text-slate-700 mb-2">
                                     Email address
                                 </label>
                                 <Input
@@ -49,11 +98,16 @@ export default function LoginPage() {
                                     autoComplete="email"
                                     required
                                     placeholder="name@example.com"
-                                    className="h-12 rounded-xl bg-slate-50/50 border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium"
+                                    value={email}
+                                    onChange={validateEmail}
+                                    className={`h-12 rounded-xl bg-slate-50 border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium ${emailError ? "border-red-300 focus:border-red-500 focus:ring-red-500/20" : ""}`}
                                 />
+                                {emailError && (
+                                    <p className="text-sm text-red-500 mt-1 font-medium animate-in slide-in-from-top-1">{emailError}</p>
+                                )}
                             </div>
                             <div>
-                                <div className="flex items-center justify-between mb-2 pl-1">
+                                <div className="flex items-center justify-between mb-2">
                                     <label htmlFor="password" className="block text-sm font-bold text-slate-700">
                                         Password
                                     </label>
@@ -67,7 +121,7 @@ export default function LoginPage() {
                                     autoComplete="current-password"
                                     required
                                     placeholder="Enter your password"
-                                    className="h-12 rounded-xl bg-slate-50/50 border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium"
+                                    className="h-12 rounded-xl bg-slate-50 border-slate-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-medium"
                                 />
                             </div>
                         </div>
@@ -78,14 +132,14 @@ export default function LoginPage() {
                             </div>
                         )}
 
-                        <Button type="submit" disabled={isPending} className="w-full h-12 bg-slate-900 text-white hover:bg-slate-800 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
+                        <Button type="submit" disabled={isPending || !!emailError} className="w-full h-12 bg-slate-900 text-white hover:bg-slate-800 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
                             {isPending ? "Signing in..." : (
                                 <span className="flex items-center gap-2">Sign in <ArrowRight className="w-5 h-5" /></span>
                             )}
                         </Button>
                     </form>
 
-                    <div className="mt-8 text-center">
+                    <div className="text-center">
                         <p className="text-sm text-slate-500 font-medium">
                             Don't have an account?{" "}
                             <Link href="/register" className="font-bold text-indigo-600 hover:text-indigo-500 hover:underline">
@@ -93,11 +147,13 @@ export default function LoginPage() {
                             </Link>
                         </p>
                     </div>
-                </div>
 
-                <p className="text-center text-xs text-slate-400 mt-8 font-medium">
-                    &copy; 2024 Career Matrimony. All rights reserved.
-                </p>
+                    <div className="pt-8 mt-8 border-t border-slate-100">
+                        <p className="text-xs text-center text-slate-400 font-medium">
+                            &copy; 2024 Career Matrimony. All rights reserved.
+                        </p>
+                    </div>
+                </div>
             </div>
         </main>
     );
