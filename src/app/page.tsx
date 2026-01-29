@@ -63,7 +63,7 @@ export default function Home() {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
-            className="order-2 lg:order-1 lg:col-span-8 relative h-[600px] lg:h-[85vh] max-h-[1000px] w-full rounded-[30px] overflow-hidden shadow-2xl shadow-rose-900/10 group cursor-pointer"
+            className="order-2 lg:order-1 lg:col-span-8 relative h-[450px] lg:h-[85vh] max-h-[1000px] w-full rounded-[30px] overflow-hidden shadow-2xl shadow-rose-900/10 group cursor-pointer"
           >
             <div className="absolute inset-0 bg-slate-900/20 z-10"></div>
             <Image
@@ -79,34 +79,34 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="absolute bottom-0 left-0 right-0 p-8 lg:p-16 z-30 text-white"
+              className="absolute bottom-0 left-0 right-0 p-6 lg:p-16 z-30 text-white"
             >
-              <div className="flex items-center gap-4 mb-8">
+              <div className="flex items-center gap-4 mb-4 lg:mb-8">
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 10 }}
-                  className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20"
+                  className="w-10 h-10 lg:w-14 lg:h-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20"
                 >
-                  <CheckCircle2 className="w-7 h-7 text-white" />
+                  <CheckCircle2 className="w-5 h-5 lg:w-7 lg:h-7 text-white" />
                 </motion.div>
                 <div>
-                  <p className="font-bold text-xl tracking-tight">Trusted by Millions</p>
-                  <p className="text-white/80 text-base font-medium">Verified profiles only</p>
+                  <p className="font-bold text-lg lg:text-xl tracking-tight">Trusted by Millions</p>
+                  <p className="text-white/80 text-sm lg:text-base font-medium">Verified profiles only</p>
                 </div>
               </div>
 
-              <h1 className="text-5xl lg:text-7xl font-black tracking-tight leading-[1.05] mb-6 drop-shadow-lg">
+              <h1 className="text-4xl lg:text-7xl font-black tracking-tight leading-[1.05] mb-4 lg:mb-6 drop-shadow-lg">
                 Find Your <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-pink-400 to-orange-400 animate-gradient-x">Equal Partner.</span>
               </h1>
-              <p className="text-xl lg:text-2xl text-white/90 font-medium max-w-lg leading-relaxed mb-10 drop-shadow-md">
+              <p className="text-lg lg:text-2xl text-white/90 font-medium max-w-lg leading-relaxed mb-6 lg:mb-10 drop-shadow-md">
                 Connect with compatible professionals who share your values, lifestyle, and ambition.
               </p>
 
-              <div className="flex flex-wrap gap-5">
-                <Button asChild className="!bg-white !text-slate-900 hover:!bg-slate-100 rounded-full font-bold px-10 h-14 text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-                  <Link href="/matches">Explore Matches <ChevronRight className="ml-1 w-5 h-5" /></Link>
+              <div className="flex flex-wrap gap-4 lg:gap-5">
+                <Button asChild className="!bg-white !text-slate-900 hover:!bg-slate-100 rounded-full font-bold px-6 h-12 text-base lg:px-10 lg:h-14 lg:text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+                  <Link href="/matches">Explore Matches <ChevronRight className="ml-1 w-4 h-4 lg:w-5 lg:h-5" /></Link>
                 </Button>
-                <Button asChild variant="ghost" className="border !border-white/40 !text-white hover:!bg-white/20 hover:!text-white rounded-full font-bold px-10 h-14 text-lg !bg-transparent backdrop-blur-sm transition-all hover:-translate-y-1">
+                <Button asChild variant="ghost" className="border !border-white/40 !text-white hover:!bg-white/20 hover:!text-white rounded-full font-bold px-6 h-12 text-base lg:px-10 lg:h-14 lg:text-lg !bg-transparent backdrop-blur-sm transition-all hover:-translate-y-1">
                   <Link href="/stories">Success Stories</Link>
                 </Button>
               </div>

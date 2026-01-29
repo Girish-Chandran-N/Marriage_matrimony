@@ -27,7 +27,7 @@ export function MobileNav({ user }: { user?: any }) {
             </Button>
 
             {open && (
-                <div className="absolute top-16 left-0 right-0 bg-white border-b shadow-lg p-4 flex flex-col gap-4 z-50 animate-in slide-in-from-top-2">
+                <div className="absolute top-20 left-0 right-0 bg-white border-b shadow-lg p-4 flex flex-col gap-4 z-50 animate-in slide-in-from-top-2 max-h-[calc(100vh-80px)] overflow-y-auto">
                     {user ? (
                         <>
                             <Link
