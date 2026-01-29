@@ -103,10 +103,10 @@ export default function Home() {
               </p>
 
               <div className="flex flex-wrap gap-5">
-                <Button asChild className="bg-white text-slate-900 hover:bg-slate-100 rounded-full font-bold px-10 h-14 text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+                <Button asChild className="!bg-white !text-slate-900 hover:!bg-slate-100 rounded-full font-bold px-10 h-14 text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
                   <Link href="/matches">Explore Matches <ChevronRight className="ml-1 w-5 h-5" /></Link>
                 </Button>
-                <Button asChild variant="outline" className="border-white/40 text-white hover:bg-white/20 hover:text-white rounded-full font-bold px-10 h-14 text-lg bg-transparent backdrop-blur-sm transition-all hover:-translate-y-1">
+                <Button asChild variant="ghost" className="border !border-white/40 !text-white hover:!bg-white/20 hover:!text-white rounded-full font-bold px-10 h-14 text-lg !bg-transparent backdrop-blur-sm transition-all hover:-translate-y-1">
                   <Link href="/stories">Success Stories</Link>
                 </Button>
               </div>
