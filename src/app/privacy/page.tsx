@@ -14,12 +14,12 @@ export default function PrivacyPolicy() {
                 <h2 className="text-xl font-semibold text-gray-800">2. How We Use Information</h2>
                 <p>
                     We use the information we collect to operate, maintain, and improve our services, such as:
-                    <ul className="list-disc pl-5 mt-2 space-y-1">
-                        <li>Facilitating matchmaking based on career preferences.</li>
-                        <li>Verifying your identity and career credentials to build trust.</li>
-                        <li>Communicating with you about updates and security alerts.</li>
-                    </ul>
                 </p>
+                <ul className="list-disc pl-5 mt-2 space-y-1">
+                    <li>Facilitating matchmaking based on career preferences.</li>
+                    <li>Verifying your identity and career credentials to build trust.</li>
+                    <li>Communicating with you about updates and security alerts.</li>
+                </ul>
 
                 <h2 className="text-xl font-semibold text-gray-800">3. Document Security</h2>
                 <p>
