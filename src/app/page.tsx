@@ -56,57 +56,58 @@ export default function Home() {
           />
         </div>
 
-        <div className="relative z-10 w-full max-w-[95%] mx-auto grid lg:grid-cols-12 gap-8 items-center">
+        <div className="relative z-10 w-full lg:max-w-[95%] mx-auto grid lg:grid-cols-12 gap-8 items-center">
 
-          {/* Left Column: Hero Image with Overlay */}
+          {/* Left Column: Hero Image (Mobile: Background, Desktop: Left Col) */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, ease: "easeOut" }}
-            className="order-1 lg:col-span-8 relative h-[550px] lg:h-[85vh] max-h-[1000px] w-full rounded-[30px] overflow-hidden shadow-2xl shadow-rose-900/10 group cursor-pointer"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            className="absolute inset-0 z-0 h-full w-full lg:static lg:col-span-8 lg:h-[85vh] lg:w-full lg:rounded-[30px] overflow-hidden shadow-2xl shadow-rose-900/10 group"
           >
-            <div className="absolute inset-0 bg-slate-900/20 z-10"></div>
+            <div className="absolute inset-0 bg-slate-900/20 z-10 hidden lg:block"></div>
             <Image
               src="/auth-hero.png"
               alt="Happy Couple"
               fill
-              className="object-cover transition-transform duration-[2s] group-hover:scale-105"
+              className="object-cover lg:transition-transform lg:duration-[2s] lg:group-hover:scale-105 blur-[2px] brightness-[0.4] lg:filter-none"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-20"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-20 hidden lg:block"></div>
 
+            {/* Text Overlay - Hidden on Mobile */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.8 }}
-              className="absolute bottom-0 left-0 right-0 p-6 lg:p-16 z-30 text-white"
+              className="absolute bottom-0 left-0 right-0 p-16 z-30 text-white hidden lg:block"
             >
-              <div className="flex items-center gap-4 mb-4 lg:mb-8">
+              <div className="flex items-center gap-4 mb-8">
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 10 }}
-                  className="w-10 h-10 lg:w-14 lg:h-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20"
+                  className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20"
                 >
-                  <CheckCircle2 className="w-5 h-5 lg:w-7 lg:h-7 text-white" />
+                  <CheckCircle2 className="w-7 h-7 text-white" />
                 </motion.div>
                 <div>
-                  <p className="font-bold text-lg lg:text-xl tracking-tight">Trusted by Millions</p>
-                  <p className="text-white/80 text-sm lg:text-base font-medium">Verified profiles only</p>
+                  <p className="font-bold text-xl tracking-tight">Trusted by Millions</p>
+                  <p className="text-white/80 text-base font-medium">Verified profiles only</p>
                 </div>
               </div>
 
-              <h1 className="text-4xl lg:text-7xl font-black tracking-tight leading-[1.05] mb-4 lg:mb-6 drop-shadow-lg">
+              <h1 className="text-7xl font-black tracking-tight leading-[1.05] mb-6 drop-shadow-lg">
                 Find Your <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-pink-400 to-orange-400 animate-gradient-x">Equal Partner.</span>
               </h1>
-              <p className="text-lg lg:text-2xl text-white/90 font-medium max-w-lg leading-relaxed mb-6 lg:mb-10 drop-shadow-md">
+              <p className="text-2xl text-white/90 font-medium max-w-lg leading-relaxed mb-10 drop-shadow-md">
                 Connect with compatible professionals who share your values, lifestyle, and ambition.
               </p>
 
-              <div className="flex flex-wrap gap-4 lg:gap-5">
-                <Button asChild className="!bg-white !text-slate-900 hover:!bg-slate-100 rounded-full font-bold px-6 h-12 text-base lg:px-10 lg:h-14 lg:text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-                  <Link href="/matches">Explore Matches <ChevronRight className="ml-1 w-4 h-4 lg:w-5 lg:h-5" /></Link>
+              <div className="flex flex-wrap gap-5">
+                <Button asChild className="!bg-white !text-slate-900 hover:!bg-slate-100 rounded-full font-bold px-10 h-14 text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
+                  <Link href="/matches">Explore Matches <ChevronRight className="ml-1 w-5 h-5" /></Link>
                 </Button>
-                <Button asChild variant="ghost" className="border !border-white/40 !text-white hover:!bg-white/20 hover:!text-white rounded-full font-bold px-6 h-12 text-base lg:px-10 lg:h-14 lg:text-lg !bg-transparent backdrop-blur-sm transition-all hover:-translate-y-1">
+                <Button asChild variant="ghost" className="border !border-white/40 !text-white hover:!bg-white/20 hover:!text-white rounded-full font-bold px-10 h-14 text-lg !bg-transparent backdrop-blur-sm transition-all hover:-translate-y-1">
                   <Link href="/stories">Success Stories</Link>
                 </Button>
               </div>
@@ -115,12 +116,12 @@ export default function Home() {
 
           {/* Right Column: Registration Form */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-            className="order-2 lg:col-span-4 w-full max-w-xl mx-auto pl-0 lg:pl-8 -mt-12 lg:mt-0 relative z-30"
+            className="relative z-10 w-full lg:col-span-4 max-w-md lg:max-w-xl mx-auto px-4 lg:px-0 lg:pl-8 flex flex-col justify-center min-h-[calc(100vh-80px)] lg:min-h-0 py-8 lg:py-0"
           >
-            <div className="bg-white p-6 lg:p-10 rounded-[30px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 relative overflow-hidden backdrop-blur-3xl">
+            <div className="bg-white/95 backdrop-blur-md lg:bg-white p-6 lg:p-10 rounded-[30px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-rose-100 to-purple-100 rounded-full blur-3xl -z-10 opacity-60"></div>
 
               <div className="mb-6 lg:mb-8 space-y-2">
@@ -146,9 +147,11 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Trusted By Ticker */}
+            {/* Trusted By Ticker - Hidden on Mobile mostly, or White text? */}
+            {/* Let's keep it but ensure visibility. On mobile bg is dark image. Text is slate-400. Might be invisible. */}
+            {/* Switch text color on mobile? Or add transparent bg? */}
             <div className="mt-8 overflow-hidden relative">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest text-center mb-4">Trusted By Professionals From</p>
+              <p className="text-xs font-bold text-white/80 lg:text-slate-400 uppercase tracking-widest text-center mb-4 shadow-black/50 lg:shadow-none drop-shadow-md lg:drop-shadow-none">Trusted By Professionals From</p>
               <div className="flex relative w-full overflow-hidden mask-linear-fade">
                 <motion.div
                   animate={{ x: "-50%" }}
@@ -159,7 +162,7 @@ export default function Home() {
                   {[...Array(2)].map((_, i) => (
                     <div key={i} className="flex gap-12 items-center">
                       {['Google', 'Microsoft', 'Amazon', 'Apple', 'Meta', 'Netflix', 'Tesla', 'Adobe'].map(company => (
-                        <span key={company} className="text-sm font-bold text-slate-400 hover:text-rose-500 transition-colors cursor-default">{company}</span>
+                        <span key={company} className="text-sm font-bold text-white/90 lg:text-slate-400 hover:text-rose-500 transition-colors cursor-default drop-shadow-md lg:drop-shadow-none">{company}</span>
                       ))}
                     </div>
                   ))}
