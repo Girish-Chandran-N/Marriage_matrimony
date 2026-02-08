@@ -12,15 +12,22 @@ import {
 } from "@/components/ui/dialog";
 import { pusherClient } from "@/lib/pusher-client";
 
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+
 export default function ChatWindow({
     initialMessages,
     receiverId,
+    receiverName,
+    receiverImage,
     currentUserId,
     currentUserName,
     currentUserImage
 }: {
     initialMessages: any[],
     receiverId: string,
+    receiverName: string,
+    receiverImage: string,
     currentUserId: string,
     currentUserName: string,
     currentUserImage: string
@@ -32,9 +39,11 @@ export default function ChatWindow({
     const [inputText, setInputText] = useState("");
     const [isPending, startTransition] = useTransition();
     const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
+    const [isReceiverOnline, setIsReceiverOnline] = useState(false);
     const [connectionStatus, setConnectionStatus] = useState("disconnected");
     const [lastError, setLastError] = useState<any>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const inputRef = useRef<HTMLInputElement>(null);
     const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const router = useRouter();
 
@@ -52,13 +61,9 @@ export default function ChatWindow({
 
     // Pusher Real-time Subscription
     useEffect(() => {
-        // Use the exported client instance
-        // Use the exported client instance directly
-        // const { pusherClient } = require("@/lib/pusher-client");
-
-        // Deterministic Channel ID for shared conversation
+        // Deterministic Channel ID for shared conversation (Presence Channel)
         const sortedIds = [currentUserId, receiverId].sort();
-        const channelName = `private-chat-${sortedIds[0]}-${sortedIds[1]}`;
+        const channelName = `presence-chat-${sortedIds[0]}-${sortedIds[1]}`;
 
         console.log(`[ChatWindow] Initializing subscription to: ${channelName}`);
 
@@ -73,8 +78,6 @@ export default function ChatWindow({
 
         pusherClient.connection.bind("error", (err: any) => {
             console.error("[ChatWindow] Pusher connection error:", JSON.stringify(err, null, 2));
-            console.error("[ChatWindow] Error details:", err?.error?.data || err?.message || "No details");
-            // Capture all possible error info
             setLastError({
                 message: err?.error?.data?.message || err?.message || "Unknown Connection Error",
                 type: err?.type,
@@ -89,39 +92,56 @@ export default function ChatWindow({
 
         const channel = pusherClient.subscribe(channelName);
 
-        channel.bind("pusher:subscription_succeeded", () => {
+        channel.bind("pusher:subscription_succeeded", (members: any) => {
             console.log(`[ChatWindow] Successfully subscribed to ${channelName}`);
             setLastError(null);
+            // Check if receiver is online
+            // members object has a 'members' property which is a map of IDs
+            // The library might expose it differently depending on version, checking members.get(id)
+            try {
+                // @ts-ignore - Pusher JS types are sometimes tricky with members
+                const isOnline = members.get(receiverId) ? true : false;
+                setIsReceiverOnline(isOnline);
+                console.log("[ChatWindow] Receiver online status:", isOnline);
+            } catch (e) {
+                console.error("Error checking members:", e);
+            }
+        });
+
+        channel.bind("pusher:member_added", (member: any) => {
+            if (member.id === receiverId) {
+                setIsReceiverOnline(true);
+                console.log("[ChatWindow] Receiver came online");
+            }
+        });
+
+        channel.bind("pusher:member_removed", (member: any) => {
+            if (member.id === receiverId) {
+                setIsReceiverOnline(false);
+                console.log("[ChatWindow] Receiver went offline");
+            }
         });
 
         channel.bind("pusher:subscription_error", (status: any) => {
             console.error(`[ChatWindow] Subscription error for ${channelName}:`, status);
             setLastError({ type: "subscription_error", ...status });
-            // Check if it's a 403 or 500
-            if (status?.status === 403) {
-                console.error("Auth failed. Check if user is logged in and authorized.");
-            }
         });
 
         const messageHandler = (data: any) => {
             console.log("[ChatWindow] Received new-message:", data);
             const msg = data.message;
-
-            // Ensure it's for this conversation (redundant with shared channel but safe)
+            // ... (rest of message handling logic same as before)
             const isRelevant =
                 (msg.senderId === receiverId) ||
                 (msg.senderId === currentUserId && msg.receiverId === receiverId);
 
             if (isRelevant) {
                 setMessages((prev: any[]) => {
-                    // Deduplicate
                     if (prev.find(m => m.id === msg.id)) return prev;
-                    if (msg.senderId === currentUserId) return prev; // Ignore optimistic echo
-
-                    setIsOtherUserTyping(false); // Stop typing indicator on message receive
+                    if (msg.senderId === currentUserId) return prev;
+                    setIsOtherUserTyping(false);
                     return [...prev, msg];
                 });
-
                 if (msg.senderId === receiverId) markAsRead(receiverId);
             }
         };
@@ -135,12 +155,9 @@ export default function ChatWindow({
         };
 
         const readHandler = (data: { userId: string, partnerId: string }) => {
-            console.log("[ChatWindow] Received message-read:", data);
             if (data.userId === receiverId) {
                 setMessages(prev => prev.map(msg =>
-                    (msg.senderId === currentUserId && !msg.isRead)
-                        ? { ...msg, isRead: true }
-                        : msg
+                    (msg.senderId === currentUserId && !msg.isRead) ? { ...msg, isRead: true } : msg
                 ));
             }
         };
@@ -150,33 +167,34 @@ export default function ChatWindow({
         channel.bind("message-read", readHandler);
 
         return () => {
-            channel.unbind("new-message", messageHandler);
-            channel.unbind("client-typing", typingHandler);
-            channel.unbind("message-read", readHandler);
+            channel.unbind_all();
             pusherClient.unsubscribe(channelName);
-            // Do not disconnect globally as other components might use it
         };
     }, [currentUserId, receiverId]);
 
     const handleTyping = () => {
         const sortedIds = [currentUserId, receiverId].sort();
-        const channelName = `private-chat-${sortedIds[0]}-${sortedIds[1]}`;
+        const channelName = `presence-chat-${sortedIds[0]}-${sortedIds[1]}`;
         const channel = pusherClient.subscribe(channelName);
         channel.trigger("client-typing", { userId: currentUserId });
     };
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
+        // Keep focus
+        inputRef.current?.focus();
+
         if (!inputText.trim()) return;
 
+        const content = inputText;
         const formData = new FormData();
         formData.append("receiverId", receiverId);
-        formData.append("content", inputText);
+        formData.append("content", content);
 
         // Optimistically update UI
         const optimisticMsg = {
             id: "temp-" + Date.now(),
-            content: inputText,
+            content: content,
             senderId: currentUserId,
             sender: {
                 id: currentUserId,
@@ -193,9 +211,9 @@ export default function ChatWindow({
             const result = await sendMessage(formData);
             if (result.error) {
                 console.error("Failed to send:", result.error);
-                // Ideally revert optimistic update here, skipping for simplicity
+                // Ideally revert...
             } else {
-                // Refresh to get real ID
+                // Refresh
                 const fresh = await getMessages(receiverId);
                 setMessages(fresh);
             }
@@ -203,8 +221,51 @@ export default function ChatWindow({
     };
 
     return (
-
         <div className="flex flex-col h-full bg-slate-50/50">
+            {/* Header */}
+            <div className="p-3 md:p-4 border-b border-indigo-50/50 flex items-center gap-3 bg-white/80 backdrop-blur-md sticky top-0 z-10 shrink-0">
+                {/* Back Button - Mobile Only */}
+                <Link href="/messages" className="md:hidden">
+                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full -ml-2 text-slate-500">
+                        <ArrowLeft className="h-5 w-5" />
+                    </Button>
+                </Link>
+
+                {/* Profile Info */}
+                <div className="flex items-center gap-3 flex-1 overflow-hidden">
+                    <Dialog>
+                        <DialogTrigger className="focus:outline-none group relative shrink-0">
+                            <div className="w-10 h-10 rounded-full overflow-hidden border border-white shadow-sm ring-2 ring-transparent group-hover:ring-purple-200 transition-all">
+                                <img
+                                    src={receiverImage}
+                                    alt={receiverName}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                            {isReceiverOnline && (
+                                <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full"></div>
+                            )}
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-transparent border-0 shadow-none outline-none">
+                            <img
+                                src={receiverImage}
+                                alt={receiverName}
+                                className="w-full h-auto max-h-[80vh] object-contain rounded-xl shadow-2xl"
+                            />
+                        </DialogContent>
+                    </Dialog>
+
+                    <Link href={`/users/${receiverId}`} className="hover:opacity-80 transition-opacity flex-1 min-w-0">
+                        <h1 className="text-base md:text-lg font-bold text-slate-900 truncate">{receiverName}</h1>
+                        {isReceiverOnline && (
+                            <p className="text-[10px] md:text-xs font-medium text-emerald-600 flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Online
+                            </p>
+                        )}
+                    </Link>
+                </div>
+            </div>
+
             {/* Messages Area */}
             <div ref={scrollRef} className="flex-1 min-h-0 p-4 md:p-6 overflow-y-auto space-y-6">
                 {messages.length === 0 && (
@@ -291,6 +352,7 @@ export default function ChatWindow({
             <div className="p-4 bg-white/80 backdrop-blur-md border-t border-slate-100 z-20">
                 <form onSubmit={handleSend} className="max-w-4xl mx-auto relative flex items-center gap-3">
                     <Input
+                        ref={inputRef}
                         value={inputText}
                         onChange={(e) => {
                             setInputText(e.target.value);

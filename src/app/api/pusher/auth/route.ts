@@ -26,7 +26,7 @@ export async function POST(req: Request) {
         console.log(`Pusher Auth: Authorizing ${session.user.id} for ${channel}`);
 
         // Authorization logic:
-        if (channel.startsWith("private-chat-")) {
+        if (channel.startsWith("private-chat-") || channel.startsWith("presence-chat-")) {
             if (!channel.includes(session.user.id)) {
                 console.error(`Pusher Auth: Forbidden. User ${session.user.id} not in ${channel}`);
                 return new NextResponse("Forbidden", { status: 403 });
