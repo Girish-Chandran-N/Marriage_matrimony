@@ -46,6 +46,7 @@ export function ProfilePictureEditor({ currentImage, galleryImages = [], name, i
     const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
     const [isCropping, setIsCropping] = useState(false);
     const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState<string | null>(null);
 
     const initials = name?.split(" ").map((n) => n[0]).join("") || "??";
 
@@ -58,6 +59,7 @@ export function ProfilePictureEditor({ currentImage, galleryImages = [], name, i
             setIsCropping(false);
             setZoom(1);
             setCrop({ x: 0, y: 0 });
+            setUploadError(null);
         }
         prevPending.current = isProfilePending;
     }, [isProfilePending, profileState, isEditOpen]);
@@ -67,6 +69,7 @@ export function ProfilePictureEditor({ currentImage, galleryImages = [], name, i
         if (!isEditOpen) {
             setImageSrc(null);
             setIsCropping(false);
+            setUploadError(null);
         }
     }, [isEditOpen]);
 
@@ -77,11 +80,13 @@ export function ProfilePictureEditor({ currentImage, galleryImages = [], name, i
     const handleFileSelect = (url: string) => {
         setImageSrc(url);
         setIsCropping(true);
+        setUploadError(null);
     };
 
     const showCroppedImage = async () => {
         if (!imageSrc || !croppedAreaPixels) return;
         setUploading(true);
+        setUploadError(null);
         try {
             const croppedBlob = await getCroppedImg(imageSrc, croppedAreaPixels);
             if (!croppedBlob) return;
@@ -95,7 +100,10 @@ export function ProfilePictureEditor({ currentImage, galleryImages = [], name, i
                 body: formData,
             });
 
-            if (!response.ok) throw new Error("Upload failed");
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: "Upload failed" }));
+                throw new Error(errorData.error || `Upload failed: ${response.statusText}`);
+            }
 
             const data = await response.json();
 
@@ -106,8 +114,9 @@ export function ProfilePictureEditor({ currentImage, galleryImages = [], name, i
                 await profileAction(profileFormData);
             });
 
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
+            setUploadError(e.message || "Something went wrong during upload");
         } finally {
             setUploading(false);
         }
@@ -253,6 +262,9 @@ export function ProfilePictureEditor({ currentImage, galleryImages = [], name, i
                             {(isProfilePending || uploading) && <p className="text-sm text-center text-muted-foreground mt-2">Processing...</p>}
                             {profileState?.message && !profileState.success && (
                                 <p className="text-sm text-center text-red-500 mt-2">{profileState.message}</p>
+                            )}
+                            {uploadError && (
+                                <p className="text-sm text-center text-red-500 mt-2">{uploadError}</p>
                             )}
                         </TabsContent>
 

@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
         try {
             await mkdir(uploadDir, { recursive: true });
         } catch (e) {
-            // Ignore error if directory exists
+            console.error("Directory creation failed:", e);
         }
 
         const filepath = path.join(uploadDir, uniqueFilename);
@@ -62,8 +62,8 @@ export async function POST(req: NextRequest) {
         const publicUrl = `/uploads/${uniqueFilename}`;
 
         return NextResponse.json({ url: publicUrl });
-    } catch (error) {
-        console.error("Upload failed:", error);
-        return NextResponse.json({ error: "Upload failed." }, { status: 500 });
+    } catch (error: any) {
+        console.error("Upload failed details:", error);
+        return NextResponse.json({ error: `Upload failed: ${error.message}` }, { status: 500 });
     }
 }
