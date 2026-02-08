@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile } from "fs/promises";
-import path from "path";
-import { mkdir } from "fs/promises";
 import { auth } from "@/auth";
+import cloudinary from "@/lib/cloudinary";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_MIME_TYPES = [
@@ -37,33 +35,35 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Invalid file type. Only Images and PDFs are allowed." }, { status: 400 });
         }
 
-        const buffer = Buffer.from(await file.arrayBuffer());
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
 
-        // Sanitize filename
-        const filename = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-        const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        const extension = path.extname(filename);
-        const basename = path.basename(filename, extension);
-        const uniqueFilename = `${basename}-${uniqueSuffix}${extension}`;
+        // Upload to Cloudinary via Stream
+        const result = await new Promise<any>((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+                {
+                    folder: "matrimony_profiles", // Organizational folder in Cloudinary
+                    resource_type: "auto",      // Auto-detect image vs pdf (raw)
+                },
+                (error, result) => {
+                    if (error) {
+                        console.error("Cloudinary upload error:", error);
+                        reject(error);
+                    } else {
+                        resolve(result);
+                    }
+                }
+            );
 
-        // Ensure directory exists
-        const uploadDir = path.join(process.cwd(), "public/uploads");
-        try {
-            await mkdir(uploadDir, { recursive: true });
-        } catch (e) {
-            console.error("Directory creation failed:", e);
-        }
+            uploadStream.end(buffer);
+        });
 
-        const filepath = path.join(uploadDir, uniqueFilename);
+        console.log("Cloudinary upload success:", result.secure_url);
 
-        await writeFile(filepath, buffer);
+        return NextResponse.json({ url: result.secure_url });
 
-        // Return the public URL
-        const publicUrl = `/uploads/${uniqueFilename}`;
-
-        return NextResponse.json({ url: publicUrl });
     } catch (error: any) {
         console.error("Upload failed details:", error);
-        return NextResponse.json({ error: `Upload failed: ${error.message}` }, { status: 500 });
+        return NextResponse.json({ error: `Upload failed: ${error.message || "Unknown error"}` }, { status: 500 });
     }
 }
