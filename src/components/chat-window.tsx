@@ -371,11 +371,10 @@ export default function ChatWindow({
                         }}
                         placeholder="Type a message..."
                         className="flex-1 bg-slate-50 border-slate-200 focus:bg-white focus:border-purple-300 transition-all rounded-full h-12 pl-6 pr-12 shadow-inner text-base"
-                        disabled={isPending}
                     />
                     <Button
                         type="submit"
-                        disabled={isPending || !inputText.trim()}
+                        disabled={!inputText.trim()}
                         className="rounded-full w-12 h-12 p-0 flex items-center justify-center bg-purple-600 hover:bg-purple-700 text-white shadow-lg shadow-purple-200 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:shadow-none bg-gradient-to-r from-purple-600 to-indigo-600"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 ml-0.5">
