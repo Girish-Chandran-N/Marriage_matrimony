@@ -139,10 +139,21 @@ export default function ChatWindow({
                 setMessages((prev: any[]) => {
                     if (prev.find(m => m.id === msg.id)) return prev;
                     if (msg.senderId === currentUserId) return prev;
+
                     setIsOtherUserTyping(false);
                     return [...prev, msg];
                 });
-                if (msg.senderId === receiverId) markAsRead(receiverId);
+
+                // Play sound if message is from receiver
+                if (msg.senderId === receiverId) {
+                    try {
+                        const audio = new Audio("/sounds/notification.mp3");
+                        audio.play().catch(e => console.error("Audio play failed:", e));
+                    } catch (e) {
+                        console.error("Audio creation failed:", e);
+                    }
+                    markAsRead(receiverId);
+                }
             }
         };
 
