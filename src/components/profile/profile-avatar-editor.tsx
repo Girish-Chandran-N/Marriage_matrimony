@@ -145,7 +145,7 @@ export default function ProfileAvatarEditor({ initialImage, initials, galleryIma
             <DialogTrigger className="focus:outline-none">
                 <div className="relative group cursor-pointer h-40 w-40 rounded-full border-4 border-white shadow-md bg-white p-1 overflow-hidden">
                     <Avatar className="h-full w-full rounded-full transition-opacity group-hover:opacity-90">
-                        <AvatarImage src={initialImage || ""} className="object-cover" />
+                        <AvatarImage src={initialImage || undefined} className="object-cover" />
                         <AvatarFallback className="text-4xl">{initials}</AvatarFallback>
                     </Avatar>
                     <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-full">
