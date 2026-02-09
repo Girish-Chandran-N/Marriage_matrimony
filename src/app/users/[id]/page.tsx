@@ -21,6 +21,12 @@ export default async function UserProfilePage({ params }: { params: Promise<{ id
     const { calculateMatchBreakdown } = await import("@/lib/matching");
     const breakdown = !isOwner && preferences ? calculateMatchBreakdown(profile, preferences) : undefined;
 
+    // Record View asynchronously
+    if (!isOwner) {
+        const { recordProfileView } = await import("@/lib/interaction-actions");
+        recordProfileView(id);
+    }
+
     return (
         <ResponsiveProfileView profile={profile} isOwner={isOwner} matchBreakdown={breakdown} />
     );

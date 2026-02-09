@@ -143,17 +143,7 @@ export function MatchCard({ user, score }: MatchCardProps) {
 
                 {/* Action Buttons */}
                 <div className="mt-auto grid grid-cols-2 gap-3">
-                    <Link href={`/messages/${user.id}`} className="w-full">
-                        <Button className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-lg shadow-indigo-200 border-0 transition-all hover:-translate-y-0.5" size="sm">
-                            <MessageCircle className="w-4 h-4 mr-2" />
-                            Connect
-                        </Button>
-                    </Link>
-                    <Link href={`/users/${user.id}`} className="w-full">
-                        <Button variant="outline" className="w-full border-slate-200 hover:border-purple-300 hover:bg-purple-50 text-slate-600 hover:text-purple-700 transition-all" size="sm">
-                            View Profile
-                        </Button>
-                    </Link>
+                    <MatchActions user={user} />
                 </div>
             </div>
 
@@ -212,5 +202,90 @@ export function MatchCard({ user, score }: MatchCardProps) {
                 </DialogContent>
             </Dialog>
         </div>
+    );
+}
+
+import { sendInterest, toggleShortlist, getInteractionStatus } from "@/lib/interaction-actions";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+
+function MatchActions({ user }: { user: any }) {
+    const [loading, setLoading] = useState(false);
+    const [status, setStatus] = useState<{ isShortlisted: boolean; hasSentInterest: boolean; interestStatus?: string }>({
+        isShortlisted: false,
+        hasSentInterest: false
+    });
+
+    useEffect(() => {
+        getInteractionStatus(user.id).then((s) => setStatus(s as any));
+    }, [user.id]);
+
+    const handleConnect = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (status.hasSentInterest) return;
+
+        setLoading(true);
+        try {
+            await sendInterest(user.id);
+            setStatus(prev => ({ ...prev, hasSentInterest: true, interestStatus: "PENDING" }));
+            toast.success("Interest sent successfully!");
+        } catch (err) {
+            toast.error("Failed to send interest");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleShortlist = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Optimistic update
+        const newState = !status.isShortlisted;
+        setStatus(prev => ({ ...prev, isShortlisted: newState }));
+
+        try {
+            await toggleShortlist(user.id);
+            toast.success(newState ? "Added to shortlist" : "Removed from shortlist");
+        } catch (err) {
+            setStatus(prev => ({ ...prev, isShortlisted: !newState })); // Revert
+            toast.error("Failed to update shortlist");
+        }
+    };
+
+    return (
+        <>
+            <Button
+                onClick={handleConnect}
+                disabled={loading || status.hasSentInterest}
+                className={`w-full text-white shadow-lg border-0 transition-all hover:-translate-y-0.5 ${status.hasSentInterest
+                        ? "bg-green-600 hover:bg-green-700 from-green-600 to-green-700"
+                        : "bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-indigo-200"
+                    }`}
+                size="sm"
+            >
+                {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> :
+                    status.hasSentInterest ? <ShieldCheck className="w-4 h-4 mr-2" /> :
+                        <Heart className="w-4 h-4 mr-2" fill={status.hasSentInterest ? "currentColor" : "none"} />}
+                {status.hasSentInterest ? "Interested" : "Connect"}
+            </Button>
+
+            <div className="flex gap-2">
+                <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleShortlist}
+                    className={`border-slate-200 hover:bg-pink-50 hover:text-pink-600 transition-all ${status.isShortlisted ? "bg-pink-50 text-pink-600 border-pink-200" : "text-slate-400"}`}
+                >
+                    <Star className={`w-4 h-4 ${status.isShortlisted ? "fill-current" : ""}`} />
+                </Button>
+                <Link href={`/users/${user.id}`} className="flex-1">
+                    <Button variant="outline" className="w-full border-slate-200 hover:border-purple-300 hover:bg-purple-50 text-slate-600 hover:text-purple-700 transition-all" size="sm">
+                        View
+                    </Button>
+                </Link>
+            </div>
+        </>
     );
 }
