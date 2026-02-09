@@ -2,14 +2,16 @@
 
 import ProfileAvatarEditor from "@/components/profile/profile-avatar-editor";
 import { GalleryEditor } from "@/components/profile/gallery-editor";
+import { FamilyPhotosEditor } from "@/components/profile/family-photos-editor";
 
 interface PhotoManagerProps {
     currentProfileImage?: string | null;
     galleryImages?: string[];
+    familyImages?: string[];
     userName?: string; // We might need this for initials if passed, or fallback
 }
 
-export default function PhotoManager({ currentProfileImage, galleryImages = [], userName = "User" }: PhotoManagerProps) {
+export default function PhotoManager({ currentProfileImage, galleryImages = [], familyImages = [], userName = "User" }: PhotoManagerProps) {
     const initials = userName.slice(0, 2).toUpperCase();
 
     return (
@@ -47,6 +49,18 @@ export default function PhotoManager({ currentProfileImage, galleryImages = [], 
                 </div>
 
                 <GalleryEditor galleryImages={galleryImages} />
+            </div>
+
+            {/* Family Photos Section */}
+            <div className="space-y-4">
+                <div className="border-b pb-4">
+                    <h3 className="text-lg font-medium text-gray-900">Family Photos</h3>
+                    <p className="text-sm text-gray-500">
+                        Upload up to 3 photos of your family.
+                    </p>
+                </div>
+
+                <FamilyPhotosEditor familyImages={familyImages} />
             </div>
         </div>
     );

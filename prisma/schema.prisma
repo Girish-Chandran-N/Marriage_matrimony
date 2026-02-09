@@ -194,6 +194,8 @@ model FamilyDetails {
   brothers         Int?     @default(0)
   sisters          Int?     @default(0)
   
+  familyImages     String[]
+  
   updatedAt        DateTime @updatedAt
 }
 

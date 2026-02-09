@@ -1,5 +1,6 @@
 "use client";
 
+import { useActiveUsers } from "@/contexts/active-users-context";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -10,6 +11,7 @@ export function ConversationsList({ initialConversations }: { initialConversatio
     const pathname = usePathname();
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState("");
+    const { members } = useActiveUsers();
 
     const filteredConversations = initialConversations.filter((conv: any) =>
         conv.partner.name?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -44,14 +46,15 @@ export function ConversationsList({ initialConversations }: { initialConversatio
                 ) : (
                     filteredConversations.map((conv: any) => {
                         const isActive = pathname === `/messages/${conv.partner.id}`;
+                        const isOnline = members.includes(conv.partner.id);
 
                         return (
                             <Link
                                 key={conv.partner.id}
                                 href={`/messages/${conv.partner.id}`}
                                 className={`group relative block p-3.5 rounded-2xl transition-all duration-300 ${isActive
-                                        ? "bg-gradient-to-r from-purple-600 to-indigo-600 shadow-lg shadow-purple-500/20 translate-x-1"
-                                        : "hover:bg-white hover:shadow-md hover:translate-x-1"
+                                    ? "bg-gradient-to-r from-purple-600 to-indigo-600 shadow-lg shadow-purple-500/20 translate-x-1"
+                                    : "hover:bg-white hover:shadow-md hover:translate-x-1"
                                     }`}
                             >
                                 <div className="flex items-center gap-3.5">
@@ -63,8 +66,10 @@ export function ConversationsList({ initialConversations }: { initialConversatio
                                             </AvatarFallback>
                                         </Avatar>
 
-                                        {/* Online Dot (Placeholder logic for now) */}
-                                        <div className={`absolute bottom-0 right-0 w-3.5 h-3.5 border-2 rounded-full ${isActive ? 'border-purple-600 bg-green-400' : 'border-white bg-green-500'
+                                        {/* Online Dot */}
+                                        <div className={`absolute bottom-0 right-0 w-3.5 h-3.5 border-2 rounded-full transition-colors duration-300 ${isActive
+                                            ? isOnline ? 'border-purple-600 bg-green-400' : 'border-purple-600 bg-slate-400/50'
+                                            : isOnline ? 'border-white bg-green-500' : 'border-white bg-slate-300'
                                             }`}></div>
                                     </div>
 
@@ -82,14 +87,14 @@ export function ConversationsList({ initialConversations }: { initialConversatio
                                         </div>
                                         <div className="flex justify-between items-center">
                                             <p className={`text-sm truncate max-w-[150px] ${isActive ? 'text-purple-100/90' :
-                                                    conv.unreadCount > 0 ? 'text-slate-900 font-semibold' : 'text-slate-500'
+                                                conv.unreadCount > 0 ? 'text-slate-900 font-semibold' : 'text-slate-500'
                                                 }`}>
                                                 {conv.lastMessage.content}
                                             </p>
                                             {conv.unreadCount > 0 && (
                                                 <span className={`ml-2 text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm ${isActive
-                                                        ? "bg-white text-purple-600"
-                                                        : "bg-purple-600 text-white shadow-purple-200"
+                                                    ? "bg-white text-purple-600"
+                                                    : "bg-purple-600 text-white shadow-purple-200"
                                                     }`}>
                                                     {conv.unreadCount}
                                                 </span>

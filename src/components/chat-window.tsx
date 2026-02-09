@@ -15,6 +15,10 @@ import { pusherClient } from "@/lib/pusher-client";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
+import { useActiveUsers } from "@/contexts/active-users-context";
+
+// ... existing imports
+
 export default function ChatWindow({
     initialMessages,
     receiverId,
@@ -34,12 +38,16 @@ export default function ChatWindow({
 }) {
     // ... existing hooks
     const OnlineIndicator = require("@/components/ui/online-indicator").default;
+    const { members } = useActiveUsers();
+
+    // Derived state from global context
+    const isReceiverOnline = members.includes(receiverId);
 
     const [messages, setMessages] = useState(initialMessages);
     const [inputText, setInputText] = useState("");
     const [isPending, startTransition] = useTransition();
     const [isOtherUserTyping, setIsOtherUserTyping] = useState(false);
-    const [isReceiverOnline, setIsReceiverOnline] = useState(false);
+    // const [isReceiverOnline, setIsReceiverOnline] = useState(false); // Removed in favor of global context
     const [connectionStatus, setConnectionStatus] = useState("disconnected");
     const [lastError, setLastError] = useState<any>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
@@ -95,31 +103,16 @@ export default function ChatWindow({
         channel.bind("pusher:subscription_succeeded", (members: any) => {
             console.log(`[ChatWindow] Successfully subscribed to ${channelName}`);
             setLastError(null);
-            // Check if receiver is online
-            // members object has a 'members' property which is a map of IDs
-            // The library might expose it differently depending on version, checking members.get(id)
-            try {
-                // @ts-ignore - Pusher JS types are sometimes tricky with members
-                const isOnline = members.get(receiverId) ? true : false;
-                setIsReceiverOnline(isOnline);
-                console.log("[ChatWindow] Receiver online status:", isOnline);
-            } catch (e) {
-                console.error("Error checking members:", e);
-            }
+            // We now use global context for online status, so we don't need to check members here for "Online" status
+            // But we could use it for "In Chat" status if needed later
         });
 
         channel.bind("pusher:member_added", (member: any) => {
-            if (member.id === receiverId) {
-                setIsReceiverOnline(true);
-                console.log("[ChatWindow] Receiver came online");
-            }
+            // Handled by global context
         });
 
         channel.bind("pusher:member_removed", (member: any) => {
-            if (member.id === receiverId) {
-                setIsReceiverOnline(false);
-                console.log("[ChatWindow] Receiver went offline");
-            }
+            // Handled by global context
         });
 
         channel.bind("pusher:subscription_error", (status: any) => {

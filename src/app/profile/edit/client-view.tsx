@@ -35,7 +35,11 @@ export default function ProfileEditClient({ profile }: { profile: any }) {
             case "lifestyle":
                 return <LifestyleDetailsForm initialData={profile.lifestyleDetails} isEditMode={true} />;
             case "photos":
-                return <PhotoManager currentProfileImage={profile.profileImage} galleryImages={profile.galleryImages} />;
+                return <PhotoManager
+                    currentProfileImage={profile.profileImage}
+                    galleryImages={profile.galleryImages}
+                    familyImages={profile.familyDetails?.familyImages}
+                />;
             default:
                 return null;
         }

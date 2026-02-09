@@ -139,3 +139,100 @@ export async function removeGalleryImage(imageUrl: string) {
         return { message: "Failed to remove image." };
     }
 }
+
+export async function reorderGalleryImages(newOrder: string[]) {
+    const session = await auth();
+    if (!session?.user?.id) return { message: "Unauthorized" };
+
+    try {
+        await db.user.update({
+            where: { id: session.user.id },
+            data: { galleryImages: newOrder },
+        });
+        revalidatePath("/profile");
+        revalidatePath("/profile/edit");
+        return { success: true, message: "Gallery order updated!" };
+    } catch (error) {
+        return { message: "Failed to reorder images." };
+    }
+}
+
+export async function addFamilyImages(prevState: any, formData: FormData) {
+    const session = await auth();
+    if (!session?.user?.id) return { message: "Unauthorized" };
+
+    const urls = formData.getAll("urls") as string[];
+    if (!urls || urls.length === 0) return { message: "No images provided" };
+
+    try {
+        const familyDetails = await db.familyDetails.findUnique({
+            where: { userId: session.user.id },
+            select: { familyImages: true }
+        });
+
+        const currentImages = familyDetails?.familyImages || [];
+        const newImages = [...currentImages, ...urls];
+
+        // Ensure FamilyDetails exists
+        await db.familyDetails.upsert({
+            where: { userId: session.user.id },
+            create: {
+                userId: session.user.id,
+                familyImages: newImages
+            },
+            update: {
+                familyImages: newImages
+            }
+        });
+
+        revalidatePath("/profile");
+        revalidatePath("/profile/edit");
+        return { success: true, message: `${urls.length} family photos added!` };
+    } catch (error) {
+        console.error("Family upload error:", error);
+        return { message: "Failed to add family images." };
+    }
+}
+
+export async function removeFamilyImage(imageUrl: string) {
+    const session = await auth();
+    if (!session?.user?.id) return { message: "Unauthorized" };
+
+    try {
+        const familyDetails = await db.familyDetails.findUnique({
+            where: { userId: session.user.id },
+            select: { familyImages: true }
+        });
+
+        const currentImages = familyDetails?.familyImages || [];
+        const newImages = currentImages.filter(img => img !== imageUrl);
+
+        await db.familyDetails.update({
+            where: { userId: session.user.id },
+            data: { familyImages: newImages },
+        });
+
+        revalidatePath("/profile");
+        revalidatePath("/profile/edit");
+        return { success: true, message: "Family photo removed!" };
+    } catch (error) {
+        return { message: "Failed to remove family photo." };
+    }
+}
+
+export async function setProfileImageFromGallery(imageUrl: string) {
+    const session = await auth();
+    if (!session?.user?.id) return { message: "Unauthorized" };
+
+    try {
+        await db.user.update({
+            where: { id: session.user.id },
+            data: { profileImage: imageUrl },
+        });
+        revalidatePath("/profile");
+        revalidatePath("/profile/edit");
+        return { success: true, message: "Profile photo updated from gallery!" };
+    } catch (error) {
+        return { message: "Failed to update profile photo." };
+    }
+}
