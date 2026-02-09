@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 async function getSessionUser() {
     const session = await auth();
     if (!session?.user?.id) throw new Error("Unauthorized");
-    return session.user;
+    return { ...session.user, id: session.user.id };
 }
 
 // 1. Interest Actions
