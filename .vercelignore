@@ -1,0 +1,4 @@
+prisma.config.js
+prisma.config.ts
+*.config.js.bak
+*.config.ts.bak
