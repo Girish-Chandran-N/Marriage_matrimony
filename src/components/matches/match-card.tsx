@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogHeader, DialogDescription } from "@/components/ui/dialog";
-import { ChevronLeft, ChevronRight, X, Heart, MessageCircle, Star, Sparkles, ShieldCheck, Loader2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Heart, MessageCircle, Star, Sparkles, Check, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { sendInterest, toggleShortlist, getInteractionStatus } from "@/lib/interaction-actions";
 import { toast } from "sonner";
@@ -264,7 +264,7 @@ function MatchActions({ user }: { user: any }) {
                 size="sm"
             >
                 {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> :
-                    status.hasSentInterest ? <ShieldCheck className="w-4 h-4 mr-2" /> :
+                    status.hasSentInterest ? <Check className="w-4 h-4 mr-2" /> :
                         <Heart className="w-4 h-4 mr-2" fill={status.hasSentInterest ? "currentColor" : "none"} />}
                 {status.hasSentInterest ? "Interested" : "Connect"}
             </Button>
