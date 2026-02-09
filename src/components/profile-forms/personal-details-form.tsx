@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { INDIAN_STATES, LOCATION_DATA } from "@/lib/location-data";
+import { INDIAN_STATES, LOCATION_DATA, COUNTRIES } from "@/lib/location-data";
 
 interface PersonalDetailsFormProps {
     onNext?: () => void;
@@ -18,11 +18,13 @@ export default function PersonalDetailsForm({ onNext, initialData }: PersonalDet
     const [age, setAge] = useState<number | null>(null);
 
     // Cascading Dropdown States
+    const [selectedCountry, setSelectedCountry] = useState<string>(initialData?.country || "India");
     const [selectedState, setSelectedState] = useState<string>(initialData?.state || "");
     const [selectedDistrict, setSelectedDistrict] = useState<string>(initialData?.district || "");
-    const [isManualCity, setIsManualCity] = useState(false);
+    const [isManualState, setIsManualState] = useState(false);
+    const [isManualDistrict, setIsManualDistrict] = useState(false);
+    // City is now always manual input as per request
 
-    // Controlled fields for immediate UI update
     // Controlled fields for immediate UI update
     const [bodyType, setBodyType] = useState<string>(initialData?.bodyType || "");
     const [complexion, setComplexion] = useState<string>(initialData?.complexion || "");
@@ -37,13 +39,23 @@ export default function PersonalDetailsForm({ onNext, initialData }: PersonalDet
     const [height, setHeight] = useState<string>(initialData?.height?.toString() || "");
     const [bio, setBio] = useState<string>(initialData?.bio || "");
 
-    // Initial load check: if saved city is not in our list, show manual input
+    // Initial load check for manual entries
     useEffect(() => {
-        if (initialData?.state && initialData?.district && initialData?.city) {
-            const cities = LOCATION_DATA[initialData.state]?.[initialData.district] || [];
-            // If the city saved in DB is NOT in the predefined list, it's a manual entry
-            if (!cities.includes(initialData.city)) {
-                setIsManualCity(true);
+        if (initialData) {
+            if (initialData.country && initialData.country !== "India") {
+                setIsManualState(true);
+                setIsManualDistrict(true);
+            } else {
+                // Country is India (or default)
+                if (initialData.state && !INDIAN_STATES.includes(initialData.state as any)) {
+                    setIsManualState(true);
+                }
+                if (initialData.state && initialData.district) {
+                    const districts = LOCATION_DATA[initialData.state] ? Object.keys(LOCATION_DATA[initialData.state]) : [];
+                    if (!districts.includes(initialData.district)) {
+                        setIsManualDistrict(true);
+                    }
+                }
             }
         }
     }, [initialData]);
@@ -112,7 +124,7 @@ export default function PersonalDetailsForm({ onNext, initialData }: PersonalDet
         <form action={action} className="space-y-6">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
                         Date of Birth
                         {age !== null && <span className="ml-2 text-blue-600 font-semibold">({age} years old)</span>}
                     </label>
@@ -135,106 +147,156 @@ export default function PersonalDetailsForm({ onNext, initialData }: PersonalDet
                         </h3>
                     </div>
 
-                    {/* State Dropdown */}
+                    {/* Country Dropdown */}
                     <div>
-                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">State</label>
+                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Country</label>
                         <select
-                            name="state"
+                            name="country"
                             required
                             className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2"
-                            defaultValue={initialData?.state || ""}
+                            value={selectedCountry}
                             onChange={(e) => {
-                                setSelectedState(e.target.value);
-                                setSelectedDistrict("");
-                                setIsManualCity(false);
+                                const val = e.target.value;
+                                setSelectedCountry(val);
+                                if (val === "India") {
+                                    setIsManualState(false);
+                                    setIsManualDistrict(false);
+                                    setSelectedState("");
+                                    setSelectedDistrict("");
+                                } else {
+                                    setIsManualState(true);
+                                    setIsManualDistrict(true);
+                                    setSelectedState("");
+                                    setSelectedDistrict("");
+                                }
                             }}
                         >
-                            <option value="">Select State</option>
-                            {INDIAN_STATES.map((s) => (
-                                <option key={s} value={s}>{s}</option>
+                            {COUNTRIES.map((c) => (
+                                <option key={c} value={c}>{c}</option>
                             ))}
                         </select>
-                        {state?.errors?.state && <p className="text-red-500 text-xs mt-1">{state.errors.state}</p>}
+                        {state?.errors?.country && <p className="text-red-500 text-xs mt-1">{state.errors.country}</p>}
                     </div>
 
-                    {/* District Dropdown */}
+                    {/* State Selection */}
                     <div>
-                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">District</label>
-                        <select
-                            name="district"
-                            required
-                            disabled={!selectedState}
-                            className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2 disabled:bg-gray-100 disabled:text-gray-400"
-                            defaultValue={initialData?.district || ""}
-                            onChange={(e) => {
-                                setSelectedDistrict(e.target.value);
-                                setIsManualCity(false);
-                            }}
-                        >
-                            <option value="">Select District</option>
-                            {selectedState && LOCATION_DATA[selectedState] && Object.keys(LOCATION_DATA[selectedState]).map((d) => (
-                                <option key={d} value={d}>{d}</option>
-                            ))}
-                        </select>
-                        {state?.errors?.district && <p className="text-red-500 text-xs mt-1">{state.errors.district}</p>}
-                    </div>
-
-                    {/* City Dropdown or Manual Input */}
-                    <div>
-                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">City / Area</label>
-
-                        {isManualCity ? (
-                            <div className="relative animate-in fade-in zoom-in-95 duration-200">
+                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">State</label>
+                        {isManualState ? (
+                            <div className="relative">
                                 <Input
                                     type="text"
-                                    name="city"
-                                    placeholder="Type city name..."
+                                    name="state"
+                                    placeholder="Enter State"
                                     required
-                                    autoFocus
-                                    className="pr-20"
-                                    defaultValue={initialData?.city || ""}
+                                    defaultValue={selectedCountry !== "India" ? initialData?.state : ""}
+                                    key={`manual-state-${selectedCountry}`}
+                                    onChange={(e) => setSelectedState(e.target.value)}
                                 />
-                                <button
-                                    type="button"
-                                    onClick={() => setIsManualCity(false)}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline px-2 py-1"
-                                >
-                                    Cancel
-                                </button>
+                                {selectedCountry === "India" && (
+                                    <button
+                                        type="button"
+                                        onClick={() => { setIsManualState(false); setSelectedState(""); }}
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-600 hover:underline"
+                                    >
+                                        Select List
+                                    </button>
+                                )}
                             </div>
                         ) : (
                             <select
-                                name="city"
+                                name="state"
                                 required
-                                disabled={!selectedDistrict}
-                                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2 disabled:bg-gray-100 disabled:text-gray-400"
-                                defaultValue={initialData?.city && !isManualCity ? initialData.city : ""}
+                                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2"
+                                value={selectedState}
                                 onChange={(e) => {
-                                    if (e.target.value === "OTHER_MANUAL_ENTRY") {
-                                        setIsManualCity(true);
-                                        // Reset select to empty to allow re-selection if cancelled
-                                        e.target.value = "";
+                                    const val = e.target.value;
+                                    if (val === "Other") {
+                                        setIsManualState(true);
+                                        setSelectedState("");
+                                    } else {
+                                        setSelectedState(val);
+                                        setIsManualDistrict(false);
+                                        setSelectedDistrict("");
                                     }
                                 }}
                             >
-                                <option value="">Select City</option>
-                                {selectedState && selectedDistrict && LOCATION_DATA[selectedState]?.[selectedDistrict]?.map((c) => (
-                                    <option key={c} value={c}>{c}</option>
+                                <option value="">Select State</option>
+                                {INDIAN_STATES.map((s) => (
+                                    <option key={s} value={s}>{s}</option>
                                 ))}
-                                {selectedDistrict && (
-                                    <option value="OTHER_MANUAL_ENTRY" className="font-semibold text-blue-600 bg-blue-50">
-                                        + Other (Enter Manually)
-                                    </option>
-                                )}
+                                <option value="Other">Other</option>
                             </select>
                         )}
+                        {state?.errors?.state && <p className="text-red-500 text-xs mt-1">{state.errors.state}</p>}
+                    </div>
 
+                    {/* District Selection */}
+                    <div>
+                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">District</label>
+                        {isManualDistrict ? (
+                            <div className="relative">
+                                <Input
+                                    type="text"
+                                    name="district"
+                                    placeholder="Enter District"
+                                    required
+                                    defaultValue={selectedCountry !== "India" ? initialData?.district : ""}
+                                    key={`manual-district-${selectedState}`}
+                                    onChange={(e) => setSelectedDistrict(e.target.value)}
+                                />
+                                {selectedCountry === "India" && !isManualState && (
+                                    <button
+                                        type="button"
+                                        onClick={() => { setIsManualDistrict(false); setSelectedDistrict(""); }}
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-blue-600 hover:underline"
+                                    >
+                                        Select List
+                                    </button>
+                                )}
+                            </div>
+                        ) : (
+                            <select
+                                name="district"
+                                required
+                                disabled={!selectedState}
+                                className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2 disabled:bg-gray-100"
+                                value={selectedDistrict}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (val === "Other") {
+                                        setIsManualDistrict(true);
+                                        setSelectedDistrict("");
+                                    } else {
+                                        setSelectedDistrict(val);
+                                    }
+                                }}
+                            >
+                                <option value="">Select District</option>
+                                {selectedState && LOCATION_DATA[selectedState as any] && Object.keys(LOCATION_DATA[selectedState as any]).map((d) => (
+                                    <option key={d} value={d}>{d}</option>
+                                ))}
+                                <option value="Other">Other</option>
+                            </select>
+                        )}
+                        {state?.errors?.district && <p className="text-red-500 text-xs mt-1">{state.errors.district}</p>}
+                    </div>
+
+                    {/* City Input (Always Manual) */}
+                    <div className="sm:col-span-3">
+                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">City / Area</label>
+                        <Input
+                            type="text"
+                            name="city"
+                            placeholder="Type city or area name..."
+                            required
+                            defaultValue={initialData?.city || ""}
+                        />
                         {state?.errors?.city && <p className="text-red-500 text-xs mt-1">{state.errors.city}</p>}
                     </div>
                 </div>
 
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Gender</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
                     <select
                         name="gender"
                         className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
@@ -249,12 +311,12 @@ export default function PersonalDetailsForm({ onNext, initialData }: PersonalDet
                     {state?.errors?.gender && <p className="text-red-500 text-xs">{state.errors.gender}</p>}
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Mother Tongue</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Mother Tongue</label>
                     <Input type="text" name="motherTongue" placeholder="e.g. Malayalam" required value={motherTongue} onChange={(e) => setMotherTongue(e.target.value)} />
                     {state?.errors?.motherTongue && <p className="text-red-500 text-xs">{state.errors.motherTongue}</p>}
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Known Languages</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Known Languages</label>
                     <Input
                         type="text"
                         name="knownLanguages"
@@ -265,16 +327,16 @@ export default function PersonalDetailsForm({ onNext, initialData }: PersonalDet
                     <p className="text-xs text-gray-500">Separate multiple languages with commas</p>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Religion</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Religion</label>
                     <Input type="text" name="religion" placeholder="Hindu, Muslim, Christian..." required value={religion} onChange={(e) => setReligion(e.target.value)} />
                     {state?.errors?.religion && <p className="text-red-500 text-xs">{state.errors.religion}</p>}
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Caste (Optional)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Caste (Optional)</label>
                     <Input type="text" name="caste" placeholder="Caste" value={caste} onChange={(e) => setCaste(e.target.value)} />
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Marital Status</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Marital Status</label>
                     <select
                         name="maritalStatus"
                         className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
@@ -290,12 +352,12 @@ export default function PersonalDetailsForm({ onNext, initialData }: PersonalDet
                     {state?.errors?.maritalStatus && <p className="text-red-500 text-xs">{state.errors.maritalStatus}</p>}
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Height (cm)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Height (cm)</label>
                     <Input type="number" name="height" placeholder="175" required value={height} onChange={(e) => setHeight(e.target.value)} />
                     {state?.errors?.height && <p className="text-red-500 text-xs">{state.errors.height}</p>}
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Blood Group (Optional)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Blood Group (Optional)</label>
                     <select
                         name="bloodGroup"
                         className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
@@ -314,7 +376,7 @@ export default function PersonalDetailsForm({ onNext, initialData }: PersonalDet
                     </select>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Body Type (Optional)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Body Type (Optional)</label>
                     <select
                         name="bodyType"
                         className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
@@ -329,7 +391,7 @@ export default function PersonalDetailsForm({ onNext, initialData }: PersonalDet
                     </select>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Complexion (Optional)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Complexion (Optional)</label>
                     <select
                         name="complexion"
                         className="mt-1 block w-full rounded-md border border-gray-300 py-2 px-3 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
@@ -343,21 +405,27 @@ export default function PersonalDetailsForm({ onNext, initialData }: PersonalDet
                     </select>
                 </div>
                 <div>
-                    <label className="block text-sm font-medium text-gray-700">Weight (kg) (Optional)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Weight (kg) (Optional)</label>
                     <Input type="number" name="weight" placeholder="65" value={weight} onChange={(e) => setWeight(e.target.value)} />
                 </div>
             </div>
 
             <div>
-                <label className="block text-sm font-medium text-gray-700">Bio</label>
-                <textarea
-                    name="bio"
-                    rows={4}
-                    className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                    placeholder="Tell us about yourself..."
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                ></textarea>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+                <div className="relative">
+                    <textarea
+                        name="bio"
+                        rows={4}
+                        maxLength={215}
+                        className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-4 whitespace-pre-wrap resize-none"
+                        placeholder="Tell us about yourself..."
+                        value={bio}
+                        onChange={(e) => setBio(e.target.value)}
+                    ></textarea>
+                    <div className="text-xs text-right text-gray-500 mt-1">
+                        {bio.length}/215 characters
+                    </div>
+                </div>
             </div>
 
             {state?.message && <p className="text-red-500 text-sm">{state.message}</p>}

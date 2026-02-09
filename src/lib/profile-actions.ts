@@ -19,10 +19,11 @@ const PersonalDetailsSchema = z.object({
     bloodGroup: z.string().optional(),
     bodyType: z.string().optional(),
     complexion: z.string().optional(),
-    bio: z.string().optional(),
+    bio: z.string().max(215, "Bio cannot exceed 215 characters").optional(),
     city: z.string().optional(),
     district: z.string().optional(),
     state: z.string().optional(),
+    country: z.string().optional(),
 });
 
 const EducationDetailsSchema = z.object({
@@ -91,6 +92,7 @@ export async function updatePersonalDetails(prevState: any, formData: FormData) 
         city: formData.get("city"),
         district: formData.get("district"),
         state: formData.get("state"),
+        country: formData.get("country"),
     });
 
     if (!validation.success) {

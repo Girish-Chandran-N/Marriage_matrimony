@@ -1,4 +1,23 @@
 
+export const COUNTRIES = [
+    "India",
+    "United States",
+    "United Kingdom",
+    "Canada",
+    "Australia",
+    "United Arab Emirates",
+    "Saudi Arabia",
+    "Qatar",
+    "Kuwait",
+    "Oman",
+    "Bahrain",
+    "Germany",
+    "France",
+    "Singapore",
+    "Malaysia",
+    "Other"
+] as const;
+
 export const INDIAN_STATES = [
     "Kerala",
     "Karnataka",
