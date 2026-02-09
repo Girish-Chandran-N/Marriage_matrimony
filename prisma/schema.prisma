@@ -81,6 +81,19 @@ model User {
 
   // Payment & Subscription
   subscription   Subscription?
+
+  // Interactions
+  sentInterests     Interest[] @relation("SentInterests")
+  receivedInterests Interest[] @relation("ReceivedInterests")
+  
+  profileViews      ProfileView[] @relation("ProfileViewer")
+  profileViewedBy   ProfileView[] @relation("ProfileViewed")
+  
+  shortlisted       Shortlist[] @relation("UserShortlists")
+  shortlistedBy     Shortlist[] @relation("ShortlistedUsers")
+  
+  contactViews      ContactView[] @relation("ContactViewer")
+  contactViewedBy   ContactView[] @relation("ContactViewed")
 }
 
 enum MembershipTier {
@@ -333,4 +346,54 @@ model Block {
   blocked   User     @relation("BlockedUsers", fields: [blockedId], references: [id], onDelete: Cascade)
 
   @@unique([blockerId, blockedId])
+}
+
+model Interest {
+  id        String   @id @default(cuid())
+  senderId  String
+  sender    User     @relation("SentInterests", fields: [senderId], references: [id], onDelete: Cascade)
+  receiverId String
+  receiver  User     @relation("ReceivedInterests", fields: [receiverId], references: [id], onDelete: Cascade)
+  status    InterestStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([senderId, receiverId])
+}
+
+enum InterestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model ProfileView {
+  id        String   @id @default(cuid())
+  viewerId  String
+  viewer    User     @relation("ProfileViewer", fields: [viewerId], references: [id], onDelete: Cascade)
+  profileId String
+  profile   User     @relation("ProfileViewed", fields: [profileId], references: [id], onDelete: Cascade)
+  viewedAt  DateTime @default(now())
+}
+
+model Shortlist {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation("UserShortlists", fields: [userId], references: [id], onDelete: Cascade)
+  shortlistedUserId String
+  shortlistedUser   User     @relation("ShortlistedUsers", fields: [shortlistedUserId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+
+  @@unique([userId, shortlistedUserId])
+}
+
+model ContactView {
+  id        String   @id @default(cuid())
+  viewerId  String
+  viewer    User     @relation("ContactViewer", fields: [viewerId], references: [id], onDelete: Cascade)
+  profileId String
+  profile   User     @relation("ContactViewed", fields: [profileId], references: [id], onDelete: Cascade)
+  viewedAt  DateTime @default(now())
+
+  @@unique([viewerId, profileId])
 }

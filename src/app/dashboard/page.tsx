@@ -1,10 +1,8 @@
 import { auth, signOut } from "@/auth";
 import Link from "next/link";
-import { db } from "@/lib/db";
-import { getMatches } from "@/lib/match-actions";
+import { getDashboardStats } from "@/lib/dashboard-actions";
 import {
     User,
-    Settings,
     ShieldCheck,
     Heart,
     MessageCircle,
@@ -15,10 +13,15 @@ import {
     Sparkles,
     Zap,
     Crown,
-    Telescope
+    Telescope,
+    EyeOff,
+    Users,
+    Contact,
+    ArrowUpRight,
+    ArrowDownLeft
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 export default async function DashboardPage() {
@@ -26,19 +29,82 @@ export default async function DashboardPage() {
     const user = session?.user;
 
     // Fetch real stats
-    const matchResult = await getMatches();
-    const matchCount = Array.isArray(matchResult) ? matchResult.length : 0;
+    const stats = await getDashboardStats();
 
-    const messageCount = await db.message.count({
-        where: { receiverId: user?.id }
-    });
-
-    const stats = {
-        profileViews: 124, // Mocked for now (no backend support yet)
-        shortlistedBy: 18, // Mocked for now
-        messages: messageCount,
-        matches: matchCount
-    };
+    const DASHBOARD_ITEMS = [
+        {
+            title: "Interest Sent",
+            value: stats.interestSent,
+            icon: ArrowUpRight,
+            color: "text-blue-600",
+            bg: "bg-blue-50",
+            href: "/dashboard/interests/sent",
+            desc: "Interests you've expressed"
+        },
+        {
+            title: "Interest Received",
+            value: stats.interestReceived,
+            icon: ArrowDownLeft,
+            color: "text-pink-600",
+            bg: "bg-pink-50",
+            href: "/dashboard/interests/received",
+            desc: "People interested in you"
+        },
+        {
+            title: "Profile Views",
+            value: stats.profileViews,
+            icon: Eye,
+            color: "text-purple-600",
+            bg: "bg-purple-50",
+            href: "/dashboard/profile-views",
+            desc: "Who viewed your profile"
+        },
+        {
+            title: "Profile Visited",
+            value: stats.profileVisited,
+            icon: Telescope, // Or History
+            color: "text-indigo-600",
+            bg: "bg-indigo-50",
+            href: "/dashboard/profile-visited",
+            desc: "Profiles you've visited"
+        },
+        {
+            title: "New Matches",
+            value: stats.newMatches, // This is a count of candidates
+            icon: Sparkles,
+            color: "text-amber-600",
+            bg: "bg-amber-50",
+            href: "/dashboard/new-matches",
+            desc: "Recently joined matches"
+        },
+        {
+            title: "Shortlisted Profile",
+            value: stats.shortlisted,
+            icon: Heart,
+            color: "text-red-600",
+            bg: "bg-red-50",
+            href: "/dashboard/shortlisted",
+            desc: "Profiles you saved"
+        },
+        {
+            title: "Contacts Viewed",
+            value: stats.contactsViewed,
+            icon: Contact,
+            color: "text-teal-600",
+            bg: "bg-teal-50",
+            href: "/dashboard/contacts-viewed",
+            desc: "People who viewed your contact"
+        },
+        {
+            title: "Contacts Visited",
+            value: stats.contactsVisited,
+            icon: Users,
+            color: "text-cyan-600",
+            bg: "bg-cyan-50",
+            href: "/dashboard/contacts-visited",
+            desc: "Contacts you unlocked"
+        },
+    ];
 
     return (
         <div className="min-h-screen bg-slate-50/50 relative overflow-hidden">
@@ -47,7 +113,6 @@ export default async function DashboardPage() {
                 <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-blue-50 via-indigo-50 to-transparent"></div>
                 <div className="absolute -top-20 -right-20 w-96 h-96 bg-purple-200/40 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
                 <div className="absolute top-40 -left-20 w-80 h-80 bg-blue-200/40 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-                <div className="absolute bottom-40 right-20 w-80 h-80 bg-pink-200/40 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 md:px-8 py-10 relative z-10 transition-all duration-500 ease-out">
@@ -76,48 +141,8 @@ export default async function DashboardPage() {
                     </div>
                 </div>
 
-                {/* Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                    <StatCard
-                        title="Profile Views"
-                        value={stats.profileViews}
-                        change="+12% from last month"
-                        icon={Eye}
-                        color="blue"
-                        delay="0"
-                    />
-                    <StatCard
-                        title="Shortlisted By"
-                        value={stats.shortlistedBy}
-                        change="People interested in you"
-                        icon={Heart}
-                        color="pink"
-                        delay="100"
-                    />
-                    <div className="group relative overflow-hidden rounded-3xl p-1 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 shadow-xl shadow-purple-200 animate-in fade-in zoom-in-95 duration-500" style={{ animationDelay: '200ms' }}>
-                        <div className="bg-white/95 backdrop-blur-xl h-full w-full rounded-[20px] p-6 relative">
-                            <div className="flex justify-between items-start mb-4">
-                                <div>
-                                    <p className="text-sm font-bold text-gray-400 uppercase tracking-widest">Matches</p>
-                                    <h3 className="text-3xl font-extrabold text-gray-900 mt-1">Explore</h3>
-                                </div>
-                                <div className="p-3 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-lg shadow-indigo-200">
-                                    <Telescope className="h-6 w-6 text-white" />
-                                </div>
-                            </div>
-                            <p className="text-sm text-gray-500 mb-6 font-medium">Discover new profiles matching your vibe.</p>
-                            <Link href="/matches">
-                                <Button className="w-full bg-slate-900 text-white hover:bg-slate-800 rounded-xl group-hover:scale-[1.02] transition-transform">
-                                    Find Matches <TrendingUp className="ml-2 w-4 h-4" />
-                                </Button>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Main Content Area */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
+                {/* Top Section: Quick Actions & Profile Status */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
                     {/* Left Column: Quick Actions */}
                     <div className="lg:col-span-2 space-y-8">
                         <div>
@@ -126,7 +151,6 @@ export default async function DashboardPage() {
                                 Quick Actions
                             </h2>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                                {/* Profile Card First */}
                                 <ActionCard
                                     href="/profile"
                                     icon={User}
@@ -135,9 +159,8 @@ export default async function DashboardPage() {
                                     color="text-purple-600"
                                     bg="bg-purple-50"
                                     hoverBorder="hover:border-purple-200"
-                                    delay="300"
+                                    delay="0"
                                 />
-
                                 <ActionCard
                                     href="/matches"
                                     icon={Search}
@@ -146,9 +169,8 @@ export default async function DashboardPage() {
                                     color="text-pink-600"
                                     bg="bg-pink-50"
                                     hoverBorder="hover:border-pink-200"
-                                    delay="400"
+                                    delay="100"
                                 />
-
                                 <ActionCard
                                     href="/messages"
                                     icon={MessageCircle}
@@ -157,9 +179,8 @@ export default async function DashboardPage() {
                                     color="text-blue-600"
                                     bg="bg-blue-50"
                                     hoverBorder="hover:border-blue-200"
-                                    delay="500"
+                                    delay="200"
                                 />
-
                                 <ActionCard
                                     href="/verification"
                                     icon={ShieldCheck}
@@ -168,7 +189,7 @@ export default async function DashboardPage() {
                                     color="text-green-600"
                                     bg="bg-green-50"
                                     hoverBorder="hover:border-green-200"
-                                    delay="600"
+                                    delay="300"
                                     badge="Recommended"
                                 />
                             </div>
@@ -176,17 +197,15 @@ export default async function DashboardPage() {
                     </div>
 
                     {/* Right Column: Profile Status */}
-                    <div className="space-y-6 animate-in slide-in-from-right-4 duration-700 delay-300">
+                    <div className="space-y-6 animate-in slide-in-from-right-4 duration-700">
                         <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
                             <User className="w-5 h-5 text-indigo-500" />
                             Profile Status
                         </h2>
                         <div className="bg-white rounded-3xl shadow-xl shadow-indigo-100/50 overflow-hidden border border-indigo-50 relative group">
-                            {/* Decorative Header */}
                             <div className="h-28 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 relative overflow-hidden">
                                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"></div>
                             </div>
-
                             <div className="px-6 pb-8 relative">
                                 <div className="relative -mt-12 mb-6">
                                     <div className="h-24 w-24 bg-white rounded-full p-1.5 shadow-lg group-hover:scale-105 transition-transform duration-300">
@@ -199,26 +218,10 @@ export default async function DashboardPage() {
                                         </div>
                                     </div>
                                 </div>
-
                                 <div className="mb-6">
                                     <h3 className="font-bold text-xl text-slate-900">{user?.name}</h3>
                                     <p className="text-sm text-slate-500 font-medium">{user?.email}</p>
                                 </div>
-
-                                <div className="space-y-4 bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                                    <div className="flex justify-between text-sm items-center">
-                                        <span className="font-semibold text-slate-600 flex items-center gap-2">
-                                            <ShieldCheck className="w-4 h-4 text-green-500" />
-                                            Trust Score
-                                        </span>
-                                        <span className="font-bold text-green-600 bg-green-100 px-2 py-0.5 rounded-md">85%</span>
-                                    </div>
-                                    <div className="w-full bg-gray-200 h-2.5 rounded-full overflow-hidden">
-                                        <div className="bg-gradient-to-r from-green-400 to-green-600 h-full w-[85%] rounded-full animate-pulse"></div>
-                                    </div>
-                                    <p className="text-xs text-slate-400 font-medium text-center">Complete verification to reach 100%</p>
-                                </div>
-
                                 <Button className="w-full mt-6 bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white font-bold shadow-lg shadow-orange-200 border-0 rounded-xl h-12" asChild>
                                     <Link href="/pricing" className="flex items-center gap-2">
                                         <Crown className="w-5 h-5 fill-white/20" /> Upgrade to Premium
@@ -228,31 +231,40 @@ export default async function DashboardPage() {
                         </div>
                     </div>
                 </div>
+
+                {/* Main Stats Grid (Moved Below) */}
+                <div className="mb-8">
+                    <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                        <Sparkles className="w-5 h-5 text-purple-500" />
+                        Activity Overview
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {DASHBOARD_ITEMS.map((item, index) => (
+                            <Link href={item.href} key={index} className="group">
+                                <Card className="border-none shadow-lg shadow-slate-200/60 rounded-[24px] overflow-hidden hover:-translate-y-1 hover:shadow-xl transition-all duration-300 h-full relative">
+                                    <div className={`absolute top-0 right-0 p-16 opacity-0 group-hover:opacity-5 transition-opacity ${item.bg.replace('bg-', 'bg-')}-500 rounded-bl-full pointer-events-none`}></div>
+
+                                    <CardHeader className="flex flex-row items-center justify-between pb-2">
+                                        <div className={`p-3 rounded-2xl ${item.bg} ${item.color} group-hover:scale-110 transition-transform duration-300`}>
+                                            <item.icon className="h-6 w-6" />
+                                        </div>
+                                        <Badge variant="secondary" className="bg-slate-100 text-slate-600 font-bold text-lg px-3 py-1 rounded-full group-hover:bg-slate-200 transition-colors">
+                                            {item.value}
+                                        </Badge>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <CardTitle className="text-lg font-bold text-slate-800 mb-1 group-hover:text-slate-900">
+                                            {item.title}
+                                        </CardTitle>
+                                        <p className="text-xs font-medium text-slate-500">{item.desc}</p>
+                                    </CardContent>
+                                </Card>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
             </div>
         </div>
-    );
-}
-
-function StatCard({ title, value, change, icon: Icon, color, delay }: any) {
-    const colorStyles = {
-        blue: "text-blue-600 bg-blue-50",
-        pink: "text-pink-600 bg-pink-50",
-        orange: "text-orange-600 bg-orange-50",
-    }[color as string] || "text-gray-600 bg-gray-50";
-
-    return (
-        <Card className={`border-none shadow-lg shadow-slate-200/60 rounded-[20px] overflow-hidden hover:-translate-y-1 transition-transform duration-300 animate-in fade-in slide-in-from-bottom-4 fill-mode-both`} style={{ animationDelay: `${delay}ms` }}>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-bold text-slate-400 uppercase tracking-wider">{title}</CardTitle>
-                <div className={`p-2 rounded-xl ${colorStyles}`}>
-                    <Icon className="h-5 w-5" />
-                </div>
-            </CardHeader>
-            <CardContent>
-                <div className="text-3xl font-extrabold text-slate-800 mb-1">{value}</div>
-                <p className="text-xs font-semibold text-slate-400">{change}</p>
-            </CardContent>
-        </Card>
     );
 }
 
