@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogHeader, DialogDescription } from "@/components/ui/dialog";
-import { ChevronLeft, ChevronRight, X, Heart, MessageCircle, Star, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Heart, MessageCircle, Star, Sparkles, ShieldCheck } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface MatchCardProps {
@@ -260,8 +260,8 @@ function MatchActions({ user }: { user: any }) {
                 onClick={handleConnect}
                 disabled={loading || status.hasSentInterest}
                 className={`w-full text-white shadow-lg border-0 transition-all hover:-translate-y-0.5 ${status.hasSentInterest
-                        ? "bg-green-600 hover:bg-green-700 from-green-600 to-green-700"
-                        : "bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-indigo-200"
+                    ? "bg-green-600 hover:bg-green-700 from-green-600 to-green-700"
+                    : "bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 shadow-indigo-200"
                     }`}
                 size="sm"
             >
