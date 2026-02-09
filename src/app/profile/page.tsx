@@ -80,7 +80,7 @@ export default async function MyProfilePage() {
                                         </Badge>
                                         <Badge variant="secondary" className="px-3 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 border-0 flex gap-1.5 items-center rounded-lg">
                                             <MapPin className="h-3.5 w-3.5" />
-                                            {[profile.personalDetails.city, profile.personalDetails.district, profile.personalDetails.state].filter(Boolean).join(", ") || "Location not set"}
+                                            {[profile.personalDetails.district, profile.personalDetails.state].filter(Boolean).join(", ") || "Location not set"}
                                         </Badge>
                                     </div>
                                 </div>
