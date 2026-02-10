@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { UserNav } from "@/components/user-nav";
 import { MobileNav } from "@/components/mobile-nav";
 import { Sparkles } from "lucide-react";
-import { prisma } from "@/lib/prisma";
+import { prisma } from "@/lib/db";
 
 export async function Navbar() {
     const session = await auth();
