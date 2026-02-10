@@ -111,26 +111,73 @@ export default async function VerificationWorkstationPage({ params }: { params: 
                     <CardContent className="flex-1 bg-slate-900 p-4 overflow-auto flex items-center justify-center">
                         {request.documentUrls.length > 0 ? (
                             <div className="w-full space-y-8">
-                                {request.documentUrls.map((url, index) => (
-                                    <div key={index} className="relative group">
-                                        {/* Placeholder for actual image - in real app would match URL */}
-                                        {/* Using a generic placeholder if URL is dummy, otherwise img tag */}
-                                        <div className="bg-white p-2 rounded shadow-lg mx-auto max-w-lg">
-                                            <div className="aspect-[3/2] bg-gray-200 flex items-center justify-center text-gray-400 rounded">
-                                                <span>Document Preview {index + 1}</span>
-                                            </div>
-                                            <div className="mt-2 text-xs text-center text-gray-500 break-all">{url}</div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-white/50 italic">No documents attached</div>
-                        )}
-                    </CardContent>
-                </Card>
+                                {request.documentUrls.map((url, index) => {
+                                    const isPDF = url.toLowerCase().endsWith('.pdf');
 
-            </div>
+                                    return (
+                                        <div key={index} className="relative group">
+                                            <div className="bg-white p-2 rounded shadow-lg mx-auto max-w-4xl">
+                                                {isPDF ? (
+                                                    // PDF Viewer
+                                                    <div className="space-y-2">
+                                                        <div className="flex items-center justify-between bg-gray-100 px-3 py-2 rounded">
+                                                            <span className="text-sm font-medium text-gray-700">
+                                                                📄 Document {index + 1}
+                                                            </span>
+                                                            <a
+                                                                href={url}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="text-blue-600 hover:text-blue-800 text-sm font-medium hover:underline"
+                                                            >
+                                                                Open in New Tab →
+                                                            </a>
+                                                        </div>
+                                                        <iframe
+                                                            src={url}
+                                                            className="w-full h-[600px] border rounded"
+                                                            title={`Document ${index + 1}`}
+                                                        />
+                                                    </div>
+                                                ) : (
+                                                    // Image Viewer
+                                                    <div className="space-y-2">
+                                                        <div className="flex items-center justify-between bg-gray-100 px-3 py-2 rounded">
+                                                            <span className="text-sm font-medium text-gray-700">
+                                                                🖼️ Image {index + 1}
+                                                            </span>
+                                                            <a
+                                                                href={url}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="text-blue-600 hover:text-blue-800 text-sm font-medium hover:underline"
+                                                            >
+                                                                Open Full Size →
+                                                            </a>
+                                                        </div>
+                                                        <img
+                                                            src={url}
+                                                            alt={`Document ${index + 1}`}
+                                                            className="w-full h-auto rounded border border-gray-200"
+                                                        />
+                                                    </div>
+                                                )}
+                                                <div className="mt-2 text-xs text-center text-gray-500 break-all px-2">
+                                                    {url}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            </div>
+                    ) : (
+                    <div className="text-white/50 italic">No documents attached</div>
+                        )}
+                </CardContent>
+            </Card>
+
         </div>
+        </div >
     );
 }
