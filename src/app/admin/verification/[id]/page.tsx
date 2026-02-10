@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { VerificationControls } from "./verification-controls";
 import { VerificationAction } from "@prisma/client";
+import { DocumentViewer } from "./document-viewer";
 
 export default async function VerificationWorkstationPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -109,70 +110,7 @@ export default async function VerificationWorkstationPage({ params }: { params: 
                     </CardHeader>
 
                     <CardContent className="flex-1 bg-slate-900 p-4 overflow-auto flex items-center justify-center">
-                        {request.documentUrls.length > 0 ? (
-                            <div className="w-full space-y-8">
-                                {request.documentUrls.map((url, index) => {
-                                    const isPDF = url.toLowerCase().endsWith('.pdf');
-
-                                    return (
-                                        <div key={index} className="relative group">
-                                            <div className="bg-white p-2 rounded shadow-lg mx-auto max-w-4xl">
-                                                {isPDF ? (
-                                                    // PDF Viewer
-                                                    <div className="space-y-2">
-                                                        <div className="flex items-center justify-between bg-gray-100 px-3 py-2 rounded">
-                                                            <span className="text-sm font-medium text-gray-700">
-                                                                📄 Document {index + 1}
-                                                            </span>
-                                                            <a
-                                                                href={url}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="text-blue-600 hover:text-blue-800 text-sm font-medium hover:underline"
-                                                            >
-                                                                Open in New Tab →
-                                                            </a>
-                                                        </div>
-                                                        <iframe
-                                                            src={url}
-                                                            className="w-full h-[600px] border rounded"
-                                                            title={`Document ${index + 1}`}
-                                                        />
-                                                    </div>
-                                                ) : (
-                                                    // Image Viewer
-                                                    <div className="space-y-2">
-                                                        <div className="flex items-center justify-between bg-gray-100 px-3 py-2 rounded">
-                                                            <span className="text-sm font-medium text-gray-700">
-                                                                🖼️ Image {index + 1}
-                                                            </span>
-                                                            <a
-                                                                href={url}
-                                                                target="_blank"
-                                                                rel="noopener noreferrer"
-                                                                className="text-blue-600 hover:text-blue-800 text-sm font-medium hover:underline"
-                                                            >
-                                                                Open Full Size →
-                                                            </a>
-                                                        </div>
-                                                        <img
-                                                            src={url}
-                                                            alt={`Document ${index + 1}`}
-                                                            className="w-full h-auto rounded border border-gray-200"
-                                                        />
-                                                    </div>
-                                                )}
-                                                <div className="mt-2 text-xs text-center text-gray-500 break-all px-2">
-                                                    {url}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        ) : (
-                            <div className="text-white/50 italic">No documents attached</div>
-                        )}
+                        <DocumentViewer documentUrls={request.documentUrls} />
                     </CardContent>
                 </Card>
 
