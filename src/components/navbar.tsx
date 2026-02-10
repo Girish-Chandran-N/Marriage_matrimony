@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { UserNav } from "@/components/user-nav";
 import { MobileNav } from "@/components/mobile-nav";
 import { Sparkles } from "lucide-react";
-import { prisma } from "@/lib/db";
+import { db } from "@/lib/db";
 
 export async function Navbar() {
     const session = await auth();
@@ -12,7 +12,7 @@ export async function Navbar() {
     // Fetch fresh profile image from database if user is logged in
     let profileImage = session?.user?.image;
     if (session?.user?.id) {
-        const user = await prisma.user.findUnique({
+        const user = await db.user.findUnique({
             where: { id: session.user.id },
             select: { profileImage: true }
         });
