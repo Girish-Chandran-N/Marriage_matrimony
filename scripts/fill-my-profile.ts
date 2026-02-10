@@ -46,9 +46,9 @@ async function fillProfile(email: string) {
                         religion: "Hindu",
                         motherTongue: "Malayalam",
                         caste: "Nair",
-                        city: "Bangalore",
-                        state: "Karnataka",
-                        country: "India",
+                        residingCity: "Bangalore",
+                        residingState: "Karnataka",
+                        residingCountry: "India",
                         knownLanguages: ["English", "Malayalam", "Hindi"],
                         dateOfBirth: new Date("1995-05-15"),
                     }
@@ -74,22 +74,7 @@ async function fillProfile(email: string) {
                     }
                 }
             },
-            educationDetails: {
-                upsert: {
-                    create: {
-                        highestQualification: "MBA",
-                        collegeName: "IIM Bangalore",
-                        stream: "Business Administration",
-                        passingYear: 2019,
-                    },
-                    update: {
-                        highestQualification: "MBA",
-                        collegeName: "IIM Bangalore",
-                        stream: "Business Administration",
-                        passingYear: 2019,
-                    }
-                }
-            },
+            // educationDetails is now an array (educations) - commented out for script
             lifestyleDetails: {
                 upsert: {
                     create: {
