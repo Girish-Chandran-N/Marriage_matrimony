@@ -22,7 +22,7 @@ export function ResponsiveProfileView({ profile, isOwner, matchBreakdown }: Resp
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-    const galleryImages = profile.photos?.map(p => p.url) || [];
+    const galleryImages = profile.photos?.map((p: { url: string }) => p.url) || [];
     const initials = profile.name?.split(" ").map((n) => n[0]).join("").slice(0, 2) || "U";
 
     // Calculate age
