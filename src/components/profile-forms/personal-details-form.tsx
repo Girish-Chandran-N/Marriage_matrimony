@@ -86,8 +86,8 @@ export default function PersonalDetailsForm({ onNext, initialData }: PersonalDet
                 setAbout(state.data.about || "");
 
                 // Update location states if returned
-                if (state.data.state) setSelectedState(state.data.state);
-                if (state.data.district) setSelectedDistrict(state.data.district);
+                if (state.data.residingState) setSelectedState(state.data.residingState);
+                if (state.data.residingDistrict) setSelectedDistrict(state.data.residingDistrict);
                 router.refresh();
             }
             if (onNext) {
