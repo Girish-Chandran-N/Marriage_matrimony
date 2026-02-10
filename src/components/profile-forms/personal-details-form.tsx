@@ -19,10 +19,10 @@ export default function PersonalDetailsForm({ onNext, initialData }: PersonalDet
 
     // Form inputs state
     const [selectedCountry, setSelectedCountry] = useState<string>(initialData?.country || "India");
-    const [selectedState, setSelectedState] = useState<string>(initialData?.state || "");
-    const [selectedDistrict, setSelectedDistrict] = useState<string>(initialData?.district || "");
-    const [isManualState, setIsManualState] = useState<boolean>(initialData?.country !== "India" && !!initialData?.state && initialData?.state !== "Other"); // Logic to detect if manual
-    const [isManualDistrict, setIsManualDistrict] = useState<boolean>(initialData?.country !== "India" && !!initialData?.district);
+    const [selectedState, setSelectedState] = useState<string>(initialData?.residingState || "");
+    const [selectedDistrict, setSelectedDistrict] = useState<string>(initialData?.residingDistrict || "");
+    const [isManualState, setIsManualState] = useState<boolean>(initialData?.country !== "India" && !!initialData?.residingState && initialData?.residingState !== "Other"); // Logic to detect if manual
+    const [isManualDistrict, setIsManualDistrict] = useState<boolean>(initialData?.country !== "India" && !!initialData?.residingDistrict);
 
     const [gender, setGender] = useState<string>(initialData?.gender || "");
     const [maritalStatus, setMaritalStatus] = useState<string>(initialData?.maritalStatus || "");
@@ -47,12 +47,12 @@ export default function PersonalDetailsForm({ onNext, initialData }: PersonalDet
                 setIsManualDistrict(true);
             } else {
                 // Country is India (or default)
-                if (initialData.state && !INDIAN_STATES.includes(initialData.state as any)) {
+                if (initialData.residingState && !INDIAN_STATES.includes(initialData.residingState as any)) {
                     setIsManualState(true);
                 }
-                if (initialData.state && initialData.district) {
-                    const districts = LOCATION_DATA[initialData.state] ? Object.keys(LOCATION_DATA[initialData.state]) : [];
-                    if (!districts.includes(initialData.district)) {
+                if (initialData.residingState && initialData.residingDistrict) {
+                    const districts = LOCATION_DATA[initialData.residingState] ? Object.keys(LOCATION_DATA[initialData.residingState]) : [];
+                    if (!districts.includes(initialData.residingDistrict)) {
                         setIsManualDistrict(true);
                     }
                 }
@@ -355,7 +355,7 @@ export default function PersonalDetailsForm({ onNext, initialData }: PersonalDet
                 <div>
                     <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">State</label>
                     {isManualState ? (
-                        <Input type="text" name="state" placeholder="State" required defaultValue={selectedCountry !== "India" ? initialData?.state : ""} onChange={(e) => setSelectedState(e.target.value)} />
+                        <Input type="text" name="state" placeholder="State" required defaultValue={selectedCountry !== "India" ? initialData?.residingState : ""} onChange={(e) => setSelectedState(e.target.value)} />
                     ) : (
                         <select name="state" required className="block w-full rounded-lg border-gray-300 shadow-sm sm:text-sm py-2" value={selectedState} onChange={(e) => {
                             const val = e.target.value;
@@ -372,7 +372,7 @@ export default function PersonalDetailsForm({ onNext, initialData }: PersonalDet
                 <div>
                     <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">District</label>
                     {isManualDistrict ? (
-                        <Input type="text" name="district" placeholder="District" required defaultValue={selectedCountry !== "India" ? initialData?.district : ""} onChange={(e) => setSelectedDistrict(e.target.value)} />
+                        <Input type="text" name="district" placeholder="District" required defaultValue={selectedCountry !== "India" ? initialData?.residingDistrict : ""} onChange={(e) => setSelectedDistrict(e.target.value)} />
                     ) : (
                         <select name="district" required disabled={!selectedState} className="block w-full rounded-lg border-gray-300 shadow-sm sm:text-sm py-2 disabled:bg-gray-100" value={selectedDistrict} onChange={(e) => {
                             const val = e.target.value;

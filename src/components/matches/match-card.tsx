@@ -109,7 +109,7 @@ export function MatchCard({ user, score }: MatchCardProps) {
                     <p className="text-sm text-white/90 font-medium flex items-center gap-2 drop-shadow-sm">
                         <span>{calculateAge(user.personalDetails?.dateOfBirth)} yrs</span>
                         <span className="w-1 h-1 bg-white/60 rounded-full"></span>
-                        <span>{user.personalDetails?.city || "Unknown City"}</span>
+                        <span>{user.personalDetails?.residingCity || "Unknown City"}</span>
                     </p>
                 </div>
             </div>
