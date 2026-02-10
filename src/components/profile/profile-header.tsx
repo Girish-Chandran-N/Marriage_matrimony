@@ -59,7 +59,7 @@ export function ProfileHeader({ profile, isOwnProfile, matchScore, matchBreakdow
                     <div className="relative">
                         <ProfilePictureEditor
                             currentImage={profile.profileImage}
-                            galleryImages={profile.galleryImages}
+                            galleryImages={profile.photos?.map((p: any) => p.url) || []}
                             name={profile.name}
                             isOwnProfile={isOwnProfile}
                         />

@@ -78,7 +78,6 @@ export async function register(prevState: any, formData: FormData) {
                         companyName: "",
                     }
                 },
-                educationDetails: { create: {} },
                 lifestyleDetails: { create: {} },
                 familyDetails: { create: {} },
             },

@@ -22,7 +22,7 @@ export function ResponsiveProfileView({ profile, isOwner, matchBreakdown }: Resp
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-    const galleryImages = profile.galleryImages || [];
+    const galleryImages = profile.photos?.map(p => p.url) || [];
     const initials = profile.name?.split(" ").map((n) => n[0]).join("").slice(0, 2) || "U";
 
     // Calculate age
@@ -110,7 +110,7 @@ export function ResponsiveProfileView({ profile, isOwner, matchBreakdown }: Resp
                                         </Badge>
                                         <Badge variant="secondary" className="px-3 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 border-0 flex gap-1.5 items-center rounded-lg">
                                             <MapPin className="h-3.5 w-3.5" />
-                                            {[profile.personalDetails?.city, profile.personalDetails?.state].filter(Boolean).join(", ") || "Location Hidden"}
+                                            {[profile.personalDetails?.residingCity, profile.personalDetails?.residingState].filter(Boolean).join(", ") || "Location Hidden"}
                                         </Badge>
 
                                         {matchBreakdown && (
@@ -218,10 +218,10 @@ export function ResponsiveProfileView({ profile, isOwner, matchBreakdown }: Resp
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent className="p-8 grid grid-cols-1 gap-6">
-                                        <DetailRow label="Highest Degree" value={profile.educationDetails?.highestQualification} />
-                                        <DetailRow label="Institution" value={profile.educationDetails?.institutionName} />
-                                        <DetailRow label="College" value={profile.educationDetails?.collegeName} />
-                                        <DetailRow label="Stream" value={profile.educationDetails?.stream} />
+                                        <DetailRow label="Highest Degree" value={profile.educations?.[0]?.qualification} />
+                                        <DetailRow label="Institution" value={profile.educations?.[0]?.institution} />
+                                        <DetailRow label="University" value={profile.educations?.[0]?.university} />
+                                        <DetailRow label="Stream" value={profile.educations?.[0]?.stream} />
                                     </CardContent>
                                 </Card>
                             </div>

@@ -21,7 +21,7 @@ export function MatchCard({ user, score }: MatchCardProps) {
 
     const allImages = [
         user.profileImage,
-        ...(user.galleryImages || [])
+        ...(user.photos?.map(p => p.url) || [])
     ].filter(Boolean);
 
     const hasImages = allImages.length > 0;
@@ -125,8 +125,8 @@ export function MatchCard({ user, score }: MatchCardProps) {
                     </div>
                     <div className="space-y-1">
                         <span className="text-[10px] font-bold text-purple-400 uppercase tracking-wider">Education</span>
-                        <p className="text-sm font-semibold text-slate-700 truncate" title={user.educationDetails?.highestQualification}>
-                            {user.educationDetails?.highestQualification || "Not specified"}
+                        <p className="text-sm font-semibold text-slate-700 truncate" title={user.educations?.[0]?.qualification}>
+                            {user.educations?.[0]?.qualification || "Not specified"}
                         </p>
                     </div>
                     <div className="space-y-1">
