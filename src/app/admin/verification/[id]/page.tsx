@@ -170,14 +170,13 @@ export default async function VerificationWorkstationPage({ params }: { params: 
                                     );
                                 })}
                             </div>
-                            </div>
-                    ) : (
-                    <div className="text-white/50 italic">No documents attached</div>
+                        ) : (
+                            <div className="text-white/50 italic">No documents attached</div>
                         )}
-                </CardContent>
-            </Card>
+                    </CardContent>
+                </Card>
 
-        </div>
+            </div>
         </div >
     );
 }
