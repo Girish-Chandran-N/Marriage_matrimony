@@ -3,10 +3,27 @@ import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { UserNav } from "@/components/user-nav";
 import { MobileNav } from "@/components/mobile-nav";
-import { Sparkles, Menu } from "lucide-react";
+import { Sparkles } from "lucide-react";
+import { prisma } from "@/lib/prisma";
 
 export async function Navbar() {
     const session = await auth();
+
+    // Fetch fresh profile image from database if user is logged in
+    let profileImage = session?.user?.image;
+    if (session?.user?.id) {
+        const user = await prisma.user.findUnique({
+            where: { id: session.user.id },
+            select: { profileImage: true }
+        });
+        profileImage = user?.profileImage || session.user.image;
+    }
+
+    // Create updated user object with fresh profile image
+    const userWithFreshImage = session?.user ? {
+        ...session.user,
+        image: profileImage
+    } : undefined;
 
     return (
         <header className="sticky top-0 z-50 w-full border-b border-white/20 bg-white/70 backdrop-blur-2xl transition-all supports-[backdrop-filter]:bg-white/60">
@@ -43,9 +60,9 @@ export async function Navbar() {
 
                 {/* Right Side Actions */}
                 <div className="flex items-center gap-4">
-                    {session?.user ? (
+                    {userWithFreshImage ? (
                         <>
-                            <UserNav user={session.user} />
+                            <UserNav user={userWithFreshImage} />
                         </>
                     ) : (
                         <div className="hidden md:flex items-center gap-3">
