@@ -53,9 +53,14 @@ model User {
   // Profile Sections
   personalDetails   PersonalDetails?
   familyDetails     FamilyDetails?
-  educationDetails  EducationDetails?
   careerProfile     CareerProfile?
   lifestyleDetails  LifestyleDetails?
+  
+  // Lists
+  educations        Education[]
+  jobs              Job[]
+  siblings          Sibling[]
+  photos            UserPhoto[]
   
   // Existing Relations
   verificationRequests VerificationRequest[]
@@ -160,58 +165,115 @@ model PersonalDetails {
   userId        String   @unique
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
+  // Basic
   dateOfBirth   DateTime?
   gender        String?
-  height        Float?   // in cm or feet
-  weight        Float?   // in kg
+  height        Float?   
+  weight        Float?   
   bloodGroup    String?
-  bodyType      String?  // Athletic, Average, Slim, Heavy
-  complexion    String?  // Fair, Wheatish, Dark
-  maritalStatus String?  // Single, Divorced, Widowed
-  religion      String?
-  caste         String?
+  bodyType      String?  
+  complexion    String?  
+  maritalStatus String?  
+  physicalStatus String?
   motherTongue   String?
   knownLanguages String[]
+  
+  // Bio
   bio           String?  @db.Text
-  // location      String?  // Deprecated in favor of structured fields
-  city          String?
-  district      String?
-  state         String?
-  country       String?  @default("India")
+  about         String?  @db.Text
+  
+  // Religion
+  religion      String?
+  caste         String?
+  subCaste      String?
+
+  // Native Location
+  nativeCountry String?
+  nativeState   String?
+  nativeDistrict String?
+  nativeCity    String?
+  nationality   String?
+
+  // Residing Location
+  residingCountry String?
+  residingState   String?
+  residingDistrict String?
+  residingCity    String? // Town/Place
+  
+  // existing keys for backward compatibility or simple location?
+  // city          String? 
+  // district      String?
+  // state         String?
+  // country       String?
+
+  // Outstation
+  leaveDateFrom DateTime?
+  leaveDateTo   DateTime?
+
+  // Contact
+  primaryContact String?
+  whatsapp       Boolean @default(false)
+  custodianName  String?
+  custodianRelation String?
+  preferredTime  String?
+  communicationAddress String?
+  email          String? // Auto fetched from registration usually, but if different?
+  
+  // Reference
+  referenceName     String?
+  referenceRelation String?
+  referenceContact  String?
+
+  // ID Proof
+  idProof       String?
   
   updatedAt     DateTime @updatedAt
 }
 
-model FamilyDetails {
-  id               String   @id @default(cuid())
-  userId           String   @unique
-  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Education {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  familyStatus     String?  // Middle Class, Upper Middle, Rich
-  familyType       String?  // Nuclear, Joint
-  fatherOccupation String?
-  motherOccupation String?
-  siblingsCount    Int?
-  brothers         Int?     @default(0)
-  sisters          Int?     @default(0)
+  qualification   String? // Highest/This Degree
+  institution     String?
+  university      String?
+  stream          String?
+  passedYear      Int? // Year
   
-  familyImages     String[]
-  
-  updatedAt        DateTime @updatedAt
+  isHighest       Boolean @default(false)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
-model EducationDetails {
-  id                   String   @id @default(cuid())
-  userId               String   @unique
-  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Job {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  highestQualification String?  // Bachelors, Masters, PhD, etc.
-  institutionName      String?
-  collegeName          String?
-  stream               String?  // CS, Arts, Commerce
-  passingYear          Int?
+  title           String?
+  company         String?
+  occupationCategory String?
+  employmentCategory String?
+  workType        String? // Full-time, etc
   
-  updatedAt            DateTime @updatedAt
+  country         String?
+  state           String?
+  district        String?
+  city            String?
+  
+  fromMonth       Int?
+  fromYear        Int?
+  toMonth         Int?
+  toYear          Int?
+  isCurrent       Boolean @default(false)
+  
+  annualIncome    String?
+  description     String? @db.Text
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model CareerProfile {
@@ -219,14 +281,24 @@ model CareerProfile {
   userId          String   @unique
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  jobTitle        String
-  companyName     String
-  employmentType  String? // Full-time, Freelance, Business
-  incomeRange     String? // e.g. "10-15 LPA"
-  workLocation    String? // City, Country
+  currentStatus   String? // Working, Not Working, Student, Internship
+  
+  // Internship details
+  internshipRole  String?
+  internshipCompany String?
+  internshipDuration String?
+  careerGoal      String?
+  
+  linkedinUrl     String?
+  
+  // Backward compatibility fields (can be removed later or mapped to latest Job)
+  jobTitle        String?
+  companyName     String?
+  employmentType  String? 
+  incomeRange     String? 
+  workLocation    String? 
   industry        String?
   yearsExperience Int?
-  linkedinUrl     String?
   
   isVerified      Boolean  @default(false)
   updatedAt       DateTime @updatedAt
@@ -234,15 +306,98 @@ model CareerProfile {
   verificationRequests VerificationRequest[]
 }
 
+model FamilyDetails {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  familyStatus     String?  
+  familyType       String?  
+  familyValue      String?
+  familyName       String?
+  
+  fatherName       String?
+  fatherOccupation String?
+  fatherNativePlace String?
+  fatherHouseName  String?
+  
+  motherName       String?
+  motherOccupation String?
+  motherNativePlace String?
+  motherHouseName  String?
+  
+  grandParentsDetails String? @db.Text
+  familyIntro         String? @db.Text
+  
+  siblingsCount    Int?
+  brothers         Int? // Count
+  sisters          Int? // Count
+  
+  familyImages     String[] // Deprecated in favor of UserPhoto?
+  
+  updatedAt        DateTime @updatedAt
+}
+
+model Sibling {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  gender          String // Brother, Sister
+  name            String?
+  maritalStatus   String?
+  spouseName      String?
+}
+
+model UserPhoto {
+  id        String   @id @default(cuid())
+  userId    String   
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  url       String
+  isProfile Boolean @default(false) // If true, it is the main profile pic
+  caption   String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
 model LifestyleDetails {
   id            String   @id @default(cuid())
   userId        String   @unique
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
-  diet          String?  // Veg, Non-Veg, Eggitarian
-  drinking      String?  // No, Occasionally, Yes
-  smoking       String?  // No, Occasionally, Yes
   hobbies       String[]
+  music         String[]
+  books         String[]
+  movies        String[]
+  sports        String[]
+  
+  eatingHabits  String?
+  drinking      String? 
+  smoking       String?
+  
+  favoriteCuisine String[]
+  dressStyle      String?
+  culturalBackground String?
+  adventureLevel  String? // Low, Medium, High
+  petPreference   String?
+  drivingLicense  Boolean?
+  
+  weekendPreference String?
+  travelFrequency   String?
+  learningInterest  String?
+  
+  // Social Media
+  facebook      String?
+  instagram     String?
+  youtube       String?
+  tiktok        String?
+  blogger       String?
+  linkedin      String? 
+  otherSocial   String?
+  
+  // Backward compatibility
+  diet          String? 
   
   updatedAt     DateTime @updatedAt
 }
@@ -253,21 +408,44 @@ model MatchPreferences {
   id                  String   @id @default(cuid())
   userId              String   @unique
   user                User     @relation(fields: [userId], references: [id])
+  
+  // Basic
+  minAge              Int?
+  maxAge              Int?
+  minHeight           Float?
+  maxHeight           Float?
+  maritalStatus       String[]
+  physicalStatus      String?
+  complexion          String[]
+  bodyType            String[]
+  familyStatus        String[]
+  
+  // Professional
+  education           String[]
+  jobStatus           String[]
+  employmentCategory  String[]
+  incomeRange         String[] // Array or String? User said "Income* (CB)" which implies checkboxes -> Array
+  workingCountry      String[]
+  readyToRelocate     Boolean?
+  
+  // Location
+  preferredLocations  String[] // Country/State?
+  
+  // Religion
+  preferredReligions  String[]
+  preferredCastes     String[] // If needed
+  preferredMotherTongues String[]
+  otherReligions      Boolean @default(false)
+  
+  // Other
+  expectations        String? @db.Text
+  
+  // Backward compatibility / Deprecated
   preferredIndustries String[]
   minExperience       Int?
   maxExperience       Int?
-  preferredLocations  String[]
-  
-  minAge              Int?
-  maxAge              Int?
-  minIncome           String?
-  maxIncome           String?
-  maritalStatus       String[]
-  minHeight           Float?
-  maxHeight           Float?
-  preferredReligions  String[]
-  preferredCastes     String[]
-  preferredMotherTongues String[]
+  minIncome           String? // Deprecated for incomeRange list
+  maxIncome           String? // Deprecated
 
   updatedAt           DateTime @updatedAt
 }

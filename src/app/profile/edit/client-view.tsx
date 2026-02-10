@@ -6,8 +6,9 @@ import EducationDetailsForm from "@/components/profile-forms/education-details-f
 import CareerDetailsForm from "@/components/profile-forms/career-details-form";
 import FamilyDetailsForm from "@/components/profile-forms/family-details-form";
 import LifestyleDetailsForm from "@/components/profile-forms/lifestyle-details-form";
+import MatchPreferencesForm from "@/components/profile-forms/match-preferences-form";
 import PhotoManager from "@/components/profile-forms/photo-manager";
-import { User, GraduationCap, Briefcase, Users, Coffee, ChevronRight, Image as ImageIcon } from "lucide-react";
+import { User, GraduationCap, Briefcase, Users, Coffee, ChevronRight, Image as ImageIcon, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const SECTIONS = [
@@ -16,6 +17,7 @@ const SECTIONS = [
     { id: "career", label: "Career & Finances", icon: Briefcase },
     { id: "family", label: "Family Background", icon: Users },
     { id: "lifestyle", label: "Lifestyle & Interests", icon: Coffee },
+    { id: "preferences", label: "Partner Preferences", icon: Heart },
     { id: "photos", label: "Manage Photos", icon: ImageIcon },
 ];
 
@@ -27,18 +29,21 @@ export default function ProfileEditClient({ profile }: { profile: any }) {
             case "personal":
                 return <PersonalDetailsForm initialData={profile.personalDetails} />;
             case "education":
-                return <EducationDetailsForm initialData={profile.educationDetails} />;
+                return <EducationDetailsForm initialData={profile.educations} />;
             case "career":
-                return <CareerDetailsForm initialData={profile.careerProfile} />;
+                return <CareerDetailsForm careerProfile={profile.careerProfile} jobs={profile.jobs} />;
             case "family":
-                return <FamilyDetailsForm initialData={profile.familyDetails} />;
+                return <FamilyDetailsForm initialData={profile.familyDetails} siblings={profile.siblings} />;
             case "lifestyle":
                 return <LifestyleDetailsForm initialData={profile.lifestyleDetails} isEditMode={true} />;
+            case "preferences":
+                return <MatchPreferencesForm initialData={profile.matchPreferences} />;
             case "photos":
                 return <PhotoManager
                     currentProfileImage={profile.profileImage}
-                    galleryImages={profile.galleryImages}
+                    galleryImages={profile.photos || []}
                     familyImages={profile.familyDetails?.familyImages}
+                    userName={profile.name}
                 />;
             default:
                 return null;

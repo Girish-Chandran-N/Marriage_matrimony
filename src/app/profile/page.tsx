@@ -59,7 +59,7 @@ export default async function MyProfilePage() {
                                 <ProfileAvatarEditor
                                     initialImage={profile.profileImage}
                                     initials={initials}
-                                    galleryImages={profile.galleryImages || []}
+                                    galleryImages={profile.photos || []}
                                 />
                             </div>
                             <div className="absolute bottom-4 right-4 bg-green-500 h-5 w-5 rounded-full border-[3px] border-white shadow-md animate-pulse" title="Online"></div>
@@ -182,11 +182,11 @@ export default async function MyProfilePage() {
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent className="p-8 grid grid-cols-1 gap-6">
-                                        <DetailRow label="Highest Degree" value={profile.educationDetails?.highestQualification} />
-                                        <DetailRow label="Institution" value={profile.educationDetails?.institutionName} />
-                                        <DetailRow label="College/University" value={profile.educationDetails?.collegeName} />
-                                        <DetailRow label="Stream/Field" value={profile.educationDetails?.stream || "Not specified"} />
-                                        <DetailRow label="Passing Year" value={profile.educationDetails?.passingYear} />
+                                        <DetailRow label="Highest Degree" value={profile.educations?.[0]?.qualification} />
+                                        <DetailRow label="Institution" value={profile.educations?.[0]?.institution} />
+                                        <DetailRow label="College/University" value={profile.educations?.[0]?.university} />
+                                        <DetailRow label="Stream/Field" value={profile.educations?.[0]?.stream || "Not specified"} />
+                                        <DetailRow label="Passing Year" value={profile.educations?.[0]?.passedYear} />
                                     </CardContent>
                                 </Card>
                             </div>
@@ -250,7 +250,7 @@ export default async function MyProfilePage() {
                                     </div>
                                     <h3 className="text-xl font-bold text-gray-900">Your Photo Gallery</h3>
                                 </div>
-                                <GalleryEditor galleryImages={profile.galleryImages || []} />
+                                <GalleryEditor galleryImages={profile.photos || []} />
                             </div>
                         </TabsContent>
                     </div>

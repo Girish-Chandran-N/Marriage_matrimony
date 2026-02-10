@@ -22,6 +22,11 @@ export async function updateProfileImage(prevState: any, formData: FormData) {
                 where: { id: session.user.id },
                 data: { profileImage: null },
             });
+            // Also unset any isProfile photo
+            await db.userPhoto.updateMany({
+                where: { userId: session.user.id, isProfile: true },
+                data: { isProfile: false }
+            });
             revalidatePath("/profile");
             revalidatePath("/profile/edit");
             return { success: true, message: "Profile photo removed." };
@@ -40,6 +45,37 @@ export async function updateProfileImage(prevState: any, formData: FormData) {
             where: { id: session.user.id },
             data: { profileImage: validation.data.url },
         });
+
+        // Check if this photo exists in UserPhoto, if so set isProfile=true
+        // If not, maybe create it? For now, just update user.profileImage as per old logic,
+        // but ideally we should sync.
+        await db.userPhoto.updateMany({
+            where: { userId: session.user.id },
+            data: { isProfile: false }
+        });
+
+        // Try to find if this URL exists in photos
+        const existingPhoto = await db.userPhoto.findFirst({
+            where: { userId: session.user.id, url: validation.data.url }
+        });
+
+        if (existingPhoto) {
+            await db.userPhoto.update({
+                where: { id: existingPhoto.id },
+                data: { isProfile: true }
+            });
+        } else {
+            // Create new marked as profile
+            await db.userPhoto.create({
+                data: {
+                    userId: session.user.id,
+                    url: validation.data.url,
+                    isProfile: true,
+                    order: -1 // Top?
+                }
+            });
+        }
+
         revalidatePath("/profile");
         revalidatePath("/profile/edit");
         return { success: true, message: "Profile photo updated!" };
@@ -49,38 +85,9 @@ export async function updateProfileImage(prevState: any, formData: FormData) {
     }
 }
 
-
+// Add single image to UserPhoto
 export async function addGalleryImage(prevState: any, formData: FormData) {
-    const session = await auth();
-    if (!session?.user?.id) return { message: "Unauthorized" };
-
-    const url = formData.get("url") as string;
-    const validation = PhotoSchema.safeParse({ url });
-
-    if (!validation.success) {
-        return { message: "Invalid URL" };
-    }
-
-    try {
-        const user = await db.user.findUnique({
-            where: { id: session.user.id },
-            select: { galleryImages: true }
-        });
-
-        const currentImages = user?.galleryImages || [];
-        const newImages = [...currentImages, validation.data.url];
-
-        await db.user.update({
-            where: { id: session.user.id },
-            data: { galleryImages: newImages },
-        });
-
-        revalidatePath("/profile");
-        revalidatePath("/profile/edit");
-        return { success: true, message: "Image added to gallery!" };
-    } catch (error) {
-        return { message: "Failed to add image." };
-    }
+    return addGalleryImages(prevState, formData);
 }
 
 export async function addGalleryImages(prevState: any, formData: FormData) {
@@ -88,21 +95,31 @@ export async function addGalleryImages(prevState: any, formData: FormData) {
     if (!session?.user?.id) return { message: "Unauthorized" };
 
     const urls = formData.getAll("urls") as string[];
-    console.log("addGalleryImages received URLs:", urls);
+    // also support single 'url'
+    const singleUrl = formData.get("url") as string;
+    if (singleUrl) urls.push(singleUrl);
+
     if (!urls || urls.length === 0) return { message: "No images provided" };
 
     try {
-        const user = await db.user.findUnique({
-            where: { id: session.user.id },
-            select: { galleryImages: true }
+        // Get current max order
+        const lastPhoto = await db.userPhoto.findFirst({
+            where: { userId: session.user.id },
+            orderBy: { order: 'desc' }
         });
+        let nextOrder = (lastPhoto?.order || 0) + 1;
 
-        const currentImages = user?.galleryImages || [];
-        const newImages = [...currentImages, ...urls];
+        const userId = session.user.id;
 
-        await db.user.update({
-            where: { id: session.user.id },
-            data: { galleryImages: newImages },
+        const dataToCreate = urls.map((url, index) => ({
+            userId: userId,
+            url: url,
+            isProfile: false,
+            order: nextOrder + index
+        }));
+
+        await db.userPhoto.createMany({
+            data: dataToCreate
         });
 
         revalidatePath("/profile");
@@ -114,23 +131,23 @@ export async function addGalleryImages(prevState: any, formData: FormData) {
     }
 }
 
-export async function removeGalleryImage(imageUrl: string) {
+// Remove by ID or URL (support both for backward compat)
+export async function removeGalleryImage(identifier: string) {
     const session = await auth();
     if (!session?.user?.id) return { message: "Unauthorized" };
 
     try {
-        const user = await db.user.findUnique({
-            where: { id: session.user.id },
-            select: { galleryImages: true }
-        });
-
-        const currentImages = user?.galleryImages || [];
-        const newImages = currentImages.filter(img => img !== imageUrl);
-
-        await db.user.update({
-            where: { id: session.user.id },
-            data: { galleryImages: newImages },
-        });
+        // Try deleting by ID first
+        try {
+            await db.userPhoto.delete({
+                where: { id: identifier, userId: session.user.id }
+            });
+        } catch (e) {
+            // If ID lookup fails, try deleting by URL
+            await db.userPhoto.deleteMany({
+                where: { url: identifier, userId: session.user.id }
+            });
+        }
 
         revalidatePath("/profile");
         revalidatePath("/profile/edit");
@@ -140,15 +157,20 @@ export async function removeGalleryImage(imageUrl: string) {
     }
 }
 
-export async function reorderGalleryImages(newOrder: string[]) {
+// Reorder by IDs
+export async function reorderGalleryImages(newOrderIds: string[]) {
     const session = await auth();
     if (!session?.user?.id) return { message: "Unauthorized" };
 
     try {
-        await db.user.update({
-            where: { id: session.user.id },
-            data: { galleryImages: newOrder },
-        });
+        await db.$transaction(
+            newOrderIds.map((id, index) =>
+                db.userPhoto.update({
+                    where: { id, userId: session.user.id },
+                    data: { order: index }
+                })
+            )
+        );
         revalidatePath("/profile");
         revalidatePath("/profile/edit");
         return { success: true, message: "Gallery order updated!" };
@@ -157,6 +179,51 @@ export async function reorderGalleryImages(newOrder: string[]) {
     }
 }
 
+// Set Profile from Gallery (by ID or URL)
+export async function setProfileImageFromGallery(identifier: string) {
+    const session = await auth();
+    if (!session?.user?.id) return { message: "Unauthorized" };
+
+    try {
+        let photo = await db.userPhoto.findFirst({
+            where: { id: identifier, userId: session.user.id }
+        });
+
+        if (!photo) {
+            photo = await db.userPhoto.findFirst({
+                where: { url: identifier, userId: session.user.id }
+            });
+        }
+
+        if (!photo) return { message: "Photo not found" };
+
+        // Unset previous
+        await db.userPhoto.updateMany({
+            where: { userId: session.user.id },
+            data: { isProfile: false }
+        });
+
+        // Set new
+        await db.userPhoto.update({
+            where: { id: photo.id },
+            data: { isProfile: true }
+        });
+
+        // Sync User.profileImage
+        await db.user.update({
+            where: { id: session.user.id },
+            data: { profileImage: photo.url }
+        });
+
+        revalidatePath("/profile");
+        revalidatePath("/profile/edit");
+        return { success: true, message: "Profile photo updated!" };
+    } catch (error) {
+        return { message: "Failed to update profile photo." };
+    }
+}
+
+// Family Photos - Still using String[] for now as per schema
 export async function addFamilyImages(prevState: any, formData: FormData) {
     const session = await auth();
     if (!session?.user?.id) return { message: "Unauthorized" };
@@ -173,7 +240,6 @@ export async function addFamilyImages(prevState: any, formData: FormData) {
         const currentImages = familyDetails?.familyImages || [];
         const newImages = [...currentImages, ...urls];
 
-        // Ensure FamilyDetails exists
         await db.familyDetails.upsert({
             where: { userId: session.user.id },
             create: {
@@ -217,22 +283,5 @@ export async function removeFamilyImage(imageUrl: string) {
         return { success: true, message: "Family photo removed!" };
     } catch (error) {
         return { message: "Failed to remove family photo." };
-    }
-}
-
-export async function setProfileImageFromGallery(imageUrl: string) {
-    const session = await auth();
-    if (!session?.user?.id) return { message: "Unauthorized" };
-
-    try {
-        await db.user.update({
-            where: { id: session.user.id },
-            data: { profileImage: imageUrl },
-        });
-        revalidatePath("/profile");
-        revalidatePath("/profile/edit");
-        return { success: true, message: "Profile photo updated from gallery!" };
-    } catch (error) {
-        return { message: "Failed to update profile photo." };
     }
 }

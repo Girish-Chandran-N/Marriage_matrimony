@@ -7,17 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Camera, Upload, X, Loader2, ZoomIn, Check } from "lucide-react";
-import getCroppedImg from "@/lib/canvas-utils";
+import getCroppedImg from "@/lib/canvasUtils";
 import { updateProfileImage } from "@/lib/photo-actions";
 import { useRouter } from "next/navigation";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+// Defined in GalleryEditor too, better to share but duplication is fine for now
+interface GalleryPhoto {
+    id: string;
+    url: string;
+    isProfile?: boolean;
+}
 
 interface ProfileAvatarEditorProps {
     initialImage?: string | null;
     initials: string;
-    galleryImages?: string[];
+    galleryImages?: GalleryPhoto[];
 }
-
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function ProfileAvatarEditor({ initialImage, initials, galleryImages = [] }: ProfileAvatarEditorProps) {
     const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -49,9 +55,6 @@ export default function ProfileAvatarEditor({ initialImage, initials, galleryIma
 
     const handleGallerySelect = async (url: string) => {
         // For gallery images, we can use the URL directly, but we need to ensure CORS works for canvas
-        // If we just set it, react-easy-crop will try to load it. 
-        // Let's verify if we need to pre-fetch it as blob or if URL is fine.
-        // Usually URL is fine if crossOrigin is set on the image element inside Cropper.
         setImageSrc(url);
     };
 
@@ -92,7 +95,7 @@ export default function ProfileAvatarEditor({ initialImage, initials, galleryIma
 
                 const { url } = await uploadRes.json();
 
-                // Update Profile
+                // Update Profile using Profile Actions
                 const profileFormData = new FormData();
                 profileFormData.append("url", url);
                 const result = await updateProfileImage({}, profileFormData);
@@ -187,38 +190,10 @@ export default function ProfileAvatarEditor({ initialImage, initials, galleryIma
                             </div>
 
                             <div className="flex items-center gap-2 justify-center flex-wrap">
-                                <Button
-                                    type="button"
-                                    variant={aspect === 1 ? "default" : "outline"}
-                                    size="sm"
-                                    onClick={() => setAspect(1)}
-                                >
-                                    Square
-                                </Button>
-                                <Button
-                                    type="button"
-                                    variant={aspect === 4 / 5 ? "default" : "outline"}
-                                    size="sm"
-                                    onClick={() => setAspect(4 / 5)}
-                                >
-                                    Portrait
-                                </Button>
-                                <Button
-                                    type="button"
-                                    variant={aspect === 16 / 9 ? "default" : "outline"}
-                                    size="sm"
-                                    onClick={() => setAspect(16 / 9)}
-                                >
-                                    Landscape
-                                </Button>
-                                <Button
-                                    type="button"
-                                    variant={aspect === undefined ? "default" : "outline"}
-                                    size="sm"
-                                    onClick={() => setAspect(undefined)}
-                                >
-                                    Free
-                                </Button>
+                                <Button type="button" variant={aspect === 1 ? "default" : "outline"} size="sm" onClick={() => setAspect(1)}>Square</Button>
+                                <Button type="button" variant={aspect === 4 / 5 ? "default" : "outline"} size="sm" onClick={() => setAspect(4 / 5)}>Portrait</Button>
+                                <Button type="button" variant={aspect === 16 / 9 ? "default" : "outline"} size="sm" onClick={() => setAspect(16 / 9)}>Landscape</Button>
+                                <Button type="button" variant={aspect === undefined ? "default" : "outline"} size="sm" onClick={() => setAspect(undefined)}>Free</Button>
                             </div>
 
                             <div className="flex justify-end gap-2">
@@ -267,13 +242,13 @@ export default function ProfileAvatarEditor({ initialImage, initials, galleryIma
                                 {galleryImages.length > 0 ? (
                                     <div className="h-64 w-full rounded-md border p-4 overflow-y-auto">
                                         <div className="grid grid-cols-3 gap-2">
-                                            {galleryImages.map((img, idx) => (
+                                            {galleryImages.map((img) => (
                                                 <button
-                                                    key={idx}
-                                                    onClick={() => handleGallerySelect(img)}
+                                                    key={img.id}
+                                                    onClick={() => handleGallerySelect(img.url)}
                                                     className="relative aspect-square rounded-md overflow-hidden border border-transparent hover:border-primary hover:ring-2 hover:ring-primary hover:ring-offset-1 transition-all"
                                                 >
-                                                    <img src={img} alt={`Gallery ${idx}`} className="object-cover w-full h-full" />
+                                                    <img src={img.url} alt={`Gallery ${img.id}`} className="object-cover w-full h-full" />
                                                 </button>
                                             ))}
                                         </div>

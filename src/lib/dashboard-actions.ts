@@ -38,7 +38,8 @@ export async function getInterestSent() {
                 include: {
                     personalDetails: true,
                     careerProfile: true,
-                    educationDetails: true,
+                    educations: true,
+                    jobs: true,
                     familyDetails: true
                 }
             }
@@ -59,7 +60,8 @@ export async function getInterestReceived() {
                 include: {
                     personalDetails: true,
                     careerProfile: true,
-                    educationDetails: true,
+                    educations: true,
+                    jobs: true,
                     familyDetails: true
                 }
             }
@@ -80,7 +82,8 @@ export async function getProfileViews() {
                 include: {
                     personalDetails: true,
                     careerProfile: true,
-                    educationDetails: true,
+                    educations: true,
+                    jobs: true,
                     familyDetails: true
                 }
             }
@@ -101,7 +104,8 @@ export async function getProfileVisited() {
                 include: {
                     personalDetails: true,
                     careerProfile: true,
-                    educationDetails: true,
+                    educations: true,
+                    jobs: true,
                     familyDetails: true
                 }
             }
@@ -122,7 +126,8 @@ export async function getShortlistedProfiles() {
                 include: {
                     personalDetails: true,
                     careerProfile: true,
-                    educationDetails: true,
+                    educations: true,
+                    jobs: true,
                     familyDetails: true
                 }
             }
@@ -143,7 +148,8 @@ export async function getContactsViewed() {
                 include: {
                     personalDetails: true,
                     careerProfile: true,
-                    educationDetails: true,
+                    educations: true,
+                    jobs: true,
                     familyDetails: true
                 }
             }
@@ -164,7 +170,8 @@ export async function getContactsVisited() {
                 include: {
                     personalDetails: true,
                     careerProfile: true,
-                    educationDetails: true,
+                    educations: true,
+                    jobs: true,
                     familyDetails: true
                 }
             }
@@ -194,7 +201,7 @@ export async function getNewMatches() {
             careerProfile: true,
             personalDetails: true,
             familyDetails: true,
-            educationDetails: true,
+            educations: true,
         },
         orderBy: { createdAt: "desc" },
         take: 20

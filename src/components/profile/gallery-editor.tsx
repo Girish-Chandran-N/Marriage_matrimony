@@ -20,8 +20,16 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
+// Matches UserPhoto model partially
+export interface GalleryPhoto {
+    id: string;
+    url: string;
+    isProfile?: boolean;
+    order?: number;
+}
+
 interface GalleryEditorProps {
-    galleryImages: string[];
+    galleryImages: GalleryPhoto[];
 }
 
 interface StagedFile {
@@ -33,20 +41,20 @@ interface StagedFile {
 }
 
 interface SortableImageProps {
-    url: string;
-    onRemove: (url: string) => void;
-    onSetProfile: (url: string) => void;
+    photo: GalleryPhoto;
+    onRemove: (id: string) => void;
+    onSetProfile: (id: string) => void;
     isPending: boolean;
 }
 
-function SortableImage({ url, onRemove, onSetProfile, isPending }: SortableImageProps) {
+function SortableImage({ photo, onRemove, onSetProfile, isPending }: SortableImageProps) {
     const {
         attributes,
         listeners,
         setNodeRef,
         transform,
         transition,
-    } = useSortable({ id: url });
+    } = useSortable({ id: photo.id });
 
     const style = {
         transform: CSS.Transform.toString(transform),
@@ -61,13 +69,19 @@ function SortableImage({ url, onRemove, onSetProfile, isPending }: SortableImage
             {...listeners}
             className="group relative aspect-square bg-gray-100 rounded-lg overflow-hidden border shadow-sm touch-none"
         >
-            <img src={url} alt="Gallery" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+            <img src={photo.url} alt="Gallery" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+
+            {photo.isProfile && (
+                <div className="absolute top-2 left-2 p-1 bg-green-500 rounded-full z-10">
+                    <User className="w-3 h-3 text-white" />
+                </div>
+            )}
 
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-end justify-between p-2">
                 <button
                     onClick={(e) => {
                         e.stopPropagation(); // Prevent drag
-                        onRemove(url);
+                        onRemove(photo.id);
                     }}
                     className="p-1.5 bg-red-600 text-white rounded-full hover:bg-red-700 shadow-sm"
                     title="Remove Image"
@@ -77,19 +91,21 @@ function SortableImage({ url, onRemove, onSetProfile, isPending }: SortableImage
                     <Trash2 className="w-3 h-3" />
                 </button>
 
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onSetProfile(url);
-                    }}
-                    className="p-1.5 bg-white/90 text-purple-700 rounded-full hover:bg-white shadow-sm w-full flex items-center justify-center gap-1 text-[10px] font-bold"
-                    title="Make Profile Photo"
-                    disabled={isPending}
-                    onPointerDown={(e) => e.stopPropagation()}
-                >
-                    <User className="w-3 h-3" />
-                    Set Profile
-                </button>
+                {!photo.isProfile && (
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onSetProfile(photo.id);
+                        }}
+                        className="p-1.5 bg-white/90 text-purple-700 rounded-full hover:bg-white shadow-sm w-full flex items-center justify-center gap-1 text-[10px] font-bold"
+                        title="Make Profile Photo"
+                        disabled={isPending}
+                        onPointerDown={(e) => e.stopPropagation()}
+                    >
+                        <User className="w-3 h-3" />
+                        Set Profile
+                    </button>
+                )}
             </div>
 
             {isPending && (
@@ -179,53 +195,106 @@ export function GalleryEditor({ galleryImages = [] }: GalleryEditorProps) {
         const { active, over } = event;
 
         if (over && active.id !== over.id) {
-            const oldIndex = galleryImages.indexOf(active.id as string);
-            const newIndex = galleryImages.indexOf(over.id as string);
+            const oldIndex = galleryImages.findIndex(img => img.id === active.id);
+            const newIndex = galleryImages.findIndex(img => img.id === over.id);
 
             if (oldIndex !== -1 && newIndex !== -1) {
                 const newOrder = arrayMove(galleryImages, oldIndex, newIndex);
-                // Optimistic update (requires parent state update or router refresh, handled by server action revalidate)
-                // For now, we rely on server action revalidation
+                // Extract new order IDs
+                const newOrderIds = newOrder.map(img => img.id);
 
                 startTransition(async () => {
-                    await reorderGalleryImages(newOrder);
+                    await reorderGalleryImages(newOrderIds);
                 });
             }
         }
     };
 
-    const handleSetProfileImage = async (url: string) => {
+    const handleSetProfileImage = async (id: string) => {
         if (confirm("Set this photo as your main profile picture?")) {
             startTransition(async () => {
-                await setProfileImageFromGallery(url);
+                await setProfileImageFromGallery(id);
             });
         }
     };
 
-    // ... existing handlers
-
-    const handleRemoveGalleryImage = async (url: string) => {
+    const handleRemoveGalleryImage = async (id: string) => {
         if (confirm("Are you sure you want to remove this photo?")) {
             startTransition(async () => {
-                await removeGalleryImage(url);
+                await removeGalleryImage(id);
             });
         }
     };
 
-    // Batch Upload - Limit Check
+    // Batch Upload - Real Implementation
     const handleBatchUpload = async () => {
         if (stagedFiles.length === 0) return;
 
         const currentCount = galleryImages.length;
         const newCount = stagedFiles.length;
 
-        if (currentCount + newCount > 7) {
-            alert(`You can only have 7 gallery photos. You currently have ${currentCount}. Please remove some or select fewer photos.`);
+        if (currentCount + newCount > 10) {
+            alert(`You can only have 10 gallery photos. You currently have ${currentCount}. Please remove some or select fewer photos.`);
             return;
         }
 
         setIsUploading(true);
-        // ... rest of upload logic
+
+        try {
+            const uploadedUrls: string[] = [];
+
+            // Parallel upload
+            const uploadPromises = stagedFiles.map(async (file) => {
+                const formData = new FormData();
+                // Use cropped blob if available, otherwise original file
+                if (file.croppedBlob) {
+                    formData.append("file", file.croppedBlob, "gallery-photo.jpg");
+                } else {
+                    formData.append("file", file.file);
+                }
+
+                const res = await fetch("/api/upload", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!res.ok) throw new Error("Upload failed");
+                const data = await res.json();
+                return data.url;
+            });
+
+            const results = await Promise.allSettled(uploadPromises);
+
+            // Collect successful uploads
+            results.forEach(result => {
+                if (result.status === "fulfilled") {
+                    uploadedUrls.push(result.value);
+                } else {
+                    console.error("Failed to upload a file", result.reason);
+                }
+            });
+
+            if (uploadedUrls.length > 0) {
+                const formData = new FormData();
+                uploadedUrls.forEach(url => formData.append("urls", url));
+
+                const res = await addGalleryImages(undefined, formData);
+                if (res.success) {
+                    setStagedFiles([]);
+                    // Optional: Toast success
+                } else {
+                    alert(res.message);
+                }
+            } else {
+                alert("Failed to upload any images.");
+            }
+
+        } catch (error) {
+            console.error("Batch upload error:", error);
+            alert("An error occurred during upload.");
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     return (
@@ -235,16 +304,15 @@ export function GalleryEditor({ galleryImages = [] }: GalleryEditorProps) {
                     <ImageIcon className="w-5 h-5 text-purple-600" />
                     Photo Gallery
                 </h3>
-                <span className={`text-sm font-medium ${galleryImages.length >= 7 ? 'text-red-500' : 'text-gray-500'}`}>
-                    {galleryImages.length} / 7 Photos
+                <span className={`text-sm font-medium ${galleryImages.length >= 10 ? 'text-red-500' : 'text-gray-500'}`}>
+                    {galleryImages.length} / 10 Photos
                 </span>
             </div>
 
             <div className="space-y-8">
                 {/* Upload / Staging Area */}
-                {galleryImages.length < 7 ? (
+                {galleryImages.length < 10 ? (
                     <div className="space-y-4">
-                        {/* ... dropzone code ... */}
                         <div
                             {...getRootProps()}
                             className={cn(
@@ -257,11 +325,10 @@ export function GalleryEditor({ galleryImages = [] }: GalleryEditorProps) {
                             <p className="text-sm font-medium text-gray-700">
                                 {isDragActive ? "Drop files here" : "Click or drag to upload"}
                             </p>
-                            <p className="text-xs text-gray-500 mt-1">Max 7 photos total</p>
+                            <p className="text-xs text-gray-500 mt-1">Max 10 photos total</p>
                         </div>
-                        {/* ... staged files grid ... */}
+
                         {stagedFiles.length > 0 && (
-                            // ... existing staging grid code
                             <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
                                 <div className="flex items-center justify-between mb-3">
                                     <h4 className="text-sm font-semibold text-gray-700">Drafts ({stagedFiles.length})</h4>
@@ -285,14 +352,12 @@ export function GalleryEditor({ galleryImages = [] }: GalleryEditorProps) {
                                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
                                     {stagedFiles.map((item) => (
                                         <div key={item.id} className="relative group aspect-square bg-white rounded-lg shadow-sm overflow-hidden border">
-                                            {/* ... preview img ... */}
                                             <img
                                                 src={item.croppedPreview || item.preview}
                                                 className="w-full h-full object-cover"
                                                 alt="Preview"
                                             />
 
-                                            {/* Actions Overlay */}
                                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                                                 <button
                                                     onClick={() => openCrop(item.id, item.preview)}
@@ -324,7 +389,7 @@ export function GalleryEditor({ galleryImages = [] }: GalleryEditorProps) {
                 ) : (
                     <div className="p-6 bg-yellow-50 border border-yellow-200 rounded-lg text-center">
                         <p className="text-yellow-800 font-medium">Gallery Limit Reached</p>
-                        <p className="text-yellow-600 text-sm mt-1">You have reached the maximum of 7 photos. Please remove some to upload new ones.</p>
+                        <p className="text-yellow-600 text-sm mt-1">You have reached the maximum of 10 photos. Please remove some to upload new ones.</p>
                     </div>
                 )}
 
@@ -338,15 +403,15 @@ export function GalleryEditor({ galleryImages = [] }: GalleryEditorProps) {
                         onDragEnd={handleDragEnd}
                     >
                         <SortableContext
-                            items={galleryImages}
+                            items={galleryImages.map(img => img.id)}
                             strategy={rectSortingStrategy}
                         >
                             {galleryImages.length > 0 ? (
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                    {galleryImages.map((url) => (
+                                    {galleryImages.map((photo) => (
                                         <SortableImage
-                                            key={url}
-                                            url={url}
+                                            key={photo.id}
+                                            photo={photo}
                                             onRemove={handleRemoveGalleryImage}
                                             onSetProfile={handleSetProfileImage}
                                             isPending={isPending}
@@ -402,38 +467,10 @@ export function GalleryEditor({ galleryImages = [] }: GalleryEditorProps) {
                         </div>
 
                         <div className="flex items-center gap-2 justify-center flex-wrap">
-                            <Button
-                                type="button"
-                                variant={aspect === 1 ? "default" : "outline"}
-                                size="sm"
-                                onClick={() => setAspect(1)}
-                            >
-                                Square (1:1)
-                            </Button>
-                            <Button
-                                type="button"
-                                variant={aspect === 4 / 5 ? "default" : "outline"}
-                                size="sm"
-                                onClick={() => setAspect(4 / 5)}
-                            >
-                                Portrait (4:5)
-                            </Button>
-                            <Button
-                                type="button"
-                                variant={aspect === 16 / 9 ? "default" : "outline"}
-                                size="sm"
-                                onClick={() => setAspect(16 / 9)}
-                            >
-                                Landscape (16:9)
-                            </Button>
-                            <Button
-                                type="button"
-                                variant={aspect === undefined ? "default" : "outline"}
-                                size="sm"
-                                onClick={() => setAspect(undefined)}
-                            >
-                                Free
-                            </Button>
+                            <Button type="button" variant={aspect === 1 ? "default" : "outline"} size="sm" onClick={() => setAspect(1)}>Square</Button>
+                            <Button type="button" variant={aspect === 4 / 5 ? "default" : "outline"} size="sm" onClick={() => setAspect(4 / 5)}>Portrait</Button>
+                            <Button type="button" variant={aspect === 16 / 9 ? "default" : "outline"} size="sm" onClick={() => setAspect(16 / 9)}>Landscape</Button>
+                            <Button type="button" variant={aspect === undefined ? "default" : "outline"} size="sm" onClick={() => setAspect(undefined)}>Free</Button>
                         </div>
                     </div>
 

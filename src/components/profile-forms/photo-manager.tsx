@@ -1,18 +1,23 @@
 "use client";
 
 import ProfileAvatarEditor from "@/components/profile/profile-avatar-editor";
-import { GalleryEditor } from "@/components/profile/gallery-editor";
+import { GalleryEditor, GalleryPhoto } from "@/components/profile/gallery-editor";
 import { FamilyPhotosEditor } from "@/components/profile/family-photos-editor";
 
 interface PhotoManagerProps {
     currentProfileImage?: string | null;
-    galleryImages?: string[];
+    galleryImages?: GalleryPhoto[]; // Accepts UserPhoto[] as it matches structure
     familyImages?: string[];
-    userName?: string; // We might need this for initials if passed, or fallback
+    userName?: string;
 }
 
 export default function PhotoManager({ currentProfileImage, galleryImages = [], familyImages = [], userName = "User" }: PhotoManagerProps) {
     const initials = userName.slice(0, 2).toUpperCase();
+
+    // Ensure we pass valid GalleryPhoto objects
+    // If backend returns extra fields, that's fine.
+    // If galleryImages is undefined, default to []
+    const safeGalleryImages = galleryImages || [];
 
     return (
         <div className="space-y-10">
@@ -27,7 +32,7 @@ export default function PhotoManager({ currentProfileImage, galleryImages = [], 
                     <ProfileAvatarEditor
                         initialImage={currentProfileImage}
                         initials={initials}
-                        galleryImages={galleryImages}
+                        galleryImages={safeGalleryImages}
                     />
 
                     <div className="flex-1 space-y-2 text-center sm:text-left">
@@ -48,7 +53,7 @@ export default function PhotoManager({ currentProfileImage, galleryImages = [], 
                     </p>
                 </div>
 
-                <GalleryEditor galleryImages={galleryImages} />
+                <GalleryEditor galleryImages={safeGalleryImages} />
             </div>
 
             {/* Family Photos Section */}

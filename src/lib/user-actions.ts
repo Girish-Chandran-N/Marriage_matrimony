@@ -10,9 +10,14 @@ const profileDetailsValidator = Prisma.validator<Prisma.UserDefaultArgs>()({
         personalDetails: true,
         careerProfile: true,
         familyDetails: true,
-        educationDetails: true,
+        educations: true,
+        jobs: true,
+        siblings: true,
         lifestyleDetails: true,
         matchPreferences: true, // Useful for showing "Match %" later
+        photos: {
+            orderBy: { order: "asc" }
+        }
     }
 });
 

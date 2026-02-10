@@ -169,7 +169,6 @@ export async function getMatches(filters?: MatchFilters) {
             careerProfile: true,
             personalDetails: true,
             familyDetails: true,
-            educationDetails: true,
         },
         take: 100 // Limit for performance
     });
