@@ -21,7 +21,7 @@ export function MatchCard({ user, score }: MatchCardProps) {
 
     const allImages = [
         user.profileImage,
-        ...(user.photos?.map(p => p.url) || [])
+        ...(user.photos?.map((p: { url: string }) => p.url) || [])
     ].filter(Boolean);
 
     const hasImages = allImages.length > 0;
