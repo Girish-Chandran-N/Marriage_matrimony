@@ -387,6 +387,11 @@ export default function PersonalDetailsForm({ onNext, initialData }: PersonalDet
                         </select>
                     )}
                 </div>
+                {/* City */}
+                <div>
+                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">City</label>
+                    <Input type="text" name="city" placeholder="Enter your city" defaultValue={initialData?.residingCity || ""} />
+                </div>
             </div>
 
             <hr className="my-6 border-gray-200" />

@@ -79,6 +79,20 @@ export async function updatePersonalDetails(prevState: any, formData: FormData) 
     // Handle checkbox
     rawData.whatsapp = formData.get("whatsapp") === "on";
 
+    // Map form field names to schema field names for backward compatibility
+    if (rawData.country && !rawData.residingCountry) {
+        rawData.residingCountry = rawData.country;
+    }
+    if (rawData.state && !rawData.residingState) {
+        rawData.residingState = rawData.state;
+    }
+    if (rawData.district && !rawData.residingDistrict) {
+        rawData.residingDistrict = rawData.district;
+    }
+    if (rawData.city && !rawData.residingCity) {
+        rawData.residingCity = rawData.city;
+    }
+
     const validation = PersonalDetailsSchema.safeParse(rawData);
 
     if (!validation.success) {
