@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 
 interface ProfileData {
     id: string;
-    name: string;
+    name: string | null;
     profileImage: string | null;
     personalDetails: {
         dateOfBirth: Date | null;
@@ -128,7 +128,7 @@ export function HighlightedProfiles({ profiles }: HighlightedProfilesProps) {
                                                 {profile.profileImage ? (
                                                     <img
                                                         src={profile.profileImage}
-                                                        alt={profile.name}
+                                                        alt={profile.name ?? "Profile"}
                                                         className="w-full h-full object-cover"
                                                     />
                                                 ) : (
@@ -148,7 +148,7 @@ export function HighlightedProfiles({ profiles }: HighlightedProfilesProps) {
                                                 {/* Name & Age */}
                                                 <div>
                                                     <h3 className="text-xl font-bold text-slate-900 group-hover:text-purple-600 transition-colors">
-                                                        {profile.name}
+                                                        {profile.name ?? "Anonymous"}
                                                         {age && <span className="text-slate-500 font-normal ml-2">({age} yrs)</span>}
                                                     </h3>
                                                 </div>
