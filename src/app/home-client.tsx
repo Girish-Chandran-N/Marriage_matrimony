@@ -96,16 +96,16 @@ export function HomeClient() {
                             </div>
 
                             <h1 className="text-7xl font-black tracking-tight leading-[1.05] mb-6 drop-shadow-lg">
-                                Find Your <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-pink-400 to-orange-400 animate-gradient-x">Equal Partner.</span>
+                                Designed for <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-pink-400 to-orange-400 animate-gradient-x">Ambition.</span>
                             </h1>
                             <p className="text-2xl text-white/90 font-medium max-w-lg leading-relaxed mb-10 drop-shadow-md">
-                                Meet compatible partner who share your values, lifestyle and ambition.
+                                Your Career defines You. Our platform matches you based on professional compatibility, lifestyle standards and future goals.
                             </p>
 
                             <div className="flex flex-wrap gap-5">
                                 <Button asChild className="!bg-white !text-slate-900 hover:!bg-slate-100 rounded-full font-bold px-10 h-14 text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-                                    <Link href="/matches">Explore Matches <ChevronRight className="ml-1 w-5 h-5" /></Link>
+                                    <Link href="/login">Create Your Profile <ChevronRight className="ml-1 w-5 h-5" /></Link>
                                 </Button>
                                 <Button asChild variant="ghost" className="border !border-white/40 !text-white hover:!bg-white/20 hover:!text-white rounded-full font-bold px-10 h-14 text-lg !bg-transparent backdrop-blur-sm transition-all hover:-translate-y-1">
                                     <Link href="/stories">Success Stories</Link>
