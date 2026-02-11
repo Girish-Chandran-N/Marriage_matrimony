@@ -17,7 +17,6 @@ export const getHighlightedProfiles = cache(async (limit: number = 10) => {
             },
             select: {
                 id: true,
-                profileId: true,
                 name: true,
                 profileImage: true,
                 personalDetails: {

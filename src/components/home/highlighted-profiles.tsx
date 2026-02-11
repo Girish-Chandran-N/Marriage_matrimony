@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge";
 
 interface ProfileData {
     id: string;
-    profileId: string;
     name: string;
     profileImage: string | null;
     personalDetails: {
@@ -141,7 +140,7 @@ export function HighlightedProfiles({ profiles }: HighlightedProfilesProps) {
 
                                                 {/* Profile ID Badge */}
                                                 <Badge className="absolute top-4 right-4 bg-white/90 text-slate-800 hover:bg-white border-0 font-mono text-xs">
-                                                    ID: {profile.profileId}
+                                                    ID: {profile.id.slice(0, 8)}
                                                 </Badge>
                                             </div>
 
