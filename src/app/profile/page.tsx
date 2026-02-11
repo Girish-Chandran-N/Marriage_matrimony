@@ -122,27 +122,6 @@ export default async function MyProfilePage() {
                     <div className="pb-12 space-y-8">
                         {/* Tab Contents with Animation */}
                         <TabsContent value="about" className="space-y-6 focus:outline-none animate-in slide-in-from-bottom-6 duration-500 ease-out fill-mode-both">
-                            {/* About the Candidate Section */}
-                            {profile.personalDetails.about && (
-                                <Card className="border-none shadow-lg shadow-indigo-100/50 overflow-hidden ring-1 ring-slate-100">
-                                    <CardHeader className="bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 border-b border-indigo-50/50 px-8 py-6">
-                                        <CardTitle className="flex items-center gap-3 text-xl font-bold text-slate-800">
-                                            <div className="p-2 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl text-indigo-600">
-                                                <Heart className="h-6 w-6" />
-                                            </div>
-                                            About {profile.name?.split(" ")[0] || "Me"}
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="p-8">
-                                        <div className="prose prose-slate max-w-none">
-                                            <p className="text-gray-700 leading-relaxed text-base whitespace-pre-wrap">
-                                                {profile.personalDetails.about}
-                                            </p>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            )}
-
                             <Card className="border-none shadow-lg shadow-blue-100/50 overflow-hidden ring-1 ring-slate-100">
                                 <CardHeader className="bg-gradient-to-r from-blue-50 to-white border-b border-blue-50/50 px-8 py-6">
                                     <CardTitle className="flex items-center gap-3 text-xl font-bold text-slate-800">
@@ -168,6 +147,27 @@ export default async function MyProfilePage() {
                                     <DetailTile label="Caste" value={profile.personalDetails.caste} emoji="🕉️" />
                                 </CardContent>
                             </Card>
+
+                            {/* About the Candidate Section - Moved to Bottom */}
+                            {profile.personalDetails.about && (
+                                <Card className="border-none shadow-lg shadow-indigo-100/50 overflow-hidden ring-1 ring-slate-100">
+                                    <CardHeader className="bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 border-b border-indigo-50/50 px-8 py-6">
+                                        <CardTitle className="flex items-center gap-3 text-xl font-bold text-slate-800">
+                                            <div className="p-2 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl text-indigo-600">
+                                                <Heart className="h-6 w-6" />
+                                            </div>
+                                            About {profile.name?.split(" ")[0] || "Me"}
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="p-8">
+                                        <div className="prose prose-slate max-w-none">
+                                            <p className="text-gray-700 leading-relaxed text-base whitespace-pre-wrap">
+                                                {profile.personalDetails.about}
+                                            </p>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )}
                         </TabsContent>
 
                         <TabsContent value="career" className="space-y-6 focus:outline-none animate-in slide-in-from-bottom-6 duration-500 ease-out fill-mode-both">
