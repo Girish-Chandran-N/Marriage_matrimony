@@ -126,7 +126,7 @@ export function HomeClient() {
                         {/* Trusted By Ticker - Hidden on Mobile mostly, or White text? */}
                         {/* Let's keep it but ensure visibility. On mobile bg is dark image. Text is slate-400. Might be invisible. */}
                         {/* Switch text color on mobile? Or add transparent bg? */}
-                        <div className="mt-8 relative">
+                        <div className="mt-8 relative z-0">
                             <p className="text-xs font-bold text-white/80 lg:text-slate-400 uppercase tracking-widest text-center mb-4 shadow-black/50 lg:shadow-none drop-shadow-md lg:drop-shadow-none">Trusted By Professionals From</p>
                             <div className="flex relative w-full overflow-hidden mask-linear-fade">
                                 <motion.div
