@@ -26,6 +26,8 @@ export default async function MatchesPage({
         religion: params.religion,
         caste: params.caste, // Added
         motherTongue: params.motherTongue,
+        gender: params.gender, // Added for bride/groom search
+        professions: params.professions ? params.professions.split(',').map(p => p.trim()) : undefined, // Parse comma-separated professions
     };
 
     const result = await getMatches(filters);

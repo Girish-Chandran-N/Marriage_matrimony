@@ -125,6 +125,8 @@ export interface MatchFilters {
     religion?: string;
     caste?: string; // Added
     motherTongue?: string;
+    gender?: string; // Added for bride/groom search
+    professions?: string[]; // Added for profession filtering
 }
 
 export async function getMatches(filters?: MatchFilters) {
@@ -159,6 +161,14 @@ export async function getMatches(filters?: MatchFilters) {
         excludedIds.add(record.blockedId);
     });
 
+    // Get current user's subscription to check limits
+    const currentUser = await db.user.findUnique({
+        where: { id: session.user.id },
+        include: { subscription: true }
+    });
+
+    const isPro = currentUser?.subscription?.status === 'active';
+
     // Start with all candidates (excluding self and blocked users)
     const candidates = await db.user.findMany({
         where: {
@@ -183,6 +193,18 @@ export async function getMatches(filters?: MatchFilters) {
 
             // Only return false if CRITICAL personal details are missing for Age/Height filtering
             // But we'll allow partial data generally
+
+            // Gender Filter (for bride/groom search)
+            if (filters.gender && pd.gender !== filters.gender) return false;
+
+            // Profession Filter (search by job title)
+            if (filters.professions && filters.professions.length > 0) {
+                const jobTitle = cp.jobTitle?.toLowerCase() || '';
+                const matchesProfession = filters.professions.some(profession =>
+                    jobTitle.includes(profession.toLowerCase())
+                );
+                if (!matchesProfession) return false;
+            }
 
             if (filters.industry) {
                 const term = filters.industry.toLowerCase();
@@ -226,5 +248,10 @@ export async function getMatches(filters?: MatchFilters) {
     // Sort by score
     scoredMatches.sort((a: any, b: any) => b.score - a.score);
 
-    return scoredMatches;
+    // Apply subscription-based limiting
+    // Free users: max 10 results, Pro users: unlimited
+    const resultLimit = isPro ? scoredMatches.length : 10;
+    const limitedResults = scoredMatches.slice(0, resultLimit);
+
+    return limitedResults;
 }
