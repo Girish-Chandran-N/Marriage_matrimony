@@ -258,14 +258,47 @@ export function HomeClient({ profiles }: HomeClientProps) {
                 </div>
             </section>
 
-            {/* Success Stories Masonry */}
-            <section className="py-32 bg-white relative">
+
+
+            {/* Highlighted Profiles Section */}
+            <HighlightedProfiles profiles={profiles} />
+
+            {/* CTA Section with Proven Success */}
+            <section className="py-32 relative overflow-hidden bg-white">
                 <div className="max-w-7xl mx-auto px-4">
+
+
+                    {/* Final CTA Block */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        className="bg-slate-900 rounded-[50px] p-12 md:p-24 text-center relative overflow-hidden"
+                    >
+                        <Image src="https://images.unsplash.com/photo-1563823023249-14a05f15949e?w=1600&q=80" alt="Background" fill className="object-cover opacity-20" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-900/60"></div>
+
+                        <div className="relative z-10 max-w-4xl mx-auto space-y-10">
+                            <h2 className="text-5xl md:text-7xl font-black text-white tracking-tight leading-tight">
+                                Your <span className="text-rose-500">Equal</span> is waiting.
+                            </h2>
+                            <p className="text-slate-300 text-xl max-w-2xl mx-auto leading-relaxed font-light">
+                                Don't leave your life partner to chance. Join the community of India's most eligible and ambitious singles today.
+                            </p>
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                                <Button asChild size="lg" className="bg-rose-600 hover:bg-rose-700 text-white text-lg px-12 py-8 h-auto rounded-full font-bold shadow-2xl shadow-rose-600/30 transition-all hover:scale-105">
+                                    <Link href="/register">Start Your Journey</Link>
+                                </Button>
+                            </div>
+                        </div>
+                    </motion.div>
+
+                    {/* Proven Success Header */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8"
+                        className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8 mt-32"
                     >
                         <div className="max-w-2xl">
                             <span className="text-rose-500 font-bold tracking-widest uppercase text-sm mb-4 block">Proven Success</span>
@@ -276,6 +309,7 @@ export function HomeClient({ profiles }: HomeClientProps) {
                         </Button>
                     </motion.div>
 
+                    {/* Success Stories Grid */}
                     <motion.div
                         variants={staggerContainer}
                         initial="hidden"
@@ -326,36 +360,6 @@ export function HomeClient({ profiles }: HomeClientProps) {
                         ))}
                     </motion.div>
                 </div>
-            </section>
-
-            {/* Highlighted Profiles Section */}
-            <HighlightedProfiles profiles={profiles} />
-
-            {/* CTA Section */}
-            <section className="py-32 relative overflow-hidden">
-                <div className="absolute inset-0 bg-slate-900">
-                    <Image src="https://images.unsplash.com/photo-1563823023249-14a05f15949e?w=1600&q=80" alt="Background" fill className="object-cover opacity-20" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-slate-900/60"></div>
-                </div>
-
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    className="max-w-4xl mx-auto px-4 space-y-10 text-center relative z-10"
-                >
-                    <h2 className="text-5xl md:text-7xl font-black text-white tracking-tight leading-tight">
-                        Your <span className="text-rose-500">Equal</span> is waiting.
-                    </h2>
-                    <p className="text-slate-300 text-xl max-w-2xl mx-auto leading-relaxed font-light">
-                        Don't leave your life partner to chance. Join the community of India's most eligible and ambitious singles today.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Button asChild size="lg" className="bg-rose-600 hover:bg-rose-700 text-white text-lg px-12 py-8 h-auto rounded-full font-bold shadow-2xl shadow-rose-600/30 transition-all hover:scale-105">
-                            <Link href="/register">Start Your Journey</Link>
-                        </Button>
-                    </div>
-                </motion.div>
             </section>
         </main>
     );
