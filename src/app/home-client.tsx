@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CheckCircle2, Shield, Heart, Briefcase, ArrowRight, Star, Sparkles, Users, Lock, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchForm } from "@/components/home/search-form";
+import { HighlightedProfiles } from "@/components/home/highlighted-profiles";
 import { motion, useScroll, useTransform, Variants } from "framer-motion";
 
 const fadeInUp: Variants = {
@@ -27,7 +28,11 @@ const scaleIn: Variants = {
     visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } }
 };
 
-export function HomeClient() {
+interface HomeClientProps {
+    highlightedProfiles: any[];
+}
+
+export function HomeClient({ highlightedProfiles }: HomeClientProps) {
     const { scrollYProgress } = useScroll();
     const yStats = useTransform(scrollYProgress, [0, 0.3], [100, 0]);
 
@@ -151,6 +156,9 @@ export function HomeClient() {
 
                 </div>
             </section>
+
+            {/* Highlighted Profiles */}
+            <HighlightedProfiles profiles={highlightedProfiles} />
 
             {/* Stats Bar */}
             <motion.section
