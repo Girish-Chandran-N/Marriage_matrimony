@@ -28,6 +28,33 @@ export default async function MatchesPage({
         motherTongue: params.motherTongue,
         gender: params.gender, // Added for bride/groom search
         professions: params.professions ? params.professions.split(',').map(p => p.trim()) : undefined, // Parse comma-separated professions
+
+        // Location
+        workingCountry: params.workingCountry,
+        workingState: params.workingState,
+        workingDistrict: params.workingDistrict,
+        nativeCountry: params.nativeCountry,
+        nativeState: params.nativeState,
+        nativeDistrict: params.nativeDistrict,
+        readyToRelocate: params.readyToRelocate === 'true',
+
+        // Advanced
+        physicalStatus: params.physicalStatus,
+        familyStatus: params.familyStatus,
+        complexion: params.complexion,
+        bodyType: params.bodyType,
+        employmentCategory: params.employmentCategory,
+        incomeRange: params.incomeRange ? params.incomeRange.split(',') : undefined,
+
+        // Lifestyle
+        eatingHabits: params.eatingHabits,
+        drinkingHabits: params.drinkingHabits,
+        smokingHabits: params.smokingHabits,
+
+        // Criteria
+        isOnline: params.isOnline === 'true',
+        hasPhoto: params.hasPhoto === 'true',
+        isPremium: params.isPremium === 'true',
     };
 
     const result = await getMatches(filters);

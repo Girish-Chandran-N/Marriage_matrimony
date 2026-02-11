@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation"; // Import useRouter
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
@@ -38,6 +39,7 @@ interface MatchCardProps {
 }
 
 export function MatchCard({ user, score, variant = "default" }: MatchCardProps) {
+    const router = useRouter(); // Import useRouter
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -80,7 +82,10 @@ export function MatchCard({ user, score, variant = "default" }: MatchCardProps) 
     const lastLogin = user.lastSeen ? new Date(user.lastSeen).toLocaleDateString() : "Just now"; // Default for demo
 
     return (
-        <div className="group relative bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden">
+        <div
+            onClick={() => router.push(`/users/${user.id}`)}
+            className="group relative bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden cursor-pointer"
+        >
 
             {/* Top Bar: Online Status & Photo Count */}
             <div className="absolute top-4 left-4 right-4 z-20 flex justify-between items-start pointer-events-none">
@@ -99,7 +104,7 @@ export function MatchCard({ user, score, variant = "default" }: MatchCardProps) 
                 </div>
 
                 {/* 3-Dot Menu (Pointer events needed) */}
-                <div className="pointer-events-auto absolute top-0 right-0">
+                <div onClick={(e) => e.stopPropagation()} className="pointer-events-auto absolute top-0 right-0">
                     <ProfileMenu user={user} />
                 </div>
             </div>
@@ -107,7 +112,10 @@ export function MatchCard({ user, score, variant = "default" }: MatchCardProps) 
             {/* Profile Image Area */}
             <div
                 className="relative aspect-[4/5] w-full overflow-hidden cursor-pointer"
-                onClick={() => hasImages && setIsGalleryOpen(true)}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    if (hasImages) setIsGalleryOpen(true);
+                }}
             >
                 {displayImage ? (
                     <img
@@ -170,7 +178,7 @@ export function MatchCard({ user, score, variant = "default" }: MatchCardProps) 
                 </div>
 
                 {/* Action Buttons */}
-                <div className="mt-auto">
+                <div className="mt-auto" onClick={(e) => e.stopPropagation()}>
                     {variant === "blocked" ? (
                         <UnblockButton user={user} />
                     ) : (
@@ -180,45 +188,54 @@ export function MatchCard({ user, score, variant = "default" }: MatchCardProps) 
             </div>
 
             {/* Gallery Dialog (Same as before) */}
-            <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
-                <DialogContent className="max-w-5xl w-full h-[85vh] p-0 bg-black/95 border-none overflow-hidden focus:outline-none">
-                    <DialogTitle className="sr-only">Profile Gallery</DialogTitle>
-                    {/* ... Gallery Controls ... */}
-                    <button
-                        onClick={() => setIsGalleryOpen(false)}
-                        className="absolute top-4 right-4 z-50 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+            <div onClick={(e) => e.stopPropagation()}>
+                <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
+                    <DialogContent
+                        className="max-w-5xl w-full h-[85vh] p-0 bg-black/95 border-none overflow-hidden focus:outline-none"
+                        onClick={(e) => e.stopPropagation()}
                     >
-                        <X className="w-6 h-6" />
-                    </button>
-                    <div className="flex-1 w-full h-full flex items-center justify-center relative">
-                        {allImages.length > 0 ? (
-                            <img
-                                src={allImages[currentImageIndex]}
-                                alt="Gallery"
-                                className="max-h-full max-w-full object-contain"
-                            />
-                        ) : (
-                            <div className="text-white/50">No photos available</div>
+                        <DialogTitle className="sr-only">Profile Gallery</DialogTitle>
+                        {/* ... Gallery Controls ... */}
+                        <button
+                            onClick={() => setIsGalleryOpen(false)}
+                            className="absolute top-4 right-4 z-50 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+                        >
+                            <X className="w-6 h-6" />
+                        </button>
+                        <div className="flex-1 w-full h-full flex items-center justify-center relative">
+                            {allImages.length > 0 ? (
+                                <img
+                                    src={allImages[currentImageIndex]}
+                                    alt="Gallery"
+                                    className="max-h-full max-w-full object-contain cursor-pointer"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleNextImage();
+                                    }}
+                                />
+                            ) : (
+                                <div className="text-white/50">No photos available</div>
+                            )}
+                        </div>
+                        {allImages.length > 1 && (
+                            <>
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 p-3 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-full transition-all z-[60]"
+                                >
+                                    <ChevronLeft className="w-8 h-8" />
+                                </button>
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 p-3 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-full transition-all z-[60]"
+                                >
+                                    <ChevronRight className="w-8 h-8" />
+                                </button>
+                            </>
                         )}
-                    </div>
-                    {allImages.length > 1 && (
-                        <>
-                            <button
-                                onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
-                                className="absolute left-4 top-1/2 -translate-y-1/2 p-3 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-full transition-all z-[60]"
-                            >
-                                <ChevronLeft className="w-8 h-8" />
-                            </button>
-                            <button
-                                onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 text-white/70 hover:text-white bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-full transition-all z-[60]"
-                            >
-                                <ChevronRight className="w-8 h-8" />
-                            </button>
-                        </>
-                    )}
-                </DialogContent>
-            </Dialog>
+                    </DialogContent>
+                </Dialog>
+            </div>
         </div>
     );
 }
@@ -304,8 +321,8 @@ function MatchActions({ user }: { user: any }) {
                 onClick={handleConnect}
                 disabled={loading || status.hasSentInterest}
                 className={`flex-1 rounded-full font-bold shadow-md transition-all ${status.hasSentInterest
-                        ? "bg-green-100 text-green-700 hover:bg-green-200"
-                        : "bg-rose-600 hover:bg-rose-700 text-white shadow-rose-200"
+                    ? "bg-green-100 text-green-700 hover:bg-green-200"
+                    : "bg-rose-600 hover:bg-rose-700 text-white shadow-rose-200"
                     }`}
             >
                 {status.hasSentInterest ? <Check className="w-4 h-4 mr-1" /> : <Heart className="w-4 h-4 mr-1 fill-current" />}
