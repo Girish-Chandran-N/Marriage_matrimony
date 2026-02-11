@@ -29,6 +29,11 @@ export const ActiveUsersProvider = ({
     const { data: session } = useSession();
 
     useEffect(() => {
+        // Only subscribe to presence channel if user is logged in
+        if (!session?.user?.id) {
+            return;
+        }
+
         let channel = pusherClient.channel("presence-global");
 
         if (!channel) {
