@@ -1,3 +1,4 @@
+import { ProfileData } from "@/components/home/highlighted-profiles";
 import { getHighlightedProfiles } from "@/lib/home-actions";
 import { HomeClient } from "./home-client";
 
@@ -6,7 +7,7 @@ export default async function Home() {
 
   return (
     <>
-      <HomeClient highlightedProfiles={highlightedProfiles} />
+      <HomeClient profiles={highlightedProfiles as unknown as ProfileData[]} />
     </>
   );
 }

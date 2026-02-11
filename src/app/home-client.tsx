@@ -5,7 +5,6 @@ import Link from "next/link";
 import { CheckCircle2, Shield, Heart, Briefcase, ArrowRight, Star, Sparkles, Users, Lock, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchForm } from "@/components/home/search-form";
-import { HighlightedProfiles } from "@/components/home/highlighted-profiles";
 import { motion, useScroll, useTransform, Variants } from "framer-motion";
 
 const fadeInUp: Variants = {
@@ -28,11 +27,13 @@ const scaleIn: Variants = {
     visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } }
 };
 
+import { HighlightedProfiles, ProfileData } from "@/components/home/highlighted-profiles";
+
 interface HomeClientProps {
-    highlightedProfiles: any[];
+    profiles: ProfileData[];
 }
 
-export function HomeClient({ highlightedProfiles }: HomeClientProps) {
+export function HomeClient({ profiles }: HomeClientProps) {
     const { scrollYProgress } = useScroll();
     const yStats = useTransform(scrollYProgress, [0, 0.3], [100, 0]);
 
@@ -156,9 +157,6 @@ export function HomeClient({ highlightedProfiles }: HomeClientProps) {
 
                 </div>
             </section>
-
-            {/* Highlighted Profiles */}
-            <HighlightedProfiles profiles={highlightedProfiles} />
 
             {/* Stats Bar */}
             <motion.section
@@ -329,6 +327,9 @@ export function HomeClient({ highlightedProfiles }: HomeClientProps) {
                     </motion.div>
                 </div>
             </section>
+
+            {/* Highlighted Profiles Section */}
+            <HighlightedProfiles profiles={profiles} />
 
             {/* CTA Section */}
             <section className="py-32 relative overflow-hidden">

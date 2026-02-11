@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-interface ProfileData {
+export interface ProfileData {
     id: string;
     name: string | null;
     profileImage: string | null;
