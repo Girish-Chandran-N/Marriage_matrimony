@@ -70,7 +70,7 @@ export default function Home() {
               src="/auth-hero.png"
               alt="Happy Couple"
               fill
-              className="object-cover lg:transition-transform lg:duration-[2s] lg:group-hover:scale-105 blur-[2px] brightness-[0.4] lg:filter-none"
+              className="object-cover blur-[2px] brightness-[0.4] lg:filter-none"
               priority
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent z-20 hidden lg:block"></div>
@@ -328,7 +328,7 @@ export default function Home() {
                 whileHover={{ y: -5 }}
                 className={`group relative rounded-[32px] overflow-hidden ${story.height} ${i === 1 ? 'md:-mt-12 shadow-2xl' : 'shadow-xl'}`}
               >
-                <Image src={story.image} alt={story.names} fill className="object-cover group-hover:scale-110 transition-transform duration-700" />
+                <Image src={story.image} alt={story.names} fill className="object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                 <div className="absolute bottom-0 left-0 right-0 p-8 text-white translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
                   <div className="flex gap-1 mb-3 text-yellow-400">
