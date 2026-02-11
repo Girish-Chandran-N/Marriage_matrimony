@@ -66,6 +66,7 @@ const scaleIn: Variants = {
 };
 
 import { HighlightedProfiles, ProfileData } from "@/components/home/highlighted-profiles";
+import { FaqSection } from "@/components/home/faq-section";
 
 interface HomeClientProps {
     profiles: ProfileData[];
@@ -548,6 +549,9 @@ export function HomeClient({ profiles }: HomeClientProps) {
                     </motion.div>
                 </div>
             </section>
+
+            {/* FAQ Section */}
+            <FaqSection />
         </main>
     );
 }
