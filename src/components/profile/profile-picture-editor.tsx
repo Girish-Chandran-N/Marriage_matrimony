@@ -154,17 +154,13 @@ export function ProfilePictureEditor({ currentImage, galleryImages = [], name, i
         <>
             <DropdownMenu>
                 <DropdownMenuTrigger className="focus:outline-none">
-                    <div className="relative group cursor-pointer">
+                    <div className="relative cursor-pointer">
                         <Avatar className="w-32 h-32 md:w-32 md:h-32 border-4 border-white shadow-lg rounded-full">
                             <AvatarImage src={currentImage || "/placeholder-user.jpg"} alt={name || "User"} className="object-cover" />
                             <AvatarFallback className="text-4xl font-bold text-purple-600 bg-purple-50">
                                 {initials}
                             </AvatarFallback>
                         </Avatar>
-                        {/* Hover Overlay */}
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Camera className="w-8 h-8 text-white drop-shadow-md" />
-                        </div>
                     </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="center">
