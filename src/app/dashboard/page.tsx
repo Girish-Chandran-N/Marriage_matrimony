@@ -31,6 +31,13 @@ export default async function DashboardPage() {
     // Fetch real stats
     const stats = await getDashboardStats();
 
+    // Fetch the latest profile image from database (same as navbar)
+    const { db } = await import("@/lib/db");
+    const dbUser = user?.id ? await db.user.findUnique({
+        where: { id: user.id },
+        select: { profileImage: true }
+    }) : null;
+
     const DASHBOARD_ITEMS = [
         {
             title: "Interest Sent",
@@ -210,8 +217,8 @@ export default async function DashboardPage() {
                                 <div className="relative -mt-12 mb-6">
                                     <div className="h-24 w-24 bg-white rounded-full p-1.5 shadow-lg group-hover:scale-105 transition-transform duration-300">
                                         <div className="h-full w-full rounded-full bg-slate-100 flex items-center justify-center text-3xl font-bold text-indigo-300 overflow-hidden border-4 border-indigo-50">
-                                            {user?.image ? (
-                                                <img src={user.image} alt={user.name || "User"} className="h-full w-full object-cover" />
+                                            {dbUser?.profileImage || user?.image ? (
+                                                <img src={dbUser?.profileImage || user?.image || ''} alt={user?.name || "User"} className="h-full w-full object-cover" />
                                             ) : (
                                                 user?.name?.[0]?.toUpperCase() || "U"
                                             )}
