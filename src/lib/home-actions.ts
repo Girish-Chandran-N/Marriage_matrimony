@@ -1,8 +1,9 @@
 "use server";
 
+import { cache } from "react";
 import { db } from "@/lib/db";
 
-export async function getHighlightedProfiles(limit: number = 10) {
+export const getHighlightedProfiles = cache(async (limit: number = 10) => {
     try {
         // Fetch profiles with complete information
         const profiles = await db.user.findMany({
@@ -57,4 +58,4 @@ export async function getHighlightedProfiles(limit: number = 10) {
         console.error("Error fetching highlighted profiles:", error);
         return [];
     }
-}
+});
