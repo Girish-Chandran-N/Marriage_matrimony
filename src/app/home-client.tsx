@@ -121,7 +121,9 @@ export function HomeClient() {
                         transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
                         className="relative z-10 w-full lg:col-span-4 max-w-md lg:max-w-xl mx-auto px-4 lg:px-0 lg:pl-8 flex flex-col justify-center min-h-[calc(100vh-80px)] lg:min-h-0 py-8 lg:py-0"
                     >
-                        <SearchForm />
+                        <div className="relative z-20">
+                            <SearchForm />
+                        </div>
 
                         {/* Trusted By Ticker - Hidden on Mobile mostly, or White text? */}
                         {/* Let's keep it but ensure visibility. On mobile bg is dark image. Text is slate-400. Might be invisible. */}
