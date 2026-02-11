@@ -298,6 +298,95 @@ export function HomeClient({ profiles }: HomeClientProps) {
 
 
 
+
+            {/* Journey / How It Works Section */}
+            <section className="py-24 bg-white relative overflow-hidden">
+                <div className="max-w-7xl mx-auto px-4 relative z-10">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="text-center mb-16"
+                    >
+                        <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">
+                            Your Journey to <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-purple-600">Meaningful Connections</span> Starts Here
+                        </h2>
+                        <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                            Three simple steps to find your perfect match.
+                        </p>
+                    </motion.div>
+
+                    <div className="grid md:grid-cols-3 gap-8 relative">
+                        {/* Connecting Line (Desktop) */}
+                        <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-rose-200 via-purple-200 to-blue-200 -z-10"></div>
+
+                        {[
+                            {
+                                step: "01",
+                                title: "Register & Create Profile",
+                                desc: "Sign up and showcase your professional achievements, values and lifestyle.",
+                                icon: UserCheck,
+                                color: "text-rose-600",
+                                bg: "bg-rose-50",
+                                border: "border-rose-100"
+                            },
+                            {
+                                step: "02",
+                                title: "Explore & Discover",
+                                desc: "Browse curated profiles based on compatibility, lifestyle and future goals.",
+                                icon: Search,
+                                color: "text-purple-600",
+                                bg: "bg-purple-50",
+                                border: "border-purple-100"
+                            },
+                            {
+                                step: "03",
+                                title: "Connect, Share & Grow",
+                                desc: "Initiate conversations, build connections and find someone who matches your vision of life.",
+                                icon: Heart,
+                                color: "text-blue-600",
+                                bg: "bg-blue-50",
+                                border: "border-blue-100"
+                            }
+                        ].map((item, i) => (
+                            <motion.div
+                                key={i}
+                                variants={fadeInUp}
+                                initial="hidden"
+                                whileInView="visible"
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.2 }}
+                                className="relative flex flex-col items-center text-center group"
+                            >
+                                <div className={`w-24 h-24 rounded-full ${item.bg} ${item.color} flex items-center justify-center mb-6 shadow-sm border-4 border-white relative z-10 group-hover:scale-110 transition-transform duration-300`}>
+                                    <item.icon className="w-10 h-10" />
+                                    <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm border-2 border-white`}>
+                                        {item.step}
+                                    </div>
+                                </div>
+                                <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
+                                <p className="text-slate-600 leading-relaxed px-4">
+                                    {item.desc}
+                                </p>
+                            </motion.div>
+                        ))}
+                    </div>
+
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.6 }}
+                        className="text-center mt-16"
+                    >
+                        <p className="text-slate-500 mb-6 italic">Because the right connection starts with a simple step</p>
+                        <Button asChild size="lg" className="bg-rose-600 hover:bg-rose-700 text-white px-10 py-6 h-auto rounded-full text-lg font-bold shadow-xl shadow-rose-200 hover:shadow-2xl hover:scale-105 transition-all">
+                            <Link href="/register">Register Free</Link>
+                        </Button>
+                    </motion.div>
+                </div>
+            </section>
+
             {/* Highlighted Profiles Section */}
             <HighlightedProfiles profiles={profiles} />
 
