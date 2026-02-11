@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle2, Shield, Heart, Briefcase, ArrowRight, Star, Sparkles, Users, Lock, ChevronRight } from "lucide-react";
