@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -137,10 +137,28 @@ export function SearchForm() {
     const [selectedProfessions, setSelectedProfessions] = useState<string[]>([]);
     const [showProfessions, setShowProfessions] = useState(false);
     const [professionSearch, setProfessionSearch] = useState("");
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     const filteredProfessions = PROFESSIONS.filter(profession =>
         profession.toLowerCase().includes(professionSearch.toLowerCase())
     );
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setShowProfessions(false);
+            }
+        };
+
+        if (showProfessions) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [showProfessions]);
 
     const handleProfessionToggle = (profession: string) => {
         setSelectedProfessions(prev =>
@@ -228,7 +246,7 @@ export function SearchForm() {
                 {/* Profession */}
                 <div className="space-y-3">
                     <Label className="text-sm font-bold text-slate-700">Search by Profession</Label>
-                    <div className="relative">
+                    <div className="relative" ref={dropdownRef}>
                         <button
                             type="button"
                             onClick={() => setShowProfessions(!showProfessions)}
