@@ -6,6 +6,9 @@ import { CheckCircle2, Shield, Heart, Briefcase, ArrowRight, Star, Sparkles, Use
 import { Button } from "@/components/ui/button";
 import { RegistrationForm } from "@/components/auth/registration-form";
 import { motion, useScroll, useTransform, Variants } from "framer-motion";
+import { HighlightedProfiles } from "@/components/home/highlighted-profiles";
+import { getHighlightedProfiles } from "@/lib/home-actions";
+import { ClientWrapper } from "./client-wrapper";
 
 const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 40 },
@@ -27,9 +30,8 @@ const scaleIn: Variants = {
   visible: { opacity: 1, scale: 1, transition: { duration: 0.5 } }
 };
 
-export default function Home() {
-  const { scrollYProgress } = useScroll();
-  const yStats = useTransform(scrollYProgress, [0, 0.3], [100, 0]);
+export default async function Home() {
+  const highlightedProfiles = await getHighlightedProfiles(15);
 
   return (
     <main className="flex min-h-screen flex-col bg-slate-50 overflow-hidden">
@@ -175,42 +177,49 @@ export default function Home() {
       </section>
 
       {/* Stats Bar */}
-      <motion.section
-        style={{ y: yStats }}
-        className="bg-white border-y border-slate-100 py-16 relative z-10"
-      >
-        <div className="max-w-7xl mx-auto px-4">
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-slate-100"
+      <ClientWrapper>
+        {({ yStats }) => (
+          <motion.section
+            style={{ y: yStats }}
+            className="bg-white border-y border-slate-100 py-16 relative z-10"
           >
-            {[
-              { label: "Active Profiles", value: "10k+", icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
-              { label: "Success Stories", value: "500+", icon: Heart, color: "text-rose-600", bg: "bg-rose-50" },
-              { label: "Verified Careers", value: "100%", icon: Shield, color: "text-green-600", bg: "bg-green-50" },
-              { label: "Cities Covered", value: "50+", icon: Sparkles, color: "text-purple-600", bg: "bg-purple-50" },
-            ].map((stat, i) => (
+            <div className="max-w-7xl mx-auto px-4">
               <motion.div
-                key={i}
-                variants={fadeInUp}
-                className="flex flex-col items-center text-center group cursor-default p-4"
+                variants={staggerContainer}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-slate-100"
               >
-                <motion.div
-                  whileHover={{ scale: 1.1, rotate: 5 }}
-                  className={`w-12 h-12 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center mb-4 transition-colors`}
-                >
-                  <stat.icon className="w-6 h-6" />
-                </motion.div>
-                <p className="text-4xl lg:text-5xl font-black text-slate-900 mb-2">{stat.value}</p>
-                <span className="text-slate-500 font-bold text-sm lg:text-base uppercase tracking-wider">{stat.label}</span>
+                {[
+                  { label: "Active Profiles", value: "10k+", icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
+                  { label: "Success Stories", value: "500+", icon: Heart, color: "text-rose-600", bg: "bg-rose-50" },
+                  { label: "Verified Careers", value: "100%", icon: Shield, color: "text-green-600", bg: "bg-green-50" },
+                  { label: "Cities Covered", value: "50+", icon: Sparkles, color: "text-purple-600", bg: "bg-purple-50" },
+                ].map((stat, i) => (
+                  <motion.div
+                    key={i}
+                    variants={fadeInUp}
+                    className="flex flex-col items-center text-center group cursor-default p-4"
+                  >
+                    <motion.div
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      className={`w-12 h-12 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center mb-4 transition-colors`}
+                    >
+                      <stat.icon className="w-6 h-6" />
+                    </motion.div>
+                    <p className="text-4xl lg:text-5xl font-black text-slate-900 mb-2">{stat.value}</p>
+                    <span className="text-slate-500 font-bold text-sm lg:text-base uppercase tracking-wider">{stat.label}</span>
+                  </motion.div>
+                ))}
               </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </motion.section>
+            </div>
+          </motion.section>
+        )}
+      </ClientWrapper>
+
+      {/* Highlighted Profiles Carousel */}
+      <HighlightedProfiles profiles={highlightedProfiles} />
 
       {/* Features Section */}
       <section className="py-32 bg-slate-50 relative overflow-hidden">
