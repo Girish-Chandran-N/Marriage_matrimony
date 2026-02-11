@@ -10,17 +10,124 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Heart } from "lucide-react";
 
 const PROFESSIONS = [
+    // Technology & IT
     "Software Engineer",
+    "Data Scientist",
+    "Web Developer",
+    "Mobile App Developer",
+    "DevOps Engineer",
+    "Cloud Architect",
+    "Cybersecurity Specialist",
+    "IT Consultant",
+    "System Administrator",
+    "Network Engineer",
+    "UI/UX Designer",
+    "Product Manager",
+    "Project Manager",
+
+    // Medical & Healthcare
     "Doctor",
-    "Teacher",
-    "Business Owner",
-    "Lawyer",
-    "Accountant",
+    "Surgeon",
+    "Dentist",
+    "Pharmacist",
     "Nurse",
+    "Physiotherapist",
+    "Medical Representative",
+    "Healthcare Administrator",
+    "Veterinarian",
+    "Lab Technician",
+
+    // Engineering
+    "Civil Engineer",
+    "Mechanical Engineer",
+    "Electrical Engineer",
+    "Electronics Engineer",
+    "Chemical Engineer",
+    "Aerospace Engineer",
+    "Automobile Engineer",
+    "Petroleum Engineer",
+
+    // Finance & Banking
+    "Chartered Accountant",
+    "Accountant",
+    "Financial Analyst",
+    "Investment Banker",
+    "Bank Manager",
+    "Insurance Agent",
+    "Tax Consultant",
+    "Auditor",
+
+    // Legal
+    "Lawyer",
+    "Corporate Lawyer",
+    "Legal Advisor",
+    "Judge",
+    "Legal Consultant",
+
+    // Education
+    "Teacher",
+    "Professor",
+    "Lecturer",
+    "School Principal",
+    "Education Consultant",
+    "Training Manager",
+
+    // Business & Management
+    "Business Owner",
+    "Entrepreneur",
+    "CEO/Managing Director",
+    "General Manager",
+    "Operations Manager",
+    "Business Analyst",
+    "Consultant",
+    "HR Manager",
+    "Sales Manager",
+
+    // Marketing & Media
     "Marketing Professional",
+    "Digital Marketer",
+    "Brand Manager",
+    "Content Writer",
+    "Journalist",
+    "Public Relations",
+    "Social Media Manager",
+    "Advertising Professional",
+
+    // Government & Public Sector
     "Government Employee",
+    "IAS Officer",
+    "IPS Officer",
+    "IFS Officer",
+    "Public Sector Employee",
+    "Defense Personnel",
+    "Police Officer",
+
+    // Creative & Design
+    "Architect",
+    "Interior Designer",
+    "Graphic Designer",
+    "Fashion Designer",
+    "Photographer",
+    "Video Editor",
+    "Animator",
+
+    // Hospitality & Services
+    "Hotel Manager",
+    "Chef",
+    "Event Manager",
+    "Travel Consultant",
+    "Pilot",
+    "Flight Attendant",
+
+    // Others
+    "Scientist",
+    "Research Scholar",
+    "Real Estate Agent",
+    "Retail Manager",
+    "Sports Professional",
+    "Fitness Trainer",
     "Other"
-];
+].sort();
 
 export function SearchForm() {
     const router = useRouter();
@@ -29,6 +136,11 @@ export function SearchForm() {
     const [ageMax, setAgeMax] = useState("");
     const [selectedProfessions, setSelectedProfessions] = useState<string[]>([]);
     const [showProfessions, setShowProfessions] = useState(false);
+    const [professionSearch, setProfessionSearch] = useState("");
+
+    const filteredProfessions = PROFESSIONS.filter(profession =>
+        profession.toLowerCase().includes(professionSearch.toLowerCase())
+    );
 
     const handleProfessionToggle = (profession: string) => {
         setSelectedProfessions(prev =>
@@ -133,20 +245,37 @@ export function SearchForm() {
                         </button>
 
                         {showProfessions && (
-                            <div className="absolute z-10 w-full mt-2 bg-white border-2 border-slate-200 rounded-xl shadow-xl max-h-64 overflow-y-auto">
-                                <div className="p-3 space-y-2">
-                                    {PROFESSIONS.map((profession) => (
-                                        <label
-                                            key={profession}
-                                            className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
-                                        >
-                                            <Checkbox
-                                                checked={selectedProfessions.includes(profession)}
-                                                onCheckedChange={() => handleProfessionToggle(profession)}
-                                            />
-                                            <span className="text-sm font-medium text-slate-700">{profession}</span>
-                                        </label>
-                                    ))}
+                            <div className="absolute z-10 w-full mt-2 bg-white border-2 border-slate-200 rounded-xl shadow-xl max-h-80 overflow-hidden flex flex-col">
+                                {/* Search Input */}
+                                <div className="p-3 border-b border-slate-200 sticky top-0 bg-white">
+                                    <Input
+                                        type="text"
+                                        placeholder="Search professions..."
+                                        value={professionSearch}
+                                        onChange={(e) => setProfessionSearch(e.target.value)}
+                                        className="h-10 border-slate-200 focus:border-rose-500 focus:ring-rose-500"
+                                        onClick={(e) => e.stopPropagation()}
+                                    />
+                                </div>
+
+                                {/* Profession List */}
+                                <div className="overflow-y-auto p-3 space-y-2">
+                                    {filteredProfessions.length > 0 ? (
+                                        filteredProfessions.map((profession) => (
+                                            <label
+                                                key={profession}
+                                                className="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
+                                            >
+                                                <Checkbox
+                                                    checked={selectedProfessions.includes(profession)}
+                                                    onCheckedChange={() => handleProfessionToggle(profession)}
+                                                />
+                                                <span className="text-sm font-medium text-slate-700">{profession}</span>
+                                            </label>
+                                        ))
+                                    ) : (
+                                        <p className="text-sm text-slate-400 text-center py-4">No professions found</p>
+                                    )}
                                 </div>
                             </div>
                         )}
