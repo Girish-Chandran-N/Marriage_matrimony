@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle2, Shield, Heart, Briefcase, ArrowRight, Star, Sparkles, Users, Lock, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { RegistrationForm } from "@/components/auth/registration-form";
+import { SearchForm } from "@/components/home/search-form";
 import { motion, useScroll, useTransform, Variants } from "framer-motion";
 
 const fadeInUp: Variants = {
@@ -100,7 +100,7 @@ export function HomeClient() {
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-pink-400 to-orange-400 animate-gradient-x">Equal Partner.</span>
                             </h1>
                             <p className="text-2xl text-white/90 font-medium max-w-lg leading-relaxed mb-10 drop-shadow-md">
-                                Connect with compatible professionals who share your values, lifestyle, and ambition.
+                                Meet compatible partner who share your values, lifestyle and ambition.
                             </p>
 
                             <div className="flex flex-wrap gap-5">
@@ -114,38 +114,14 @@ export function HomeClient() {
                         </motion.div>
                     </motion.div>
 
-                    {/* Right Column: Registration Form */}
+                    {/* Right Column: Search Form */}
                     <motion.div
                         initial={{ opacity: 0, y: 50 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
                         className="relative z-10 w-full lg:col-span-4 max-w-md lg:max-w-xl mx-auto px-4 lg:px-0 lg:pl-8 flex flex-col justify-center min-h-[calc(100vh-80px)] lg:min-h-0 py-8 lg:py-0"
                     >
-                        <div className="bg-white/95 backdrop-blur-md lg:bg-white p-6 lg:p-10 rounded-[30px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-rose-100 to-purple-100 rounded-full blur-3xl -z-10 opacity-60"></div>
-
-                            <div className="mb-6 lg:mb-8 space-y-2">
-                                <div className="inline-flex items-center gap-2 mb-2">
-                                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-lg shadow-rose-500/20">
-                                        <Heart className="h-5 w-5 text-white fill-white" />
-                                    </div>
-                                    <span className="text-xl font-bold text-slate-900 tracking-tight">Career Matrimony</span>
-                                </div>
-                                <h2 className="text-2xl lg:text-3xl font-black text-slate-900 tracking-tight">Create Account</h2>
-                                <p className="text-slate-500 font-medium text-base lg:text-lg">Your perfect match is waiting.</p>
-                            </div>
-
-                            <RegistrationForm />
-
-                            <div className="mt-8 text-center">
-                                <p className="text-sm text-slate-500 font-medium">
-                                    Already have an account?{" "}
-                                    <Link href="/login" className="font-bold text-rose-600 hover:text-rose-700 hover:underline transition-all">
-                                        Sign in here
-                                    </Link>
-                                </p>
-                            </div>
-                        </div>
+                        <SearchForm />
 
                         {/* Trusted By Ticker - Hidden on Mobile mostly, or White text? */}
                         {/* Let's keep it but ensure visibility. On mobile bg is dark image. Text is slate-400. Might be invisible. */}
