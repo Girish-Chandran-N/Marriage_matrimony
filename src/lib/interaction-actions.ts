@@ -237,3 +237,24 @@ export async function reportUser(targetUserId: string, reason: string) {
         return { message: "Failed to report user" };
     }
 }
+
+// 7. Unblock User
+export async function unblockUser(targetUserId: string) {
+    const user = await getSessionUser();
+    try {
+        await db.block.delete({
+            where: {
+                blockerId_blockedId: {
+                    blockerId: user.id,
+                    blockedId: targetUserId
+                }
+            }
+        });
+        revalidatePath("/matches");
+        revalidatePath("/dashboard/blocked");
+        return { success: true, message: "User unblocked" };
+    } catch (error) {
+        return { message: "Failed to unblock user" };
+    }
+}
+
