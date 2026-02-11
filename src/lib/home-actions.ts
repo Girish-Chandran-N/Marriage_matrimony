@@ -22,9 +22,9 @@ export const getHighlightedProfiles = cache(async (limit: number = 10) => {
                 personalDetails: {
                     select: {
                         dateOfBirth: true,
-                        city: true,
-                        state: true,
-                        country: true,
+                        residingCity: true,
+                        residingState: true,
+                        residingCountry: true,
                         height: true,
                         gender: true
                     }

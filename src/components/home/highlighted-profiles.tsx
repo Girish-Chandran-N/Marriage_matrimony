@@ -13,9 +13,9 @@ interface ProfileData {
     profileImage: string | null;
     personalDetails: {
         dateOfBirth: Date | null;
-        city: string | null;
-        state: string | null;
-        country: string | null;
+        residingCity: string | null;
+        residingState: string | null;
+        residingCountry: string | null;
         height: number | null;
         gender: string | null;
     } | null;
@@ -110,9 +110,9 @@ export function HighlightedProfiles({ profiles }: HighlightedProfilesProps) {
                             {profiles.map((profile) => {
                                 const age = calculateAge(profile.personalDetails?.dateOfBirth || null);
                                 const location = [
-                                    profile.personalDetails?.city,
-                                    profile.personalDetails?.state,
-                                    profile.personalDetails?.country
+                                    profile.personalDetails?.residingCity,
+                                    profile.personalDetails?.residingState,
+                                    profile.personalDetails?.residingCountry
                                 ].filter(Boolean).join(", ");
 
                                 return (
