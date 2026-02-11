@@ -19,7 +19,9 @@ import {
     Settings,
     Smartphone,
     Headphones,
-    CreditCard
+    CreditCard,
+    UserPlus,
+    MapPin
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchForm } from "@/components/home/search-form";
@@ -209,9 +211,9 @@ export function HomeClient({ profiles }: HomeClientProps) {
                     >
                         {[
                             { label: "Active Profiles", value: 10000, suffix: "+", icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
-                            { label: "Success Stories", value: 500, suffix: "+", icon: Heart, color: "text-rose-600", bg: "bg-rose-50" },
-                            { label: "Verified Careers", value: 100, suffix: "%", icon: Shield, color: "text-green-600", bg: "bg-green-50" },
-                            { label: "Cities Covered", value: 50, suffix: "+", icon: Sparkles, color: "text-purple-600", bg: "bg-purple-50" },
+                            { label: "Joined Today", value: 200, suffix: "+", icon: UserPlus, color: "text-rose-600", bg: "bg-rose-50" },
+                            { label: "Verified Profiles", value: 100, suffix: "%", icon: Shield, color: "text-green-600", bg: "bg-green-50" },
+                            { label: "Cities & States", value: 50, suffix: "+", icon: MapPin, color: "text-purple-600", bg: "bg-purple-50" },
                         ].map((stat, i) => (
                             <motion.div
                                 key={i}
