@@ -216,6 +216,28 @@ export async function getNewMatches() {
     return scoredMatches.sort((a, b) => b.score - a.score).slice(0, 10);
 }
 
+// 9. Blocked Users
+export async function getBlockedUsers() {
+    const user = await getSessionUser();
+    const data = await db.block.findMany({
+        where: { blockerId: user.id },
+        include: {
+            blocked: {
+                include: {
+                    personalDetails: true,
+                    careerProfile: true,
+                    educations: true,
+                    jobs: true,
+                    familyDetails: true
+                }
+            }
+        },
+        orderBy: { createdAt: "desc" }
+    });
+    // We might not need scores for blocked users, but keeping data structure consistent is helpful
+    return data.map(item => ({ ...item, user: item.blocked }));
+}
+
 // Aggregated Stats for Dashboard Cards
 export async function getDashboardStats() {
     const user = await getSessionUser();
@@ -228,7 +250,8 @@ export async function getDashboardStats() {
         shortlistedCount,
         contactsViewedCount,
         contactsVisitedCount,
-        newMatches
+        newMatches,
+        blockedCount
     ] = await Promise.all([
         db.interest.count({ where: { senderId: user.id } }),
         db.interest.count({ where: { receiverId: user.id } }),
@@ -237,7 +260,8 @@ export async function getDashboardStats() {
         db.shortlist.count({ where: { userId: user.id } }),
         db.contactView.count({ where: { profileId: user.id } }),
         db.contactView.count({ where: { viewerId: user.id } }),
-        getNewMatches()
+        getNewMatches(),
+        db.block.count({ where: { blockerId: user.id } })
     ]);
 
     return {
@@ -248,6 +272,7 @@ export async function getDashboardStats() {
         shortlisted: shortlistedCount,
         contactsViewed: contactsViewedCount,
         contactsVisited: contactsVisitedCount,
-        newMatches: newMatches.length
+        newMatches: newMatches.length,
+        blockedUsers: blockedCount
     };
 }

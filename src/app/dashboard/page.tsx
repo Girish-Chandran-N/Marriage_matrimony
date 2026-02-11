@@ -111,6 +111,15 @@ export default async function DashboardPage() {
             href: "/dashboard/contacts-visited",
             desc: "Contacts you unlocked"
         },
+        {
+            title: "Ignored/Blocked",
+            value: stats.blockedUsers,
+            icon: EyeOff,
+            color: "text-gray-600",
+            bg: "bg-gray-50",
+            href: "/dashboard/blocked",
+            desc: "Profiles you hid or blocked"
+        },
     ];
 
     return (

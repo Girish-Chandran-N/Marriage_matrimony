@@ -27,16 +27,17 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { sendInterest, toggleShortlist, getInteractionStatus, blockUser, reportUser, ignoreUser } from "@/lib/interaction-actions";
+import { sendInterest, toggleShortlist, getInteractionStatus, blockUser, reportUser, ignoreUser, unblockUser } from "@/lib/interaction-actions";
 import { toast } from "sonner";
 
 
 interface MatchCardProps {
     user: any;
-    score: number;
+    score?: number;
+    variant?: "default" | "blocked";
 }
 
-export function MatchCard({ user, score }: MatchCardProps) {
+export function MatchCard({ user, score, variant = "default" }: MatchCardProps) {
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -170,7 +171,11 @@ export function MatchCard({ user, score }: MatchCardProps) {
 
                 {/* Action Buttons */}
                 <div className="mt-auto">
-                    <MatchActions user={user} />
+                    {variant === "blocked" ? (
+                        <UnblockButton user={user} />
+                    ) : (
+                        <MatchActions user={user} />
+                    )}
                 </div>
             </div>
 
@@ -215,6 +220,39 @@ export function MatchCard({ user, score }: MatchCardProps) {
                 </DialogContent>
             </Dialog>
         </div>
+    );
+}
+
+function UnblockButton({ user }: { user: any }) {
+    const [loading, setLoading] = useState(false);
+
+    const handleUnblock = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setLoading(true);
+        try {
+            const res = await unblockUser(user.id);
+            if (res.success) {
+                toast.success(res.message);
+            } else {
+                toast.error(res.message);
+            }
+        } catch {
+            toast.error("Failed to unblock");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <Button
+            onClick={handleUnblock}
+            disabled={loading}
+            className="w-full bg-slate-900 text-white hover:bg-slate-800 rounded-full font-bold shadow-md"
+        >
+            {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <EyeOff className="w-4 h-4 mr-2" />}
+            Unblock User
+        </Button>
     );
 }
 
@@ -266,8 +304,8 @@ function MatchActions({ user }: { user: any }) {
                 onClick={handleConnect}
                 disabled={loading || status.hasSentInterest}
                 className={`flex-1 rounded-full font-bold shadow-md transition-all ${status.hasSentInterest
-                    ? "bg-green-100 text-green-700 hover:bg-green-200"
-                    : "bg-rose-600 hover:bg-rose-700 text-white shadow-rose-200"
+                        ? "bg-green-100 text-green-700 hover:bg-green-200"
+                        : "bg-rose-600 hover:bg-rose-700 text-white shadow-rose-200"
                     }`}
             >
                 {status.hasSentInterest ? <Check className="w-4 h-4 mr-1" /> : <Heart className="w-4 h-4 mr-1 fill-current" />}
