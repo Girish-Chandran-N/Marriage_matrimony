@@ -90,17 +90,17 @@ export function HomeClient() {
                                     <CheckCircle2 className="w-7 h-7 text-white" />
                                 </motion.div>
                                 <div>
-                                    <p className="font-bold text-xl tracking-tight">Trusted by Millions</p>
-                                    <p className="text-white/80 text-base font-medium">Verified profiles only</p>
+                                    <p className="font-bold text-xl tracking-tight">Start Your Journey</p>
+                                    <p className="text-white/80 text-base font-medium">Designed for Ambition.</p>
                                 </div>
                             </div>
 
                             <h1 className="text-7xl font-black tracking-tight leading-[1.05] mb-6 drop-shadow-lg">
-                                Designed for <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-pink-400 to-orange-400 animate-gradient-x">Ambition.</span>
+                                Your Career <br />
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-pink-400 to-orange-400 animate-gradient-x">defines You.</span>
                             </h1>
                             <p className="text-2xl text-white/90 font-medium max-w-lg leading-relaxed mb-10 drop-shadow-md">
-                                Your Career defines You. Our platform matches you based on professional compatibility, lifestyle standards and future goals.
+                                Our platform matches you based on professional compatibility, lifestyle standards and future goals.
                             </p>
 
                             <div className="flex flex-wrap gap-5">
