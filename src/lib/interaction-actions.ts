@@ -188,3 +188,52 @@ export async function getInteractionStatus(targetUserId: string) {
         isContactUnlocked: !!contact
     };
 }
+
+// 5. Block / Ignore User
+export async function blockUser(targetUserId: string) {
+    const user = await getSessionUser();
+
+    if (user.id === targetUserId) return { message: "Cannot block yourself" };
+
+    try {
+        await db.block.create({
+            data: {
+                blockerId: user.id,
+                blockedId: targetUserId
+            }
+        });
+        revalidatePath("/matches");
+        return { success: true, message: "User blocked" };
+    } catch (error) {
+        return { message: "Failed to block user" };
+    }
+}
+
+// Ignore is essentially a soft block or just hiding from matches
+// For now, we can treat it as a block or a separate "Ignored" table if needed.
+// User requested "Ignore Profile" and "Block Profile".
+// Let's implement Ignore as a Block for now to remove them from feed.
+export async function ignoreUser(targetUserId: string) {
+    return blockUser(targetUserId);
+}
+
+// 6. Report User
+export async function reportUser(targetUserId: string, reason: string) {
+    const user = await getSessionUser();
+
+    if (user.id === targetUserId) return { message: "Cannot report yourself" };
+
+    try {
+        await db.report.create({
+            data: {
+                reporterId: user.id,
+                reportedId: targetUserId,
+                reason: reason,
+                status: "PENDING"
+            }
+        });
+        return { success: true, message: "User reported successfully" };
+    } catch (error) {
+        return { message: "Failed to report user" };
+    }
+}
