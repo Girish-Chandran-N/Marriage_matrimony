@@ -23,7 +23,25 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchForm } from "@/components/home/search-form";
-import { motion, useScroll, useTransform, Variants } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useInView, Variants } from "framer-motion";
+import { useEffect, useRef } from "react";
+
+function Counter({ value, suffix = "" }: { value: number, suffix?: string }) {
+    const ref = useRef(null);
+    const inView = useInView(ref, { once: true, margin: "-100px" });
+    const springValue = useSpring(0, { bounce: 0, duration: 2500 });
+    const displayValue = useTransform(springValue, (latest) =>
+        Math.floor(latest).toLocaleString() + suffix
+    );
+
+    useEffect(() => {
+        if (inView) {
+            springValue.set(value);
+        }
+    }, [inView, value, springValue]);
+
+    return <motion.span ref={ref}>{displayValue}</motion.span>;
+}
 
 const fadeInUp: Variants = {
     hidden: { opacity: 0, y: 40 },
@@ -154,7 +172,7 @@ export function HomeClient({ profiles }: HomeClientProps) {
                         {/* Switch text color on mobile? Or add transparent bg? */}
                         <div className="mt-8 relative z-0">
                             <p className="text-xs font-bold text-white/80 lg:text-slate-400 uppercase tracking-widest text-center mb-4 shadow-black/50 lg:shadow-none drop-shadow-md lg:drop-shadow-none">Trusted By Professionals From</p>
-                            <div className="flex relative w-full overflow-hidden mask-linear-fade">
+                            <div className="flex relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_20%,black_80%,transparent)]">
                                 <motion.div
                                     animate={{ x: "-50%" }}
                                     transition={{ duration: 20, ease: "linear", repeat: Infinity }}
@@ -190,10 +208,10 @@ export function HomeClient({ profiles }: HomeClientProps) {
                         className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-slate-100"
                     >
                         {[
-                            { label: "Active Profiles", value: "10k+", icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
-                            { label: "Success Stories", value: "500+", icon: Heart, color: "text-rose-600", bg: "bg-rose-50" },
-                            { label: "Verified Careers", value: "100%", icon: Shield, color: "text-green-600", bg: "bg-green-50" },
-                            { label: "Cities Covered", value: "50+", icon: Sparkles, color: "text-purple-600", bg: "bg-purple-50" },
+                            { label: "Active Profiles", value: 10000, suffix: "+", icon: Users, color: "text-blue-600", bg: "bg-blue-50" },
+                            { label: "Success Stories", value: 500, suffix: "+", icon: Heart, color: "text-rose-600", bg: "bg-rose-50" },
+                            { label: "Verified Careers", value: 100, suffix: "%", icon: Shield, color: "text-green-600", bg: "bg-green-50" },
+                            { label: "Cities Covered", value: 50, suffix: "+", icon: Sparkles, color: "text-purple-600", bg: "bg-purple-50" },
                         ].map((stat, i) => (
                             <motion.div
                                 key={i}
@@ -206,7 +224,9 @@ export function HomeClient({ profiles }: HomeClientProps) {
                                 >
                                     <stat.icon className="w-6 h-6" />
                                 </motion.div>
-                                <p className="text-4xl lg:text-5xl font-black text-slate-900 mb-2">{stat.value}</p>
+                                <p className="text-4xl lg:text-5xl font-black text-slate-900 mb-2">
+                                    <Counter value={stat.value} suffix={stat.suffix} />
+                                </p>
                                 <span className="text-slate-500 font-bold text-sm lg:text-base uppercase tracking-wider">{stat.label}</span>
                             </motion.div>
                         ))}
@@ -421,15 +441,15 @@ export function HomeClient({ profiles }: HomeClientProps) {
                                 key={i}
                                 variants={fadeInUp}
                                 whileHover={{ y: -5 }}
-                                className={`bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all border border-slate-100 group ${i >= 12 ? 'lg:col-span-2' : ''}`}
+                                className={`bg-white p-6 rounded-2xl shadow-sm hover:shadow-xl hover:shadow-rose-100/50 transition-all duration-300 border border-slate-100 hover:border-rose-200 group ${i >= 12 ? 'lg:col-span-2' : ''}`}
                             >
                                 <div className="flex items-start gap-4">
-                                    <div className="p-3 rounded-xl bg-gradient-to-br from-rose-50 to-purple-50 group-hover:from-rose-100 group-hover:to-purple-100 transition-colors text-rose-600">
+                                    <div className="p-3 rounded-xl bg-gradient-to-br from-rose-50 to-purple-50 group-hover:from-rose-100 group-hover:to-purple-100 transition-colors text-rose-600 shadow-sm group-hover:shadow-md group-hover:scale-110 duration-300">
                                         <feature.icon className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-slate-900 mb-1">{feature.title}</h3>
-                                        <p className="text-sm text-slate-500 leading-snug">{feature.desc}</p>
+                                        <h3 className="font-bold text-slate-900 mb-1 group-hover:text-rose-600 transition-colors">{feature.title}</h3>
+                                        <p className="text-sm text-slate-500 leading-snug group-hover:text-slate-600 transition-colors">{feature.desc}</p>
                                     </div>
                                 </div>
                             </motion.div>
