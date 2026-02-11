@@ -166,7 +166,7 @@ export function SearchForm() {
     };
 
     return (
-        <div className="bg-white/95 backdrop-blur-md lg:bg-white p-6 lg:p-10 rounded-[30px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 relative overflow-hidden">
+        <div className="bg-white/95 backdrop-blur-md lg:bg-white p-6 lg:p-10 rounded-[30px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100 relative">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-rose-100 to-purple-100 rounded-full blur-3xl -z-10 opacity-60"></div>
 
             <div className="mb-6 lg:mb-8 space-y-2">
