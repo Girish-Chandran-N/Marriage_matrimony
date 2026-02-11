@@ -7,8 +7,8 @@ export default async function Home() {
 
   return (
     <>
-      <HomeClient />
       <HighlightedProfiles profiles={highlightedProfiles} />
+      <HomeClient />
     </>
   );
 }
