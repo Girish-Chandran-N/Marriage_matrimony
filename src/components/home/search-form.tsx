@@ -245,7 +245,7 @@ export function SearchForm() {
                         </button>
 
                         {showProfessions && (
-                            <div className="absolute z-10 w-full mt-2 bg-white border-2 border-slate-200 rounded-xl shadow-xl max-h-80 overflow-hidden flex flex-col">
+                            <div className="absolute z-50 w-full mt-2 bg-white border-2 border-slate-200 rounded-xl shadow-xl max-h-80 overflow-hidden flex flex-col">
                                 {/* Search Input */}
                                 <div className="p-3 border-b border-slate-200 sticky top-0 bg-white">
                                     <Input
