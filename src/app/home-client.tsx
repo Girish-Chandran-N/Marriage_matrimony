@@ -2,7 +2,25 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { CheckCircle2, Shield, Heart, Briefcase, ArrowRight, Star, Sparkles, Users, Lock, ChevronRight } from "lucide-react";
+import {
+    CheckCircle2,
+    Shield,
+    Heart,
+    Briefcase,
+    ArrowRight,
+    Star,
+    Sparkles,
+    Users,
+    Lock,
+    ChevronRight,
+    UserCheck,
+    Search,
+    Bell,
+    Settings,
+    Smartphone,
+    Headphones,
+    CreditCard
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SearchForm } from "@/components/home/search-form";
 import { motion, useScroll, useTransform, Variants } from "framer-motion";
@@ -355,6 +373,64 @@ export function HomeClient({ profiles }: HomeClientProps) {
                                     <p className="text-lg italic mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">"{story.quote}"</p>
                                     <h3 className="text-2xl font-bold">{story.names}</h3>
                                     <p className="text-white/80 font-medium text-sm">{story.jobs}</p>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                </div>
+            </section>
+            {/* Why Us Section */}
+            <section className="py-32 bg-slate-50 relative overflow-hidden">
+                <div className="max-w-7xl mx-auto px-4 relative z-10">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="text-center mb-20"
+                    >
+                        <h2 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">Why Choose <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-purple-600">Us?</span></h2>
+                        <p className="text-xl text-slate-600 leading-relaxed max-w-2xl mx-auto">
+                            We provide a premium, secure, and personalized matchmaking experience designed for your success.
+                        </p>
+                    </motion.div>
+
+                    <motion.div
+                        variants={staggerContainer}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true }}
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+                    >
+                        {[
+                            { title: "Verified Profiles Only", icon: UserCheck, desc: "100% manual verification for every profile." },
+                            { title: "Your Privacy. Our Commitment", icon: Lock, desc: "Your data is encrypted and secure with us." },
+                            { title: "Professional & High Quality Matches", icon: Briefcase, desc: "Connect with ambitious professionals." },
+                            { title: "Advanced Search Algorithm", icon: Search, desc: "Refine matches with granular filters." },
+                            { title: "Detailed Profiles", icon: UserCheck, desc: "Comprehensive details for informed decisions." },
+                            { title: "Compatibility Based Matching", icon: Heart, desc: "AI-driven scoring for deeper connection." },
+                            { title: "Personalized Recommendation", icon: Sparkles, desc: "Curated daily matches just for you." },
+                            { title: "Real-Time Notification", icon: Bell, desc: "Never miss an interest or message." },
+                            { title: "Secure Connection", icon: Shield, desc: "Safe platform for your improved safety." },
+                            { title: "Profile Visibility Control", icon: Settings, desc: "You decide who sees your photos and info." },
+                            { title: "Easy Profile Management", icon: UserCheck, desc: "Update and manage your profile with ease." },
+                            { title: "Mobile Friendly Platform", icon: Smartphone, desc: "Seamless experience on all devices." },
+                            { title: "24/7 Customer Support", icon: Headphones, desc: "We are here to help you anytime." },
+                            { title: "Safe & Secure Payment", icon: CreditCard, desc: "Trusted payment gateways for peace of mind." },
+                        ].map((feature, i) => (
+                            <motion.div
+                                key={i}
+                                variants={fadeInUp}
+                                whileHover={{ y: -5 }}
+                                className={`bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all border border-slate-100 group ${i >= 12 ? 'lg:col-span-2' : ''}`}
+                            >
+                                <div className="flex items-start gap-4">
+                                    <div className="p-3 rounded-xl bg-gradient-to-br from-rose-50 to-purple-50 group-hover:from-rose-100 group-hover:to-purple-100 transition-colors text-rose-600">
+                                        <feature.icon className="w-6 h-6" />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-slate-900 mb-1">{feature.title}</h3>
+                                        <p className="text-sm text-slate-500 leading-snug">{feature.desc}</p>
+                                    </div>
                                 </div>
                             </motion.div>
                         ))}
