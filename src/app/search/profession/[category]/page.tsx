@@ -78,7 +78,7 @@ export default async function ProfessionSearchPage({ params, searchParams }: Pag
                     {Array.isArray(matches) && matches.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {matches.map((match: any) => (
-                                <MatchCard key={match.user.id} match={match} />
+                                <MatchCard key={match.user.id} user={match.user} score={match.score} />
                             ))}
                         </div>
                     ) : (

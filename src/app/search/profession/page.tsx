@@ -1,107 +1,54 @@
 import { getProfessionCounts } from "@/lib/user-actions";
-import { getMatches, MatchFilters } from "@/lib/match-actions";
-import { MatchCard } from "@/components/matches/match-card";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
-import AdPlacement from "@/components/ad-placement";
-import ProfessionSearchFilters from "@/components/search/profession-search-filters";
+import { ChevronRight, Briefcase } from "lucide-react";
 
-interface PageProps {
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}
-
-export default async function ProfessionSearchPage({ searchParams }: PageProps) {
-    // 1. Await Search Params (Fix for Next.js 15+)
-    const resolvedParams = await searchParams;
-
-    // 2. Get Categories & Counts for Dropdown
+export default async function ProfessionLandingPage() {
     const counts = await getProfessionCounts();
 
-    // 3. Parse Filters
-    const selectedCategory = typeof resolvedParams.category === 'string' ? resolvedParams.category : undefined;
-    const ageMin = resolvedParams.ageMin ? Number(resolvedParams.ageMin) : undefined;
-    const ageMax = resolvedParams.ageMax ? Number(resolvedParams.ageMax) : undefined;
-
-    // Construct filters for backend
-    const filters: MatchFilters = {
-        employmentCategory: selectedCategory && selectedCategory !== 'all' ? selectedCategory : undefined,
-        ageMin,
-        ageMax,
-        // Preserve other filters if passed via URL manually, though UI only shows Profession/Age now
-        minHeight: resolvedParams.minHeight ? Number(resolvedParams.minHeight) : undefined,
-        maxHeight: resolvedParams.maxHeight ? Number(resolvedParams.maxHeight) : undefined,
-        workingCountry: typeof resolvedParams.workingCountry === 'string' ? resolvedParams.workingCountry : undefined,
-        workingState: typeof resolvedParams.workingState === 'string' ? resolvedParams.workingState : undefined,
-        nativeCountry: typeof resolvedParams.nativeCountry === 'string' ? resolvedParams.nativeCountry : undefined,
-        nativeState: typeof resolvedParams.nativeState === 'string' ? resolvedParams.nativeState : undefined,
-        religion: typeof resolvedParams.religion === 'string' ? resolvedParams.religion : undefined,
-        caste: typeof resolvedParams.caste === 'string' ? resolvedParams.caste : undefined,
-    };
-
-    // 4. Fetch Matches
-    const matches = await getMatches(filters);
-
     return (
-        <div className="min-h-screen bg-slate-50 relative">
-            {/* Header & Filters */}
-            <div className="bg-white border-b border-slate-200 sticky top-20 z-30 shadow-sm">
-                <div className="max-w-7xl mx-auto px-4 py-4 md:py-6">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <h1 className="text-2xl font-black text-slate-900 tracking-tight">
-                            Search by <span className="text-indigo-600">Profession</span>
-                        </h1>
-
-                        {/* Client Component for Dropdowns */}
-                        <div className="flex-1 w-full md:w-auto flex justify-end">
-                            <ProfessionSearchFilters
-                                counts={counts}
-                                currentCategory={selectedCategory || 'all'}
-                                currentAgeMin={ageMin?.toString() || ''}
-                                currentAgeMax={ageMax?.toString() || ''}
-                            />
-                        </div>
-                    </div>
+        <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-4xl mx-auto">
+                <div className="text-center mb-12">
+                    <h1 className="text-3xl font-black text-slate-900 sm:text-4xl tracking-tight">
+                        Browse Profiles by <span className="text-indigo-600">Profession</span>
+                    </h1>
+                    <p className="mt-4 text-lg text-slate-600">
+                        Find your perfect match from a wide range of professional backgrounds.
+                    </p>
                 </div>
-            </div>
 
-            {/* Main Content Area - Full Width Grid */}
-            <div className="max-w-[1920px] mx-auto px-4 md:px-8 py-8 flex gap-8">
-
-                {/* Results - Expanded to fill more space */}
-                <main className="flex-1">
-                    <div className="mb-6 flex items-center justify-between">
-                        <h2 className="text-lg font-bold text-slate-700">
-                            {selectedCategory && selectedCategory !== 'all' ? `${selectedCategory} Matches` : "All Professional Profiles"}
-                            <span className="text-slate-400 ml-2 text-sm font-normal">
-                                ({Array.isArray(matches) ? matches.length : 0} found)
-                            </span>
-                        </h2>
+                <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div className="p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {counts.map((item) => (
+                            <Link
+                                key={item.category}
+                                href={`/search/profession/${encodeURIComponent(item.category)}`}
+                                className="group flex items-center justify-between p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-indigo-200 hover:shadow-md transition-all duration-200"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                        <Briefcase size={18} />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-slate-900 group-hover:text-indigo-700 transition-colors">
+                                            {item.category}
+                                        </h3>
+                                        <p className="text-xs text-slate-500 font-medium">
+                                            {item.count} Profiles
+                                        </p>
+                                    </div>
+                                </div>
+                                <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
+                            </Link>
+                        ))}
                     </div>
 
-                    {Array.isArray(matches) && matches.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-                            {matches.map((match: any) => (
-                                <MatchCard key={match.user.id} user={match.user} score={match.score} />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="text-center py-32 bg-white rounded-3xl border border-dashed border-slate-300">
-                            <div className="text-6xl mb-4 grayscale opacity-50">📂</div>
-                            <h3 className="text-xl font-bold text-slate-800">No profiles found</h3>
-                            <p className="text-slate-500 mt-2">Try adjusting your filters.</p>
+                    {counts.length === 0 && (
+                        <div className="p-12 text-center text-slate-500">
+                            No professional categories found at the moment.
                         </div>
                     )}
-                </main>
-
-                {/* Right Sidebar - Ads (Preserved but can be hidden if user wants FULL width) 
-                    User said "clean it up", "wasting space". 
-                    I'll keep the right ad for business logic but ensure main grid expands.
-                */}
-                <aside className="w-80 shrink-0 hidden 2xl:block">
-                    <div className="sticky top-44 space-y-6">
-                        <AdPlacement slot="RIGHT_SIDEBAR" />
-                    </div>
-                </aside>
+                </div>
             </div>
         </div>
     );

@@ -179,60 +179,133 @@ export default function ProfessionFilterSidebar({ category }: { category: string
                     </button>
                     {showLocation && (
                         <div className="space-y-4 animate-in slide-in-from-top-2">
-                            {/* Working Country */}
+                            {/* --- WORKING LOCATION --- */}
                             <div className="space-y-2">
-                                <Label className="text-xs text-slate-500 font-medium uppercase">Working Country</Label>
-                                <div className="space-y-1.5 max-h-32 overflow-y-auto pl-1">
-                                    {["India", "USA", "UK", "Canada", "UAE", "Australia"].map(c => (
-                                        <div key={c} className="flex items-center gap-2">
-                                            <Checkbox
-                                                id={`wc-${c}`}
-                                                checked={filters.workingCountry.includes(c)}
-                                                onCheckedChange={(checked) => handleCheckboxFilter("workingCountry", c, checked as boolean)}
-                                            />
-                                            <Label htmlFor={`wc-${c}`} className="text-sm font-normal">{c}</Label>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
+                                <Label className="text-xs text-slate-500 font-medium uppercase text-indigo-900 bg-indigo-50 px-2 py-1 rounded">Avg Working Location</Label>
 
-                            {/* Working State - Show if India is selected or generic list */}
-                            {filters.workingCountry.includes("India") && (
-                                <div className="space-y-2">
-                                    <Label className="text-xs text-slate-500 font-medium uppercase">Working State (India)</Label>
-                                    <div className="space-y-1.5 max-h-32 overflow-y-auto pl-1">
-                                        {/* Simplified List - Ideally map from constants */}
-                                        {["Kerala", "Tamil Nadu", "Karnataka", "Maharashtra", "Delhi", "Telangana"].map(s => (
-                                            <div key={s} className="flex items-center gap-2">
+                                {/* Working Country */}
+                                <div className="pt-2">
+                                    <Label className="text-xs font-semibold text-slate-700 mb-1.5 block">Country</Label>
+                                    <div className="space-y-1.5 max-h-32 overflow-y-auto pl-1 border-l-2 border-indigo-100 ml-1">
+                                        {[...COUNTRIES].map(c => (
+                                            <div key={c} className="flex items-center gap-2">
                                                 <Checkbox
-                                                    id={`ws-${s}`}
-                                                    checked={filters.workingState.includes(s)}
-                                                    onCheckedChange={(checked) => handleCheckboxFilter("workingState", s, checked as boolean)}
+                                                    id={`wc-${c}`}
+                                                    checked={filters.workingCountry.includes(c)}
+                                                    onCheckedChange={(checked) => handleCheckboxFilter("workingCountry", c, checked as boolean)}
                                                 />
-                                                <Label htmlFor={`ws-${s}`} className="text-sm font-normal">{s}</Label>
+                                                <Label htmlFor={`wc-${c}`} className="text-sm font-normal">{c}</Label>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
-                            )}
 
-                            <div className="h-px bg-slate-50 my-2" />
-
-                            {/* Native Country */}
-                            <div className="space-y-2">
-                                <Label className="text-xs text-slate-500 font-medium uppercase">Native Country</Label>
-                                <div className="space-y-1.5 max-h-32 overflow-y-auto pl-1">
-                                    {["India", "USA", "UK", "Canada", "UAE"].map(c => (
-                                        <div key={c} className="flex items-center gap-2">
-                                            <Checkbox
-                                                id={`nc-${c}`}
-                                                checked={filters.nativeCountry.includes(c)}
-                                                onCheckedChange={(checked) => handleCheckboxFilter("nativeCountry", c, checked as boolean)}
-                                            />
-                                            <Label htmlFor={`nc-${c}`} className="text-sm font-normal">{c}</Label>
+                                {/* Working State (India Only) */}
+                                {filters.workingCountry.includes("India") && (
+                                    <div className="pt-2">
+                                        <Label className="text-xs font-semibold text-slate-700 mb-1.5 block">State (India)</Label>
+                                        <div className="space-y-1.5 max-h-32 overflow-y-auto pl-1 border-l-2 border-indigo-100 ml-1">
+                                            {[...INDIAN_STATES].map(s => (
+                                                <div key={s} className="flex items-center gap-2">
+                                                    <Checkbox
+                                                        id={`ws-${s}`}
+                                                        checked={filters.workingState.includes(s)}
+                                                        onCheckedChange={(checked) => handleCheckboxFilter("workingState", s, checked as boolean)}
+                                                    />
+                                                    <Label htmlFor={`ws-${s}`} className="text-sm font-normal">{s}</Label>
+                                                </div>
+                                            ))}
                                         </div>
-                                    ))}
+                                    </div>
+                                )}
+
+                                {/* Working District (Dependent on State) */}
+                                {filters.workingCountry.includes("India") && filters.workingState.length > 0 && (
+                                    <div className="pt-2">
+                                        <Label className="text-xs font-semibold text-slate-700 mb-1.5 block">District</Label>
+                                        <div className="space-y-1.5 max-h-32 overflow-y-auto pl-1 border-l-2 border-indigo-100 ml-1">
+                                            {filters.workingState.flatMap(state =>
+                                                LOCATION_DATA[state] ? Object.keys(LOCATION_DATA[state]).map(dist => ({ state, dist })) : []
+                                            ).map(({ state, dist }) => (
+                                                <div key={`${state}-${dist}`} className="flex items-center gap-2">
+                                                    <Checkbox
+                                                        id={`wd-${dist}`}
+                                                        checked={filters.workingDistrict.includes(dist)}
+                                                        onCheckedChange={(checked) => handleCheckboxFilter("workingDistrict", dist, checked as boolean)}
+                                                    />
+                                                    <Label htmlFor={`wd-${dist}`} className="text-sm font-normal">{dist}</Label>
+                                                </div>
+                                            ))}
+                                            {filters.workingState.length > 0 && filters.workingState.every(s => !LOCATION_DATA[s]) && (
+                                                <p className="text-xs text-slate-400 italic">No districts available for selected states.</p>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="h-px bg-slate-100 my-2" />
+
+                            {/* --- NATIVE LOCATION --- */}
+                            <div className="space-y-2">
+                                <Label className="text-xs text-slate-500 font-medium uppercase text-indigo-900 bg-indigo-50 px-2 py-1 rounded">Native Location</Label>
+
+                                {/* Native Country */}
+                                <div className="pt-2">
+                                    <Label className="text-xs font-semibold text-slate-700 mb-1.5 block">Country</Label>
+                                    <div className="space-y-1.5 max-h-32 overflow-y-auto pl-1 border-l-2 border-indigo-100 ml-1">
+                                        {[...COUNTRIES].map(c => (
+                                            <div key={c} className="flex items-center gap-2">
+                                                <Checkbox
+                                                    id={`nc-${c}`}
+                                                    checked={filters.nativeCountry.includes(c)}
+                                                    onCheckedChange={(checked) => handleCheckboxFilter("nativeCountry", c, checked as boolean)}
+                                                />
+                                                <Label htmlFor={`nc-${c}`} className="text-sm font-normal">{c}</Label>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
+
+                                {/* Native State (India Only) */}
+                                {filters.nativeCountry.includes("India") && (
+                                    <div className="pt-2">
+                                        <Label className="text-xs font-semibold text-slate-700 mb-1.5 block">State (India)</Label>
+                                        <div className="space-y-1.5 max-h-32 overflow-y-auto pl-1 border-l-2 border-indigo-100 ml-1">
+                                            {[...INDIAN_STATES].map(s => (
+                                                <div key={s} className="flex items-center gap-2">
+                                                    <Checkbox
+                                                        id={`ns-${s}`}
+                                                        checked={filters.nativeState.includes(s)}
+                                                        onCheckedChange={(checked) => handleCheckboxFilter("nativeState", s, checked as boolean)}
+                                                    />
+                                                    <Label htmlFor={`ns-${s}`} className="text-sm font-normal">{s}</Label>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Native District (Dependent on State) */}
+                                {filters.nativeCountry.includes("India") && filters.nativeState.length > 0 && (
+                                    <div className="pt-2">
+                                        <Label className="text-xs font-semibold text-slate-700 mb-1.5 block">District</Label>
+                                        <div className="space-y-1.5 max-h-32 overflow-y-auto pl-1 border-l-2 border-indigo-100 ml-1">
+                                            {filters.nativeState.flatMap(state =>
+                                                LOCATION_DATA[state] ? Object.keys(LOCATION_DATA[state]).map(dist => ({ state, dist })) : []
+                                            ).map(({ state, dist }) => (
+                                                <div key={`${state}-${dist}`} className="flex items-center gap-2">
+                                                    <Checkbox
+                                                        id={`nd-${dist}`}
+                                                        checked={filters.nativeDistrict.includes(dist)}
+                                                        onCheckedChange={(checked) => handleCheckboxFilter("nativeDistrict", dist, checked as boolean)}
+                                                    />
+                                                    <Label htmlFor={`nd-${dist}`} className="text-sm font-normal">{dist}</Label>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}
