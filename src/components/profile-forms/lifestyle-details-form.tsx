@@ -42,8 +42,8 @@ export default function LifestyleDetailsForm({
                     Habits & Lifestyle
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                        <Label>Eating Habits</Label>
+                    <div className="">
+                        <Label className="mb-2 block">Eating Habits</Label>
                         <select name="eatingHabits" defaultValue={initialData?.eatingHabits || ""} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                             <option value="">Select</option>
                             <option value="Vegetarian">Vegetarian</option>
@@ -52,8 +52,8 @@ export default function LifestyleDetailsForm({
                             <option value="Vegan">Vegan</option>
                         </select>
                     </div>
-                    <div className="space-y-2">
-                        <Label>Drinking</Label>
+                    <div className="">
+                        <Label className="mb-2 block">Drinking</Label>
                         <select name="drinking" defaultValue={initialData?.drinking || ""} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                             <option value="">Select</option>
                             <option value="No">No</option>
@@ -61,8 +61,8 @@ export default function LifestyleDetailsForm({
                             <option value="Yes">Yes</option>
                         </select>
                     </div>
-                    <div className="space-y-2">
-                        <Label>Smoking</Label>
+                    <div className="">
+                        <Label className="mb-2 block">Smoking</Label>
                         <select name="smoking" defaultValue={initialData?.smoking || ""} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                             <option value="">Select</option>
                             <option value="No">No</option>
@@ -81,29 +81,29 @@ export default function LifestyleDetailsForm({
                 </h3>
 
                 <div className="space-y-4">
-                    <div className="space-y-2">
-                        <Label>Hobbies</Label>
+                    <div className="">
+                        <Label className="mb-2 block">Hobbies</Label>
                         <Input name="hobbies" defaultValue={joinList(initialData?.hobbies)} placeholder="e.g. Photography, Gardening, Coding" />
                         <p className="text-xs text-gray-500">Separate multiple with commas</p>
                     </div>
-                    <div className="space-y-2">
-                        <Label>Music</Label>
+                    <div className="">
+                        <Label className="mb-2 block">Music</Label>
                         <Input name="music" defaultValue={joinList(initialData?.music)} placeholder="e.g. Classical, Jazz, Pop" />
                     </div>
-                    <div className="space-y-2">
-                        <Label>Books</Label>
+                    <div className="">
+                        <Label className="mb-2 block">Books</Label>
                         <Input name="books" defaultValue={joinList(initialData?.books)} placeholder="e.g. Fiction, Biographies" />
                     </div>
-                    <div className="space-y-2">
-                        <Label>Movies</Label>
+                    <div className="">
+                        <Label className="mb-2 block">Movies</Label>
                         <Input name="movies" defaultValue={joinList(initialData?.movies)} placeholder="e.g. Sci-Fi, Comedy" />
                     </div>
-                    <div className="space-y-2">
-                        <Label>Sports</Label>
+                    <div className="">
+                        <Label className="mb-2 block">Sports</Label>
                         <Input name="sports" defaultValue={joinList(initialData?.sports)} placeholder="e.g. Cricket, Football, Chess" />
                     </div>
-                    <div className="space-y-2">
-                        <Label>Favorite Cuisine</Label>
+                    <div className="">
+                        <Label className="mb-2 block">Favorite Cuisine</Label>
                         <Input name="favoriteCuisine" defaultValue={joinList(initialData?.favoriteCuisine)} placeholder="e.g. Italian, Indian, Chinese" />
                     </div>
                 </div>
@@ -116,12 +116,12 @@ export default function LifestyleDetailsForm({
                     More About You
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <Label>Dress Style</Label>
+                    <div className="">
+                        <Label className="mb-2 block">Dress Style</Label>
                         <Input name="dressStyle" defaultValue={initialData?.dressStyle || ""} placeholder="e.g. Casual, Formal, Traditional" />
                     </div>
-                    <div className="space-y-2">
-                        <Label>Cultural Background</Label>
+                    <div className="">
+                        <Label className="mb-2 block">Cultural Background</Label>
                         <Input name="culturalBackground" defaultValue={initialData?.culturalBackground || ""} />
                     </div>
                     {/* Add more fields as needed based on schema */}
@@ -139,16 +139,16 @@ export default function LifestyleDetailsForm({
                     Social Profiles (Optional)
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <Label className="flex items-center gap-2"><Facebook className="w-3 h-3" /> Facebook</Label>
+                    <div className="">
+                        <Label className="flex items-center gap-2 mb-2 block"><Facebook className="w-3 h-3" /> Facebook</Label>
                         <Input name="facebook" defaultValue={initialData?.facebook || ""} placeholder="Profile URL" />
                     </div>
-                    <div className="space-y-2">
-                        <Label className="flex items-center gap-2"><Instagram className="w-3 h-3" /> Instagram</Label>
+                    <div className="">
+                        <Label className="flex items-center gap-2 mb-2 block"><Instagram className="w-3 h-3" /> Instagram</Label>
                         <Input name="instagram" defaultValue={initialData?.instagram || ""} placeholder="Profile URL" />
                     </div>
-                    <div className="space-y-2">
-                        <Label className="flex items-center gap-2"><Linkedin className="w-3 h-3" /> LinkedIn</Label>
+                    <div className="">
+                        <Label className="flex items-center gap-2 mb-2 block"><Linkedin className="w-3 h-3" /> LinkedIn</Label>
                         <Input name="linkedin" defaultValue={initialData?.linkedin || ""} placeholder="Profile URL" />
                     </div>
                 </div>

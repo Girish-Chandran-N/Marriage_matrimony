@@ -47,7 +47,7 @@ function Counter({ value, suffix = "" }: { value: number, suffix?: string }) {
 
 const fadeInUp: Variants = {
     hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "circOut" } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "circOut" } }
 };
 
 const staggerContainer: Variants = {
@@ -73,32 +73,19 @@ interface HomeClientProps {
 }
 
 export function HomeClient({ profiles }: HomeClientProps) {
-    const { scrollYProgress } = useScroll();
-    const yStats = useTransform(scrollYProgress, [0, 0.3], [100, 0]);
+    // Removed scroll animation for performance
+    // const { scrollYProgress } = useScroll();
+    // const yStats = useTransform(scrollYProgress, [0, 0.3], [100, 0]);
 
     return (
         <main className="flex min-h-screen flex-col bg-slate-50 overflow-hidden">
 
             {/* Hero Section */}
             <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center overflow-hidden py-12 lg:py-8">
-                {/* Animated Background Patterns */}
+                {/* Static Background Patterns */}
                 <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                    <motion.div
-                        animate={{
-                            scale: [1, 1.2, 1],
-                            rotate: [0, 90, 0],
-                        }}
-                        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                        className="absolute -top-[20%] -right-[10%] w-[800px] h-[800px] bg-rose-200/30 rounded-full blur-[100px] mix-blend-multiply"
-                    />
-                    <motion.div
-                        animate={{
-                            scale: [1.2, 1, 1.2],
-                            rotate: [0, -90, 0],
-                        }}
-                        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                        className="absolute -bottom-[20%] -left-[10%] w-[600px] h-[600px] bg-purple-200/30 rounded-full blur-[100px] mix-blend-multiply"
-                    />
+                    <div className="absolute -top-[20%] -right-[10%] w-[800px] h-[800px] bg-rose-200/30 rounded-full blur-[100px] mix-blend-multiply" />
+                    <div className="absolute -bottom-[20%] -left-[10%] w-[600px] h-[600px] bg-purple-200/30 rounded-full blur-[100px] mix-blend-multiply" />
                 </div>
 
                 <div className="relative z-10 w-full lg:max-w-[95%] mx-auto grid lg:grid-cols-12 gap-8 items-center">
@@ -107,7 +94,7 @@ export function HomeClient({ profiles }: HomeClientProps) {
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        transition={{ duration: 1 }}
+                        transition={{ duration: 0.5 }}
                         className="absolute inset-0 z-0 h-full w-full lg:static lg:col-span-8 lg:h-[85vh] lg:w-full lg:rounded-[30px] overflow-hidden shadow-2xl shadow-rose-900/10 group"
                     >
                         <div className="absolute inset-0 bg-slate-900/20 z-10 hidden lg:block"></div>
@@ -124,12 +111,12 @@ export function HomeClient({ profiles }: HomeClientProps) {
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.5, duration: 0.8 }}
+                            transition={{ delay: 0.2, duration: 0.5 }}
                             className="absolute bottom-0 left-0 right-0 p-16 z-30 text-white hidden lg:block"
                         >
                             <div className="flex items-center gap-4 mb-8">
                                 <motion.div
-                                    whileHover={{ scale: 1.1, rotate: 10 }}
+                                    whileHover={{ scale: 1.05 }}
                                     className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20"
                                 >
                                     <CheckCircle2 className="w-7 h-7 text-white" />
@@ -142,7 +129,7 @@ export function HomeClient({ profiles }: HomeClientProps) {
 
                             <h1 className="text-7xl font-black tracking-tight leading-[1.05] mb-6 drop-shadow-lg">
                                 Your Career <br />
-                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-pink-400 to-orange-400 animate-gradient-x">defines You.</span>
+                                <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-pink-400 to-orange-400">defines You.</span>
                             </h1>
                             <p className="text-2xl text-white/90 font-medium max-w-lg leading-relaxed mb-10 drop-shadow-md">
                                 Our platform matches you based on professional compatibility, lifestyle standards and future goals.
@@ -198,8 +185,7 @@ export function HomeClient({ profiles }: HomeClientProps) {
             </section>
 
             {/* Stats Bar */}
-            <motion.section
-                style={{ y: yStats }}
+            <section
                 className="bg-white border-y border-slate-100 py-16 relative z-10"
             >
                 <div className="max-w-7xl mx-auto px-4">
@@ -222,7 +208,7 @@ export function HomeClient({ profiles }: HomeClientProps) {
                                 className="flex flex-col items-center text-center group cursor-default p-4"
                             >
                                 <motion.div
-                                    whileHover={{ scale: 1.1, rotate: 5 }}
+                                    whileHover={{ scale: 1.05 }}
                                     className={`w-12 h-12 rounded-2xl ${stat.bg} ${stat.color} flex items-center justify-center mb-4 transition-colors`}
                                 >
                                     <stat.icon className="w-6 h-6" />
@@ -235,7 +221,7 @@ export function HomeClient({ profiles }: HomeClientProps) {
                         ))}
                     </motion.div>
                 </div>
-            </motion.section>
+            </section>
 
             {/* Features Section */}
             <section className="py-32 bg-slate-50 relative overflow-hidden">

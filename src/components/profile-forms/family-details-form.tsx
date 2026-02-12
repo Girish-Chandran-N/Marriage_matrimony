@@ -63,7 +63,7 @@ export default function FamilyDetailsForm({
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label>Family Status</Label>
+                            <Label className="mb-2 block">Family Status</Label>
                             <select name="familyStatus" defaultValue={initialData?.familyStatus || ""} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                                 <option value="">Select</option>
                                 <option value="Middle Class">Middle Class</option>
@@ -72,7 +72,7 @@ export default function FamilyDetailsForm({
                             </select>
                         </div>
                         <div className="space-y-2">
-                            <Label>Family Type</Label>
+                            <Label className="mb-2 block">Family Type</Label>
                             <select name="familyType" defaultValue={initialData?.familyType || ""} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                                 <option value="">Select</option>
                                 <option value="Nuclear">Nuclear Family</option>
@@ -80,7 +80,7 @@ export default function FamilyDetailsForm({
                             </select>
                         </div>
                         <div className="space-y-2">
-                            <Label>Family Values</Label>
+                            <Label className="mb-2 block">Family Values</Label>
                             <select name="familyValue" defaultValue={initialData?.familyValue || ""} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                                 <option value="">Select</option>
                                 <option value="Orthodox">Orthodox</option>
@@ -90,7 +90,7 @@ export default function FamilyDetailsForm({
                             </select>
                         </div>
                         <div className="space-y-2">
-                            <Label>Family Name / House Name</Label>
+                            <Label className="mb-2 block">Family Name / House Name</Label>
                             <Input name="familyName" defaultValue={initialData?.familyName || ""} placeholder="e.g. The Gupta Family" />
                         </div>
                     </div>
@@ -108,16 +108,16 @@ export default function FamilyDetailsForm({
                         <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Father</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label>Father's Name</Label>
+                                <Label className="mb-2 block">Father's Name</Label>
                                 <Input name="fatherName" defaultValue={initialData?.fatherName || ""} required />
                                 {state?.errors?.fatherName && <p className="text-red-500 text-xs">{state.errors.fatherName}</p>}
                             </div>
                             <div className="space-y-2">
-                                <Label>Occupation</Label>
+                                <Label className="mb-2 block">Occupation</Label>
                                 <Input name="fatherOccupation" defaultValue={initialData?.fatherOccupation || ""} placeholder="e.g. Businessman" />
                             </div>
                             <div className="space-y-2">
-                                <Label>Native Place</Label>
+                                <Label className="mb-2 block">Native Place</Label>
                                 <Input name="fatherNativePlace" defaultValue={initialData?.fatherNativePlace || ""} />
                             </div>
                         </div>
@@ -127,16 +127,16 @@ export default function FamilyDetailsForm({
                         <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Mother</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label>Mother's Name</Label>
+                                <Label className="mb-2 block">Mother's Name</Label>
                                 <Input name="motherName" defaultValue={initialData?.motherName || ""} required />
                                 {state?.errors?.motherName && <p className="text-red-500 text-xs">{state.errors.motherName}</p>}
                             </div>
                             <div className="space-y-2">
-                                <Label>Occupation</Label>
+                                <Label className="mb-2 block">Occupation</Label>
                                 <Input name="motherOccupation" defaultValue={initialData?.motherOccupation || ""} placeholder="e.g. Homemaker" />
                             </div>
                             <div className="space-y-2">
-                                <Label>Native Place</Label>
+                                <Label className="mb-2 block">Native Place</Label>
                                 <Input name="motherNativePlace" defaultValue={initialData?.motherNativePlace || ""} />
                             </div>
                         </div>
@@ -148,18 +148,18 @@ export default function FamilyDetailsForm({
                     <h3 className="text-lg font-semibold text-gray-900">Sibling Summary</h3>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label>No. of Brothers</Label>
+                            <Label className="mb-2 block">No. of Brothers</Label>
                             <Input type="number" name="brothers" defaultValue={initialData?.brothers || 0} min="0" />
                         </div>
                         <div className="space-y-2">
-                            <Label>No. of Sisters</Label>
+                            <Label className="mb-2 block">No. of Sisters</Label>
                             <Input type="number" name="sisters" defaultValue={initialData?.sisters || 0} min="0" />
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-4">
-                    <Label>About Family</Label>
+                <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
+                    <Label className="mb-2 block">About Family</Label>
                     <textarea
                         name="familyIntro"
                         defaultValue={initialData?.familyIntro || ""}
@@ -204,14 +204,14 @@ export default function FamilyDetailsForm({
                         <h4 className="text-sm font-medium">Add Sibling</h4>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label>Gender</Label>
+                                <Label className="mb-2 block">Gender</Label>
                                 <select name="gender" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                                     <option value="Brother">Brother</option>
                                     <option value="Sister">Sister</option>
                                 </select>
                             </div>
                             <div className="space-y-2">
-                                <Label>Name</Label>
+                                <Label className="mb-2 block">Name</Label>
                                 <Input name="name" placeholder="Name" />
                             </div>
                             <div className="space-y-2">

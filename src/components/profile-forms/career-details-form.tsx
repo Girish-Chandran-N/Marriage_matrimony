@@ -64,8 +64,8 @@ export default function CareerDetailsForm({
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                        <Label>Current Status</Label>
+                    <div className="">
+                        <Label className="mb-2 block">Current Status</Label>
                         <select
                             name="currentStatus"
                             className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
@@ -81,31 +81,31 @@ export default function CareerDetailsForm({
                         </select>
                     </div>
 
-                    <div className="space-y-2">
-                        <Label>LinkedIn Profile</Label>
+                    <div className="">
+                        <Label className="mb-2 block">LinkedIn Profile</Label>
                         <Input name="linkedinUrl" defaultValue={careerProfile?.linkedinUrl || ""} placeholder="https://linkedin.com/in/..." />
                     </div>
 
                     {/* Internship Specific Fields */}
                     {currentStatus === "Internship" && (
                         <>
-                            <div className="space-y-2">
-                                <Label>Internship Role</Label>
+                            <div className="">
+                                <Label className="mb-2 block">Internship Role</Label>
                                 <Input name="internshipRole" defaultValue={careerProfile?.internshipRole || ""} placeholder="e.g. Marketing Intern" />
                             </div>
-                            <div className="space-y-2">
-                                <Label>Company</Label>
+                            <div className="">
+                                <Label className="mb-2 block">Company</Label>
                                 <Input name="internshipCompany" defaultValue={careerProfile?.internshipCompany || ""} placeholder="Company Name" />
                             </div>
-                            <div className="space-y-2">
-                                <Label>Duration</Label>
+                            <div className="">
+                                <Label className="mb-2 block">Duration</Label>
                                 <Input name="internshipDuration" defaultValue={careerProfile?.internshipDuration || ""} placeholder="e.g. 6 months" />
                             </div>
                         </>
                     )}
 
-                    <div className="col-span-full space-y-2">
-                        <Label>Career Goals / Summary</Label>
+                    <div className="col-span-full">
+                        <Label className="mb-2 block">Career Goals / Summary</Label>
                         <Input name="careerGoal" defaultValue={careerProfile?.careerGoal || ""} placeholder="Briefly describe your career aspirations..." />
                     </div>
                 </div>
@@ -164,41 +164,41 @@ export default function CareerDetailsForm({
                             <h4 className="text-sm font-semibold text-gray-900 mb-4">Add Job</h4>
                             <form action={jobAction} className="space-y-4">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <Label>Job Title</Label>
+                                    <div className="">
+                                        <Label className="mb-2 block">Job Title</Label>
                                         <Input name="title" required placeholder="e.g. Senior Manager" />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label>Company Name</Label>
+                                    <div className="">
+                                        <Label className="mb-2 block">Company Name</Label>
                                         <Input name="company" required placeholder="e.g. Tech Solutions Inc." />
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <Label>City</Label>
+                                    <div className="">
+                                        <Label className="mb-2 block">City</Label>
                                         <Input name="city" placeholder="e.g. New York" />
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label>Country</Label>
+                                    <div className="">
+                                        <Label className="mb-2 block">Country</Label>
                                         <Input name="country" placeholder="e.g. USA" />
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <Label>From (Month/Year)</Label>
+                                    <div className="">
+                                        <Label className="mb-2 block">From (Month/Year)</Label>
                                         <div className="flex gap-2">
                                             <Input name="fromMonth" type="number" placeholder="MM" min="1" max="12" className="w-20" />
                                             <Input name="fromYear" type="number" placeholder="YYYY" min="1970" max={new Date().getFullYear()} />
                                         </div>
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label>To (Month/Year)</Label>
+                                    <div className="">
+                                        <Label className="mb-2 block">To (Month/Year)</Label>
                                         <div className="flex gap-2">
                                             <Input name="toMonth" type="number" placeholder="MM" min="1" max="12" className="w-20" />
                                             <Input name="toYear" type="number" placeholder="YYYY" min="1970" max={new Date().getFullYear()} />
                                         </div>
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <Label>Annual Income</Label>
+                                    <div className="">
+                                        <Label className="mb-2 block">Annual Income</Label>
                                         <select name="annualIncome" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                                             <option value="">Select Income</option>
                                             <option value="0-3 LPA">0-3 LPA</option>
@@ -211,8 +211,8 @@ export default function CareerDetailsForm({
                                         </select>
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <Label>Work Type</Label>
+                                    <div className="">
+                                        <Label className="mb-2 block">Work Type</Label>
                                         <select name="workType" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
                                             <option value="Full-time">Full-time</option>
                                             <option value="Part-time">Part-time</option>
