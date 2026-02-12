@@ -23,6 +23,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import AdPlacement from "@/components/ad-placement";
 
 export default async function DashboardPage() {
     const session = await auth();
@@ -250,6 +251,11 @@ export default async function DashboardPage() {
 
                 {/* Main Stats Grid (Moved Below) */}
                 <div className="mb-8">
+                    {/* Dashboard Ad Slot */}
+                    <div className="mb-8">
+                        <AdPlacement placement="DASHBOARD" className="h-32 md:h-40" />
+                    </div>
+
                     <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
                         <Sparkles className="w-5 h-5 text-purple-500" />
                         Activity Overview

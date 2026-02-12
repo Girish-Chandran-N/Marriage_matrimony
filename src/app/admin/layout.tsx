@@ -58,6 +58,16 @@ export default async function AdminLayout({
                             Back to App
                         </Button>
                     </Link>
+                    <div className="pt-4 pb-2">
+                        <p className="px-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                            System
+                        </p>
+                    </div>
+                    <Link href="/admin/ads">
+                        <Button variant="ghost" className="w-full justify-start !text-gray-300 hover:!text-white hover:!bg-slate-800">
+                            Manage Ads
+                        </Button>
+                    </Link>
                 </nav>
             </aside>
 

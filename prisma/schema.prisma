@@ -104,8 +104,12 @@ model User {
 
 enum MembershipTier {
   FREE
+  STARTER
+  BASIC
+  SILVER
   GOLD
   PLATINUM
+  ELITE
 }
 
 model Subscription {
@@ -436,6 +440,11 @@ model MatchPreferences {
   preferredCastes     String[] // If needed
   preferredMotherTongues String[]
   otherReligions      Boolean @default(false)
+
+  // Lifestyle
+  eatingHabits        String[]
+  drinkingHabits      String[]
+  smokingHabits       String[]
   
   // Other
   expectations        String? @db.Text
@@ -576,5 +585,42 @@ model ContactView {
   profile   User     @relation("ContactViewed", fields: [profileId], references: [id], onDelete: Cascade)
   viewedAt  DateTime @default(now())
 
+
   @@unique([viewerId, profileId])
+}
+
+model Advertisement {
+  id          String   @id @default(cuid())
+  title       String?  // Internal reference name
+  type        AdType   @default(MANUAL)
+  placement   AdPlacementSlot @default(SIDEBAR)
+  
+  // Manual Ad Fields
+  imageUrl    String?
+  targetUrl   String?
+  
+  // Code Ad Fields
+  adCode      String?  @db.Text // Google AdSense script/iframe code
+  
+  isActive    Boolean  @default(true)
+  clickCount  Int      @default(0)
+  viewCount   Int      @default(0)
+  
+  startDate   DateTime?
+  endDate     DateTime?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum AdType {
+  MANUAL
+  GOOGLE_ADS
+}
+
+enum AdPlacementSlot {
+  SIDEBAR
+  DASHBOARD
+  FEED
+  RIGHT_SIDEBAR
 }

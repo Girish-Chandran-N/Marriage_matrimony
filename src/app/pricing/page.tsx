@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Check, X, Sparkles, Crown, Zap } from "lucide-react";
+import { Check, X, Sparkles, Crown, Zap, Star, Shield, Gem } from "lucide-react";
 import Link from "next/link";
 
 export default function PricingPage() {
@@ -16,116 +16,166 @@ export default function PricingPage() {
                         <span>Simple, Transparent Pricing</span>
                     </div>
                     <h1 className="text-4xl md:text-6xl font-black tracking-tight text-slate-900">
-                        Select a Plan That <br className="hidden md:block" />
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">Powers Your Journey</span>
+                        Choose Your Path to <br className="hidden md:block" />
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">Forever</span>
                     </h1>
                     <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto">
-                        Unlock premium features to find your perfect match faster.
-                        No hidden fees, cancel anytime.
+                        Flexible plans designed for every stage of your journey.
                     </p>
                 </div>
             </section>
 
-            {/* Pricing Cards */}
+            {/* Pricing Cards Grid */}
             <section className="px-4 max-w-7xl mx-auto -mt-8 relative z-20">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    {/* Starter (Access) */}
+                    <PricingCard
+                        title="Starter Access"
+                        price="Free"
+                        period="3 Days"
+                        description="Experience the platform."
+                        features={[
+                            "Create Profile",
+                            "Browse Profiles",
+                            "Send 1 Interest/Day",
+                            "No Contact Info"
+                        ]}
+                        buttonText="Start Free Trial"
+                        buttonVariant="outline"
+                        icon={<Star className="w-5 h-5" />}
+                        color="slate"
+                    />
+
+                    {/* Basic Plan */}
+                    <PricingCard
+                        title="Basic Plan"
+                        price="₹599"
+                        period="15 Days"
+                        description="Short-term access for quick search."
+                        features={[
+                            "Everything in Starter",
+                            "View 5 Contacts",
+                            "Unlimited Interests",
+                            "Basic Chat"
+                        ]}
+                        buttonText="Get Basic"
+                        buttonVariant="outline"
+                        icon={<Shield className="w-5 h-5" />}
+                        color="blue"
+                    />
+
                     {/* Silver Plan */}
                     <PricingCard
-                        title="Silver"
-                        price="Free"
-                        period="forever"
-                        description="Perfect for getting started and exploring profiles."
+                        title="Silver Plan"
+                        price="₹5999"
+                        period="6 Months"
+                        description="Standard plan for serious seekers."
                         features={[
-                            "Create standard profile",
-                            "Browse profiles (Names Hidden)",
-                            "Send 1 interest per day",
-                            "Basic search filters",
-                            "Upload 1 photo"
+                            "Everything in Basic",
+                            "View 30 Contacts",
+                            "Messaging & Chat",
+                            "Priority Support"
                         ]}
-                        buttonText="Get Started"
-                        buttonVariant="outline"
-                        icon={<Sparkles className="w-6 h-6 text-slate-500" />}
+                        buttonText="Get Silver"
+                        buttonVariant="primary"
+                        icon={<Sparkles className="w-5 h-5" />}
+                        color="gray" // Silver-ish
                     />
 
                     {/* Gold Plan */}
                     <PricingCard
-                        title="Gold"
-                        price="$29"
-                        period="/month"
-                        description="Best for serious seekers ready to connect."
+                        title="Gold Plan"
+                        price="₹9999"
+                        period="12 Months"
+                        description="Best value for long-term search."
                         highlighted={true}
                         features={[
                             "Everything in Silver",
-                            "Unlock User Names & Photos",
-                            "Unlimited Chat & Messaging",
-                            "View unlocked contact numbers (10/mo)",
-                            "See who viewed your profile",
-                            "Upload up to 10 photos"
+                            "View 75 Contacts",
+                            "Profile Highlighter",
+                            "Relationship Manager"
                         ]}
-                        buttonText="Upgrade to Gold"
+                        buttonText="Go Gold"
                         buttonVariant="primary"
-                        icon={<Zap className="w-6 h-6 text-white" />}
+                        icon={<Crown className="w-5 h-5" />}
+                        color="amber" // Gold
                     />
 
                     {/* Platinum Plan */}
                     <PricingCard
-                        title="Platinum"
-                        price="$59"
-                        period="/month"
-                        description="The ultimate experience with exclusive benefits."
+                        title="Platinum Plan"
+                        price="₹12999"
+                        period="15 Months"
+                        description="Premium features & visibility."
                         features={[
                             "Everything in Gold",
-                            "View unlimited contact numbers",
-                            "Dedicated Relationship Manager",
-                            "Profile Spotlight (2x visibility)",
-                            "Verified Premium Badge",
-                            "Ad-free experience"
+                            "View 150 Contacts",
+                            "Profile Spotlight (2x)",
+                            "Verified Badge"
                         ]}
                         buttonText="Go Platinum"
                         buttonVariant="outline"
-                        icon={<Crown className="w-6 h-6 text-purple-600" />}
+                        icon={<Gem className="w-5 h-5" />}
+                        color="violet" // Platinum/Purple
                     />
+
+                    {/* Elite Plan */}
+                    <PricingCard
+                        title="Elite Plan"
+                        price="₹15599"
+                        period="24 Months"
+                        description="The ultimate VIP experience."
+                        features={[
+                            "All Features Unlocked",
+                            "Unlimited Contacts",
+                            "Dedicated Advisor",
+                            "Top Search Ranking"
+                        ]}
+                        buttonText="Join Elite"
+                        buttonVariant="outline"
+                        icon={<Zap className="w-5 h-5" />}
+                        color="rose" // Elite/Rose Gold
+                    />
+
                 </div>
             </section>
 
             {/* Comparison Table */}
-            <section className="px-4 max-w-5xl mx-auto mt-24">
+            <section className="px-4 max-w-6xl mx-auto mt-24">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-slate-900">See Features Included</h2>
-                    <p className="text-slate-600 mt-2">Compare plans to find the right fit for you.</p>
+                    <h2 className="text-3xl font-bold text-slate-900">Compare Benefits</h2>
                 </div>
 
-                <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden border border-slate-100">
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="bg-slate-50/50">
-                                    <th className="text-left p-6 font-semibold text-slate-900 w-1/4">Features</th>
-                                    <th className="p-6 font-bold text-slate-700 w-1/4">Silver</th>
-                                    <th className="p-6 font-bold text-indigo-600 w-1/4">Gold</th>
-                                    <th className="p-6 font-bold text-purple-600 w-1/4">Platinum</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                                <ComparisonRow feature="Profile Creation" silver={true} gold={true} platinum={true} />
-                                <ComparisonRow feature="View Full Names" silver={false} gold={true} platinum={true} />
-                                <ComparisonRow feature="Search Filters" silver="Basic" gold="Advanced" platinum="Premium" />
-                                <ComparisonRow feature="Send Interests" silver="1/day" gold="Unlimited" platinum="Unlimited" />
-                                <ComparisonRow feature="Messaging" silver={false} gold={true} platinum={true} />
-                                <ComparisonRow feature="View Contacts" silver={false} gold="10/month" platinum="Unlimited" />
-                                <ComparisonRow feature="Who Viewed Me" silver={false} gold={true} platinum={true} />
-                                <ComparisonRow feature="Profile Spotlight" silver={false} gold={false} platinum={true} />
-                                <ComparisonRow feature="Relationship Manager" silver={false} gold={false} platinum={true} />
-                            </tbody>
-                        </table>
-                    </div>
+                <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 overflow-hidden border border-slate-100 overflow-x-auto">
+                    <table className="w-full min-w-[800px]">
+                        <thead>
+                            <tr className="bg-slate-50/50">
+                                <th className="text-left p-4 font-semibold text-slate-900">Features</th>
+                                <th className="p-4 font-bold text-slate-500">Starter</th>
+                                <th className="p-4 font-bold text-blue-600">Basic</th>
+                                <th className="p-4 font-bold text-slate-600">Silver</th>
+                                <th className="p-4 font-bold text-amber-500">Gold</th>
+                                <th className="p-4 font-bold text-violet-600">Platinum</th>
+                                <th className="p-4 font-bold text-rose-600">Elite</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100 text-sm">
+                            <ComparisonRow feature="Validity" starter="3 Days" basic="15 Days" silver="6 Months" gold="12 Months" platinum="15 Months" elite="24 Months" />
+                            <ComparisonRow feature="Contact Views" starter="0" basic="5" silver="30" gold="75" platinum="150" elite="Unlimited" />
+                            <ComparisonRow feature="Send Interests" starter="1/Day" basic="Unlimited" silver="Unlimited" gold="Unlimited" platinum="Unlimited" elite="Unlimited" />
+                            <ComparisonRow feature="Chat/Messaging" starter={false} basic="Basic" silver={true} gold={true} platinum={true} elite={true} />
+                            <ComparisonRow feature="Profile Spotlight" starter={false} basic={false} silver={false} gold="Standard" platinum="2x Reach" elite="Max Reach" />
+                            <ComparisonRow feature="Dedicated Manager" starter={false} basic={false} silver={false} gold={true} platinum={true} elite={true} />
+                        </tbody>
+                    </table>
                 </div>
             </section>
         </main>
     );
 }
 
-function PricingCard({ title, price, period, description, features, buttonText, buttonVariant, highlighted = false, icon }: {
+function PricingCard({ title, price, period, description, features, buttonText, buttonVariant, highlighted = false, icon, color }: {
     title: string;
     price: string;
     period: string;
@@ -135,41 +185,66 @@ function PricingCard({ title, price, period, description, features, buttonText, 
     buttonVariant: "primary" | "outline";
     highlighted?: boolean;
     icon: React.ReactNode;
+    color: "slate" | "blue" | "gray" | "amber" | "violet" | "rose";
 }) {
+    const colorStyles = {
+        slate: "bg-slate-50 border-slate-200 text-slate-900 shadow-slate-100",
+        blue: "bg-white border-blue-100 text-slate-900 shadow-blue-100",
+        gray: "bg-gradient-to-b from-slate-100 to-white border-slate-200 text-slate-900 shadow-slate-200",
+        amber: "bg-gradient-to-b from-amber-50 to-white border-amber-200 text-slate-900 shadow-amber-200 ring-1 ring-amber-200", // Gold
+        violet: "bg-gradient-to-b from-violet-50 to-white border-violet-200 text-slate-900 shadow-violet-200",
+        rose: "bg-gradient-to-b from-rose-50 to-white border-rose-200 text-slate-900 shadow-rose-200",
+    };
+
+    const iconBg = {
+        slate: "bg-slate-200 text-slate-600",
+        blue: "bg-blue-100 text-blue-600",
+        gray: "bg-slate-200 text-slate-600",
+        amber: "bg-amber-100 text-amber-600",
+        violet: "bg-violet-100 text-violet-600",
+        rose: "bg-rose-100 text-rose-600",
+    };
+
+    const btnStyles = {
+        slate: "bg-slate-900 text-white hover:bg-slate-800",
+        blue: "bg-blue-600 text-white hover:bg-blue-700",
+        gray: "bg-slate-600 text-white hover:bg-slate-700",
+        amber: "bg-amber-500 text-white hover:bg-amber-600 shadow-amber-200",
+        violet: "bg-violet-600 text-white hover:bg-violet-700",
+        rose: "bg-rose-600 text-white hover:bg-rose-700",
+    };
+
     return (
-        <div className={`relative p-8 rounded-[32px] transition-all duration-300 hover:-translate-y-2 flex flex-col h-full ${highlighted
-            ? "bg-gradient-to-b from-indigo-600 to-purple-700 text-white shadow-2xl shadow-indigo-500/30 scale-105 z-10"
-            : "bg-white text-slate-900 shadow-xl shadow-slate-200/50 border border-slate-100"
-            }`}>
+        <div className={`relative p-6 rounded-[2rem] border transition-all duration-300 hover:-translate-y-1 flex flex-col h-full ${highlighted ? "shadow-2xl scale-105 z-10" : "shadow-lg"} ${colorStyles[color]}`}>
             {highlighted && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <span className="bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg uppercase tracking-wider">
-                        Most Popular
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="bg-amber-500 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest shadow-lg">
+                        Best Value
                     </span>
                 </div>
             )}
 
-            <div className="flex items-center gap-3 mb-6">
-                <div className={`p-2 rounded-xl ${highlighted ? "bg-white/10" : "bg-indigo-50"}`}>
+            <div className="flex items-center gap-3 mb-4">
+                <div className={`p-2 rounded-xl ${iconBg[color]}`}>
                     {icon}
                 </div>
-                <h3 className="text-xl font-bold">{title}</h3>
+                <h3 className="text-lg font-bold">{title}</h3>
             </div>
 
             <div className="mb-6">
                 <div className="flex items-baseline gap-1">
-                    <span className="text-4xl font-black">{price}</span>
-                    <span className={`text-sm font-medium ${highlighted ? "text-indigo-100" : "text-slate-500"}`}>{period}</span>
+                    <span className="text-3xl font-black">{price}</span>
                 </div>
-                <p className={`mt-4 text-sm leading-relaxed ${highlighted ? "text-indigo-100" : "text-slate-500"}`}>
+                <span className="text-xs font-semibold uppercase tracking-wide opacity-60">{period}</span>
+                <p className="mt-2 text-sm opacity-80 leading-relaxed">
                     {description}
                 </p>
             </div>
 
-            <div className="space-y-4 mb-8 flex-1">
+            <div className="space-y-3 mb-8 flex-1">
                 {features.map((feature, i) => (
-                    <div key={i} className="flex items-start gap-3 text-sm">
-                        <Check className={`w-5 h-5 shrink-0 ${highlighted ? "text-indigo-300" : "text-indigo-600"}`} />
+                    <div key={i} className="flex items-start gap-2 text-sm">
+                        <Check className={`w-4 h-4 shrink-0 mt-0.5 opacity-70`} />
                         <span>{feature}</span>
                     </div>
                 ))}
@@ -177,10 +252,7 @@ function PricingCard({ title, price, period, description, features, buttonText, 
 
             <Link href="/register" className="mt-auto">
                 <Button
-                    className={`w-full h-12 rounded-full font-bold btn-hover-effect ${highlighted
-                        ? "bg-white text-indigo-600 hover:bg-indigo-50"
-                        : "bg-slate-900 text-white hover:bg-slate-800"
-                        }`}
+                    className={`w-full rounded-full font-bold shadow-md transition-all ${btnStyles[color]}`}
                 >
                     {buttonText}
                 </Button>
@@ -189,24 +261,23 @@ function PricingCard({ title, price, period, description, features, buttonText, 
     );
 }
 
-function ComparisonRow({ feature, silver, gold, platinum }: { feature: string, silver: boolean | string, gold: boolean | string, platinum: boolean | string }) {
-    const renderValue = (val: boolean | string) => {
+function ComparisonRow({ feature, starter, basic, silver, gold, platinum, elite }: any) {
+    const renderValue = (val: any) => {
         if (typeof val === "boolean") {
-            return val ? (
-                <div className="flex justify-center"><div className="bg-indigo-100 p-1 rounded-full"><Check className="w-4 h-4 text-indigo-600" /></div></div>
-            ) : (
-                <div className="flex justify-center"><X className="w-4 h-4 text-slate-300" /></div>
-            );
+            return val ? <Check className="w-5 h-5 text-green-500 mx-auto" /> : <X className="w-5 h-5 text-slate-300 mx-auto" />;
         }
-        return <div className="text-center text-sm font-medium text-slate-600">{val}</div>;
+        return <div className="text-center font-medium opacity-80">{val}</div>;
     };
 
     return (
-        <tr className="hover:bg-slate-50/50 transition-colors">
-            <td className="p-6 text-sm font-medium text-slate-700">{feature}</td>
-            <td className="p-6">{renderValue(silver)}</td>
-            <td className="p-6 bg-indigo-50/10 border-x border-indigo-50">{renderValue(gold)}</td>
-            <td className="p-6">{renderValue(platinum)}</td>
+        <tr className="hover:bg-slate-50 transition-colors">
+            <td className="p-4 font-medium text-slate-900">{feature}</td>
+            <td className="p-4">{renderValue(starter)}</td>
+            <td className="p-4">{renderValue(basic)}</td>
+            <td className="p-4">{renderValue(silver)}</td>
+            <td className="p-4 bg-amber-50/30">{renderValue(gold)}</td>
+            <td className="p-4">{renderValue(platinum)}</td>
+            <td className="p-4">{renderValue(elite)}</td>
         </tr>
     );
 }

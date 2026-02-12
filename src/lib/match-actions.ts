@@ -28,6 +28,11 @@ const MatchPreferencesSchema = z.object({
     preferredReligions: z.string().optional(),
     preferredCastes: z.string().optional(), // Added
     preferredMotherTongues: z.string().optional(),
+
+    // Lifestyle
+    eatingHabits: z.string().optional(),
+    drinkingHabits: z.string().optional(),
+    smokingHabits: z.string().optional(),
 });
 
 export async function updateMatchPreferences(prevState: any, formData: FormData) {
@@ -49,6 +54,9 @@ export async function updateMatchPreferences(prevState: any, formData: FormData)
         preferredReligions: formData.get("preferredReligions"),
         preferredCastes: formData.get("preferredCastes"), // Added
         preferredMotherTongues: formData.get("preferredMotherTongues"),
+        eatingHabits: formData.get("eatingHabits"),
+        drinkingHabits: formData.get("drinkingHabits"),
+        smokingHabits: formData.get("smokingHabits"),
     };
 
     const validation = MatchPreferencesSchema.safeParse(rawData);
@@ -68,6 +76,9 @@ export async function updateMatchPreferences(prevState: any, formData: FormData)
         preferredReligions,
         preferredCastes, // Added
         preferredMotherTongues,
+        eatingHabits,
+        drinkingHabits,
+        smokingHabits,
         ...numericFields
     } = validation.data;
 
@@ -84,6 +95,9 @@ export async function updateMatchPreferences(prevState: any, formData: FormData)
                 preferredReligions: toArray(preferredReligions),
                 preferredCastes: toArray(preferredCastes), // Added
                 preferredMotherTongues: toArray(preferredMotherTongues),
+                eatingHabits: toArray(eatingHabits),
+                drinkingHabits: toArray(drinkingHabits),
+                smokingHabits: toArray(smokingHabits),
             },
             create: {
                 userId: session.user.id,
@@ -94,6 +108,9 @@ export async function updateMatchPreferences(prevState: any, formData: FormData)
                 preferredReligions: toArray(preferredReligions),
                 preferredCastes: toArray(preferredCastes), // Added
                 preferredMotherTongues: toArray(preferredMotherTongues),
+                eatingHabits: toArray(eatingHabits),
+                drinkingHabits: toArray(drinkingHabits),
+                smokingHabits: toArray(smokingHabits),
             }
         });
 
@@ -126,6 +143,8 @@ export interface MatchFilters {
     caste?: string; // Added
     motherTongue?: string;
     gender?: string;
+    maritalStatus?: string; // Added filter
+    education?: string; // Added filter
     professions?: string[];
 
     // Location
@@ -195,7 +214,7 @@ export async function getMatches(filters?: MatchFilters) {
         include: { subscription: true }
     });
 
-    const isPro = currentUser?.subscription?.status === 'active';
+    const isPro = currentUser?.subscription?.status === 'active' && currentUser?.subscription?.plan !== 'FREE';
 
     // Start with all candidates (excluding self and blocked users)
     const candidates = await db.user.findMany({
@@ -211,6 +230,7 @@ export async function getMatches(filters?: MatchFilters) {
             jobs: { take: 1, orderBy: { createdAt: 'desc' } }, // Fetch latest job for location/income
             subscription: true, // For Premium filter
             photos: true, // Include gallery photos
+            educations: true, // Include education details
         },
         take: 100 // Limit for performance
     });
@@ -264,7 +284,19 @@ export async function getMatches(filters?: MatchFilters) {
 
             if (filters.religion && pd.religion !== filters.religion) return false;
             if (filters.caste && pd.caste?.toLowerCase() !== filters.caste.toLowerCase()) return false;
+            if (filters.religion && pd.religion !== filters.religion) return false;
+            if (filters.caste && pd.caste?.toLowerCase() !== filters.caste.toLowerCase()) return false;
             if (filters.motherTongue && pd.motherTongue !== filters.motherTongue) return false;
+            if (filters.maritalStatus && pd.maritalStatus !== filters.maritalStatus) return false;
+
+            // Education Filter
+            if (filters.education) {
+                const eduMatches = c.educations?.some((e: any) =>
+                    e.qualification?.toLowerCase().includes(filters.education!.toLowerCase()) ||
+                    e.stream?.toLowerCase().includes(filters.education!.toLowerCase())
+                );
+                if (!eduMatches) return false;
+            }
 
             // --- Location Filters ---
             if (filters.workingCountry && cp.workLocation && !cp.workLocation.includes(filters.workingCountry)) return false;
@@ -301,9 +333,8 @@ export async function getMatches(filters?: MatchFilters) {
             if (filters.complexion && pd.complexion !== filters.complexion) return false;
             if (filters.bodyType && pd.bodyType !== filters.bodyType) return false;
             if (filters.employmentCategory && c.jobs?.[0]?.employmentCategory !== filters.employmentCategory) {
-                // Fallback to CareerProfile or Job
-                // We need to include Jobs in the query to be accurate, currently filteredCandidates comes from `candidates` which has `include: { careerProfile, personalDetails, familyDetails }`.
-                // We need to add `jobs: true` to include.
+                // Return false if mismatch
+                return false;
             }
 
             // Income (Range matching)

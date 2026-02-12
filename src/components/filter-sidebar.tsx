@@ -10,6 +10,7 @@ import { Filter, X, ChevronDown, ChevronUp, Loader2, Sparkles } from "lucide-rea
 import { getMatchPreferences } from "@/lib/match-actions";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import AdPlacement from "@/components/ad-placement";
 
 export default function FilterSidebar() {
     const router = useRouter();
@@ -32,6 +33,9 @@ export default function FilterSidebar() {
         gender: searchParams.get("gender") || "",
 
         // Location
+        maritalStatus: searchParams.get("maritalStatus") || "",
+        education: searchParams.get("education") || "",
+
         workingCountry: searchParams.get("workingCountry") || "",
         workingState: searchParams.get("workingState") || "",
         workingDistrict: searchParams.get("workingDistrict") || "",
@@ -95,7 +99,7 @@ export default function FilterSidebar() {
             workingCountry: "", workingState: "", workingDistrict: "",
             nativeCountry: "", nativeState: "", nativeDistrict: "", readyToRelocate: false,
             physicalStatus: "", familyStatus: "", complexion: "", bodyType: "",
-            employmentCategory: "", incomeRange: [],
+            employmentCategory: "", incomeRange: [], maritalStatus: "", education: "",
             eatingHabits: "", drinkingHabits: "", smokingHabits: "",
             isOnline: false, hasPhoto: false, isPremium: false
         });
@@ -122,7 +126,10 @@ export default function FilterSidebar() {
                 religion: prefs.preferredReligions?.[0] || "", // Use first for now if single input
                 caste: prefs.preferredCastes?.[0] || "",
                 motherTongue: prefs.preferredMotherTongues?.[0] || "",
+                maritalStatus: prefs.maritalStatus?.[0] || "", // Added mapping
+
                 // Advanced
+                education: prefs.education?.[0] || "", // Added mapping
                 physicalStatus: prefs.physicalStatus || "",
                 familyStatus: prefs.familyStatus?.[0] || "",
                 complexion: prefs.complexion?.[0] || "",
@@ -130,6 +137,11 @@ export default function FilterSidebar() {
                 employmentCategory: prefs.employmentCategory?.[0] || "",
                 incomeRange: prefs.incomeRange || [], // Array
                 nativeCountry: prefs.preferredLocations?.[0] || "", // Approximate mapping
+
+                // Lifestyle
+                eatingHabits: prefs.eatingHabits?.[0] || "",
+                drinkingHabits: prefs.drinkingHabits?.[0] || "",
+                smokingHabits: prefs.smokingHabits?.[0] || "",
 
                 // Show sections
             }));
@@ -213,6 +225,7 @@ export default function FilterSidebar() {
                             <Input name="religion" placeholder="Religion" value={filters.religion} onChange={handleChange} className="bg-white/60 h-9" />
                             <Input name="caste" placeholder="Caste" value={filters.caste} onChange={handleChange} className="bg-white/60 h-9" />
                             <Input name="motherTongue" placeholder="Mother Tongue" value={filters.motherTongue} onChange={handleChange} className="bg-white/60 h-9" />
+                            <Input name="maritalStatus" placeholder="Marital Status" value={filters.maritalStatus} onChange={handleChange} className="bg-white/60 h-9" />
                         </div>
                     </div>
 
@@ -270,6 +283,7 @@ export default function FilterSidebar() {
                                 <Input name="employmentCategory" placeholder="Employment Category" value={filters.employmentCategory} onChange={handleChange} className="bg-white/60 h-9" />
                                 {/* Income is simpler text for now */}
                                 <Input name="industry" placeholder="Industry / Job Title" value={filters.industry} onChange={handleChange} className="bg-white/60 h-9" />
+                                <Input name="education" placeholder="Education" value={filters.education} onChange={handleChange} className="bg-white/60 h-9" />
                             </div>
                         )}
                     </div>
@@ -331,6 +345,11 @@ export default function FilterSidebar() {
                     <Button onClick={handleApply} className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white border-0 shadow-lg shadow-purple-200 h-11 rounded-xl font-medium transition-all hover:scale-[1.02]">
                         Apply Filters
                     </Button>
+
+                    {/* Advertisement Slot */}
+                    <div className="pt-4">
+                        <AdPlacement placement="SIDEBAR" />
+                    </div>
                 </div>
             </div>
         </>

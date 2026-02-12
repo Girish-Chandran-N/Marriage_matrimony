@@ -1,11 +1,13 @@
 import { auth } from "@/auth";
+import { Fragment } from "react";
 import { getMatches } from "@/lib/match-actions";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import FilterSidebar from "@/components/filter-sidebar";
 import { MatchCard } from "@/components/matches/match-card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"; // Can imply remove if unused later, but keeping for safety
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import AdPlacement from "@/components/ad-placement";
 
 export default async function MatchesPage({
     searchParams,
@@ -88,7 +90,7 @@ export default async function MatchesPage({
                 <div className="absolute top-40 left-40 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
             </div>
 
-            <div className="max-w-7xl mx-auto p-6 md:p-8 relative z-10">
+            <div className="max-w-[1920px] mx-auto p-4 md:p-6 lg:p-8 relative z-10">
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight flex items-center gap-3">
@@ -119,7 +121,7 @@ export default async function MatchesPage({
                     </div>
 
                     {/* Main Content */}
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                         {matches.length === 0 ? (
                             <div className="text-center py-24 bg-white/60 backdrop-blur-md rounded-3xl border border-white/50 shadow-lg">
                                 <div className="text-6xl mb-4">🧞‍♂️</div>
@@ -132,18 +134,36 @@ export default async function MatchesPage({
                                 </Link>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
                                 {matches.map(({ user, score }, idx) => (
-                                    <div
-                                        key={user.id}
-                                        className="animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both"
-                                        style={{ animationDelay: `${idx * 100}ms` }}
-                                    >
-                                        <MatchCard user={user} score={score} />
-                                    </div>
+                                    <Fragment key={user.id}>
+                                        <div
+                                            className="animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both"
+                                            style={{ animationDelay: `${idx * 100}ms` }}
+                                        >
+                                            <MatchCard user={user} score={score} />
+                                        </div>
+                                        {/* In-Feed Ad: Spans full width to act as a breaker between rows */}
+                                        {idx === 3 && (
+                                            <div key="ad-feed" className="col-span-1 md:col-span-2 xl:col-span-3 2xl:col-span-4 animate-in fade-in slide-in-from-bottom-4 duration-700 my-4">
+                                                <div className="bg-slate-50/50 rounded-xl border border-slate-200/60 p-1">
+                                                    <AdPlacement placement="FEED" className="h-32 md:h-40 w-full" />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </Fragment>
                                 ))}
                             </div>
                         )}
+                    </div>
+
+                    {/* Right Sidebar (Ads) */}
+                    <div className="hidden xl:block w-72 flex-shrink-0 sticky top-8 space-y-6">
+                        <AdPlacement placement="RIGHT_SIDEBAR" className="h-[600px]" />
+                        <div className="bg-white/50 backdrop-blur-sm p-4 rounded-xl border border-white/50">
+                            <h3 className="text-sm font-semibold text-gray-500 mb-2">Sponsored</h3>
+                            <AdPlacement placement="SIDEBAR" className="h-64" />
+                        </div>
                     </div>
                 </div>
             </div>
