@@ -61,3 +61,44 @@ export async function updateLastSeen() {
         console.error("Failed to update last seen:", error);
     }
 }
+
+export async function getProfessionCounts() {
+    try {
+        // Fetch active users with their latest job
+        const users = await db.user.findMany({
+            where: {
+                status: 'ACTIVE',
+                jobs: {
+                    some: { employmentCategory: { not: null } }
+                }
+            },
+            select: {
+                jobs: {
+                    where: { employmentCategory: { not: null } },
+                    orderBy: { toYear: 'desc' }, // Prioritize recent jobs
+                    take: 1,
+                    select: { employmentCategory: true }
+                }
+            }
+        });
+
+        // Aggregate counts
+        const categoryCounts: Record<string, number> = {};
+
+        users.forEach(user => {
+            const category = user.jobs[0]?.employmentCategory;
+            if (category) {
+                categoryCounts[category] = (categoryCounts[category] || 0) + 1;
+            }
+        });
+
+        // Convert to array and sort
+        return Object.entries(categoryCounts)
+            .map(([category, count]) => ({ category, count }))
+            .sort((a, b) => b.count - a.count);
+
+    } catch (error) {
+        console.error("Failed to fetch profession counts:", error);
+        return [];
+    }
+}

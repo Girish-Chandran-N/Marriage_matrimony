@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Briefcase, Building2, Calendar, MapPin, Plus, Trash2 } from "lucide-react";
+import { EMPLOYMENT_CATEGORIES } from "@/lib/constants";
 
 export default function CareerDetailsForm({
     onNext,
@@ -173,6 +174,16 @@ export default function CareerDetailsForm({
                                         <Input name="company" required placeholder="e.g. Tech Solutions Inc." />
                                     </div>
 
+                                    <div className="col-span-full md:col-span-1">
+                                        <Label className="mb-2 block">Employment Category</Label>
+                                        <select name="employmentCategory" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600">
+                                            <option value="">Select Category</option>
+                                            {EMPLOYMENT_CATEGORIES.map((cat) => (
+                                                <option key={cat} value={cat}>{cat}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
                                     <div className="">
                                         <Label className="mb-2 block">City</Label>
                                         <Input name="city" placeholder="e.g. New York" />
@@ -244,9 +255,11 @@ export default function CareerDetailsForm({
             )}
 
             <div className="flex justify-between pt-6 border-t border-gray-100">
-                <Button type="button" variant="outline" onClick={onBack}>
-                    Back
-                </Button>
+                {onBack ? (
+                    <Button type="button" variant="outline" onClick={onBack}>
+                        Back
+                    </Button>
+                ) : <div></div>}
                 <Button
                     type="button"
                     onClick={onNext} // Note: This Next doesn't submit status, it just navigates. To save status, user must click "Update Status"

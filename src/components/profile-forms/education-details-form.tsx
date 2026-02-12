@@ -29,7 +29,7 @@ export default function EducationDetailsForm({
     onBack?: () => void,
     initialData?: Education[]
 }) {
-    const [isAdding, setIsAdding] = useState(false);
+    const [isAdding, setIsAdding] = useState(initialData.length === 0);
     const router = useRouter();
 
     // Create Action State
@@ -64,14 +64,7 @@ export default function EducationDetailsForm({
                     Your Education
                 </h3>
 
-                {initialData.length === 0 && !isAdding && (
-                    <div className="text-center p-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50">
-                        <p className="text-gray-500 text-sm">No education details added yet.</p>
-                        <Button variant="link" onClick={() => setIsAdding(true)} className="mt-2 text-indigo-600">
-                            + Add Education
-                        </Button>
-                    </div>
-                )}
+
 
                 <div className="grid gap-4">
                     {initialData.map((edu) => (
@@ -156,9 +149,11 @@ export default function EducationDetailsForm({
             )}
 
             <div className="flex justify-between pt-6 border-t border-gray-100">
-                <Button type="button" variant="outline" onClick={onBack}>
-                    Back
-                </Button>
+                {onBack ? (
+                    <Button type="button" variant="outline" onClick={onBack}>
+                        Back
+                    </Button>
+                ) : <div></div>}
                 <Button
                     type="button"
                     onClick={onNext}

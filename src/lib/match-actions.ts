@@ -299,8 +299,8 @@ export async function getMatches(filters?: MatchFilters) {
             }
 
             // --- Location Filters ---
-            if (filters.workingCountry && cp.workLocation && !cp.workLocation.includes(filters.workingCountry)) return false;
-            // Note: workLocation is a string, might need parsing or distinct fields in future. Assuming 'City, State, Country' format or similar.
+            // Removed legacy workLocation check in favor of precise fields
+            // if (filters.workingCountry && cp.workLocation && !cp.workLocation.includes(filters.workingCountry)) return false;
             // Better: If schema had structured location. Currently Job has country/state.
             // Let's try to match against Job table if available, but getMatches fetches User with include careerProfile.
             // Schema: Job has country, state, district. User has jobs[].
@@ -308,15 +308,37 @@ export async function getMatches(filters?: MatchFilters) {
             // Request said "Working Country". CareerProfile has "workLocation". 
             // Let's match against PersonalDetails.residingCountry for "Working Country" (assuming residency = work place usually) OR Job.country?
             // User schema has: residingCountry in PersonalDetails.
-            if (filters.workingCountry && pd.residingCountry !== filters.workingCountry) return false;
-            // If State/District are present, check them too
-            if (filters.workingState && pd.residingState !== filters.workingState) return false;
-            if (filters.workingDistrict && pd.residingDistrict !== filters.workingDistrict) return false;
+            // --- Location Filters ---
+            if (filters.workingCountry) {
+                const countries = filters.workingCountry.split(',').map(s => s.trim());
+                if (!countries.includes(pd.residingCountry || '')) return false;
+            }
+
+            if (filters.workingState) {
+                const states = filters.workingState.split(',').map(s => s.trim());
+                if (!states.includes(pd.residingState || '')) return false;
+            }
+
+            if (filters.workingDistrict) {
+                const districts = filters.workingDistrict.split(',').map(s => s.trim());
+                if (!districts.includes(pd.residingDistrict || '')) return false;
+            }
 
             // Native Location
-            if (filters.nativeCountry && pd.nativeCountry !== filters.nativeCountry) return false;
-            if (filters.nativeState && pd.nativeState !== filters.nativeState) return false;
-            if (filters.nativeDistrict && pd.nativeDistrict !== filters.nativeDistrict) return false;
+            if (filters.nativeCountry) {
+                const countries = filters.nativeCountry.split(',').map(s => s.trim());
+                if (!countries.includes(pd.nativeCountry || '')) return false;
+            }
+
+            if (filters.nativeState) {
+                const states = filters.nativeState.split(',').map(s => s.trim());
+                if (!states.includes(pd.nativeState || '')) return false;
+            }
+
+            if (filters.nativeDistrict) {
+                const districts = filters.nativeDistrict.split(',').map(s => s.trim());
+                if (!districts.includes(pd.nativeDistrict || '')) return false;
+            }
 
             // Relocate? (Stored in MatchPreferences usually, but here filtering Candidates who match MY preference? Or Candidates who are willing to relocate?)
             // Usually "Ready to Relocate" filter means "Show candidates who said YES to relocate".

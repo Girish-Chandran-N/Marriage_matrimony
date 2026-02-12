@@ -157,11 +157,11 @@ export default function LifestyleDetailsForm({
             {state?.message && <p className={state.success ? "text-green-600 text-sm" : "text-red-500 text-sm"}>{state.message}</p>}
 
             <div className="flex justify-between pt-6 border-t border-gray-100">
-                {onBack && (
+                {onBack ? (
                     <Button type="button" variant="outline" onClick={onBack} disabled={isPending}>
                         Back
                     </Button>
-                )}
+                ) : <div></div>}
                 <Button
                     type="submit"
                     disabled={isPending}

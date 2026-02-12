@@ -239,9 +239,11 @@ export default function FamilyDetailsForm({
             </div>
 
             <div className="flex justify-between pt-6 border-t border-gray-100">
-                <Button type="button" variant="outline" onClick={onBack}>
-                    Back
-                </Button>
+                {onBack ? (
+                    <Button type="button" variant="outline" onClick={onBack}>
+                        Back
+                    </Button>
+                ) : <div></div>}
                 <Button
                     type="button"
                     onClick={onNext}

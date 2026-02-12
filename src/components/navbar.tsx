@@ -3,8 +3,9 @@ import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { UserNav } from "@/components/user-nav";
 import { MobileNav } from "@/components/mobile-nav";
-import { Sparkles } from "lucide-react";
+import { Sparkles, ChevronDown } from "lucide-react";
 import { db } from "@/lib/db";
+import { getProfessionCounts } from "@/lib/user-actions";
 
 export async function Navbar() {
     const session = await auth();
@@ -44,6 +45,7 @@ export async function Navbar() {
                         <>
                             <NavLink href="/dashboard">Dashboard</NavLink>
                             <NavLink href="/matches">Find Matches</NavLink>
+                            <NavLink href="/search/profession">Search by Professions</NavLink>
                             <NavLink href="/messages">Messages</NavLink>
                             {session.user.role === "ADMIN" && (
                                 <NavLink href="/admin" className="text-red-500 hover:text-red-600">Admin</NavLink>
@@ -52,6 +54,7 @@ export async function Navbar() {
                     ) : (
                         <>
                             <NavLink href="/">Home</NavLink>
+                            <NavLink href="/search/profession">Search by Professions</NavLink>
                             <NavLink href="/pricing">Pricing</NavLink>
                             <NavLink href="/stories">Success Stories</NavLink>
                         </>

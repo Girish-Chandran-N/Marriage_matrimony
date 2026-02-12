@@ -45,6 +45,13 @@ export function MobileNav({ user }: { user?: any }) {
                                 Matches
                             </Link>
                             <Link
+                                href="/search/profession"
+                                className={`text-sm font-medium transition-colors hover:text-purple-600 ${pathname?.startsWith("/search/profession") ? "text-purple-600" : ""}`}
+                                onClick={toggle}
+                            >
+                                Search by Professions
+                            </Link>
+                            <Link
                                 href="/messages"
                                 className={`text-sm font-medium transition-colors hover:text-purple-600 ${pathname === "/messages" ? "text-purple-600" : ""}`}
                                 onClick={toggle}
@@ -63,6 +70,13 @@ export function MobileNav({ user }: { user?: any }) {
                         </>
                     ) : (
                         <>
+                            <Link
+                                href="/search/profession"
+                                className="text-sm font-medium transition-colors hover:text-purple-600"
+                                onClick={toggle}
+                            >
+                                Search by Professions
+                            </Link>
                             <Link
                                 href="/pricing"
                                 className="text-sm font-medium transition-colors hover:text-purple-600"
