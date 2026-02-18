@@ -35,7 +35,7 @@ export function Footer() {
                         <h3 className="text-sm font-bold text-white tracking-wider uppercase mb-6">Explore</h3>
                         <ul className="space-y-3">
                             <FooterLink href="/matches">Find Matches</FooterLink>
-                            <FooterLink href="/success-stories">Success Stories</FooterLink>
+                            <FooterLink href="/stories">Success Stories</FooterLink>
                             <FooterLink href="/pricing">Membership Plans</FooterLink>
                             <FooterLink href="/about">About Us</FooterLink>
                         </ul>

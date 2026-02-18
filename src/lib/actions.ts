@@ -25,9 +25,25 @@ const RegisterSchema = z.object({
             const domain = email.split("@")[1];
             return allowedDomains.includes(domain);
         }, { message: "Please use a valid email provider (Gmail, Outlook, Yahoo, etc.)" }),
-    password: z.string().min(6, { message: "Password must be at least 6 characters." }),
-    phoneNumber: z.string().regex(/^\d{10}$/, { message: "Mobile number must be exactly 10 digits." }),
+    password: z
+        .string()
+        .min(8, { message: "Password must be at least 8 characters." })
+        .regex(/[A-Z]/, { message: "Password must contain at least one uppercase letter." })
+        .regex(/[a-z]/, { message: "Password must contain at least one lowercase letter." })
+        .regex(/[0-9]/, { message: "Password must contain at least one number." })
+        .regex(/[^A-Za-z0-9]/, { message: "Password must contain at least one special character." }),
+    phoneNumber: z.string().regex(/^\+?\d{10,15}$/, { message: "Invalid mobile number format." }),
     gender: z.enum(["Male", "Female", "Other"], { message: "Please select a gender." }),
+    dob: z.string().refine((date) => {
+        const birthDate = new Date(date);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age >= 18;
+    }, { message: "You must be at least 18 years old." }),
 });
 
 export async function register(prevState: any, formData: FormData) {
@@ -37,16 +53,24 @@ export async function register(prevState: any, formData: FormData) {
         password: formData.get("password"),
         phoneNumber: formData.get("phoneNumber"),
         gender: formData.get("gender"),
+        dob: formData.get("dob"),
     });
 
     if (!validatedFields.success) {
         return {
             errors: validatedFields.error.flatten().fieldErrors,
             message: "Missing Fields. Failed to Register.",
+            payload: {
+                name: formData.get("name")?.toString(),
+                email: formData.get("email")?.toString(),
+                phoneNumber: formData.get("phoneNumber")?.toString(),
+                gender: formData.get("gender")?.toString(),
+                dob: formData.get("dob")?.toString(),
+            }
         };
     }
 
-    const { name, email, password, phoneNumber, gender } = validatedFields.data;
+    const { name, email, password, phoneNumber, gender, dob } = validatedFields.data;
 
     try {
         const existingUser = await db.user.findUnique({
@@ -56,6 +80,18 @@ export async function register(prevState: any, formData: FormData) {
         if (existingUser) {
             return {
                 message: "Email already in use.",
+                payload: { name, email, phoneNumber, gender, dob }
+            };
+        }
+
+        const existingPhone = await db.user.findUnique({
+            where: { phoneNumber },
+        });
+
+        if (existingPhone) {
+            return {
+                message: "Mobile number already in use.",
+                payload: { name, email, phoneNumber, gender, dob }
             };
         }
 
@@ -70,6 +106,7 @@ export async function register(prevState: any, formData: FormData) {
                 personalDetails: {
                     create: {
                         gender,
+                        dateOfBirth: new Date(dob),
                     },
                 },
                 careerProfile: {
@@ -86,6 +123,7 @@ export async function register(prevState: any, formData: FormData) {
         console.error("Registration error:", error);
         return {
             message: "Database Error: " + (error instanceof Error ? error.message : String(error)),
+            payload: { name, email, phoneNumber, gender }
         };
     }
 
