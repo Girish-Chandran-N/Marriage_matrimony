@@ -27,7 +27,8 @@ export default function ProfileEditClient({ profile }: { profile: any }) {
     const renderSection = () => {
         switch (activeSection) {
             case "personal":
-                return <PersonalDetailsForm initialData={profile.personalDetails} />;
+                const verificationStatus = profile.verificationRequests?.[0]?.status;
+                return <PersonalDetailsForm initialData={profile.personalDetails} userName={profile.name} verificationStatus={verificationStatus} />;
             case "education":
                 return <EducationDetailsForm initialData={profile.educations} />;
             case "career":
@@ -51,19 +52,20 @@ export default function ProfileEditClient({ profile }: { profile: any }) {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-            {/* Header */}
-            <div className="bg-white border-b sticky top-0 z-10">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-                    <h1 className="text-xl font-bold text-gray-900">Edit Profile</h1>
-                    <a href="/profile" className="text-sm font-medium text-primary hover:text-primary/80">View Profile</a>
+        <div className="h-[calc(100vh-5rem)] bg-gray-50 flex flex-col overflow-hidden">
+            {/* Header - Reduced height */}
+            <div className="bg-white border-b shrink-0 z-10">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center justify-between">
+                    <h1 className="text-lg font-bold text-gray-900">Edit Profile</h1>
+                    <a href="/profile" className="text-xs font-medium text-primary hover:text-primary/80">View Profile</a>
                 </div>
             </div>
 
-            <div className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
-                <div className="flex flex-col md:flex-row gap-8">
-                    {/* Sidebar Navigation */}
-                    <nav className="w-full md:w-64 shrink-0 space-y-1">
+            {/* Main Layout - Flex row, full height minus header */}
+            <div className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-4 flex gap-6 overflow-hidden">
+                {/* Sidebar - Fixed */}
+                <nav className="hidden md:block w-64 shrink-0 overflow-y-auto py-1 custom-scrollbar">
+                    <div className="space-y-1">
                         {SECTIONS.map((section) => {
                             const Icon = section.icon;
                             const isActive = activeSection === section.id;
@@ -84,23 +86,21 @@ export default function ProfileEditClient({ profile }: { profile: any }) {
                                 </button>
                             );
                         })}
-                    </nav>
+                    </div>
+                </nav>
 
-                    {/* Main Content Area */}
-                    <main className="flex-1 min-w-0">
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                            <div className="p-6 md:p-8">
-                                <div className="mb-6">
-                                    <h2 className="text-2xl font-bold text-gray-900">
-                                        {SECTIONS.find(s => s.id === activeSection)?.label}
-                                    </h2>
-                                    <p className="text-gray-500 mt-1">Update your information below.</p>
-                                </div>
-                                {renderSection()}
-                            </div>
-                        </div>
-                    </main>
-                </div>
+                {/* Main Content Area - Scrollable */}
+                <main className="flex-1 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col min-w-0">
+                    <div className="p-4 md:p-6 border-b shrink-0 bg-white z-10">
+                        <h2 className="text-lg font-bold text-gray-900">
+                            {SECTIONS.find(s => s.id === activeSection)?.label}
+                        </h2>
+                        <p className="text-xs text-gray-500 mt-1">Update your information below.</p>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar">
+                        {renderSection()}
+                    </div>
+                </main>
             </div>
         </div>
     );

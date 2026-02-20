@@ -34,7 +34,8 @@ const PersonalDetailsSchema = z.object({
     nativeCity: z.string().optional(),
     nationality: z.string().optional(),
 
-    residingCountry: z.string().min(1, "Residing Country is required"),
+    // Location - Made optional as requested to remove from this form
+    residingCountry: z.string().optional(),
     residingState: z.string().optional(),
     residingDistrict: z.string().optional(),
     residingCity: z.string().optional(),
@@ -42,8 +43,8 @@ const PersonalDetailsSchema = z.object({
     leaveDateFrom: z.string().optional().transform(str => str ? new Date(str) : undefined),
     leaveDateTo: z.string().optional().transform(str => str ? new Date(str) : undefined),
 
-    // Religion
-    religion: z.string().min(1),
+    // Religion - Made optional
+    religion: z.string().optional(),
     caste: z.string().optional(),
     subCaste: z.string().optional(),
 
@@ -68,9 +69,13 @@ export async function updatePersonalDetails(prevState: any, formData: FormData) 
     const session = await auth();
     if (!session?.user?.id) return { message: "Unauthorized" };
 
+    // Extract Name
+    const name = formData.get("name") as string | null;
+
     const rawData: Record<string, any> = {};
     for (const key of formData.keys()) {
         if (key.startsWith("$")) continue; // Skip internal Next.js keys
+        if (key === "name") continue; // Handle name separately
         const value = formData.get(key);
         // Convert empty strings to undefined for optional fields to satisfy Zod
         rawData[key] = value === "" ? undefined : value;
@@ -107,6 +112,15 @@ export async function updatePersonalDetails(prevState: any, formData: FormData) 
                 : [],
         };
 
+        // 1. Update User Name if provided
+        if (name && name.trim().length >= 2) {
+            await db.user.update({
+                where: { id: session.user.id },
+                data: { name: name.trim() }
+            });
+        }
+
+        // 2. Upsert Personal Details
         await db.personalDetails.upsert({
             where: { userId: session.user.id },
             update: dataToSave,

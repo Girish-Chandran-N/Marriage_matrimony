@@ -91,11 +91,11 @@ export default function EducationDetailsForm({
             {isAdding ? (
                 <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200 animate-in slide-in-from-top-4 fade-in">
                     <h4 className="text-sm font-semibold text-gray-900 mb-4">Add New Education</h4>
-                    <form action={createAction} className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="qualification">Qualification</Label>
-                                <select id="qualification" name="qualification" required className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                    <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <Label htmlFor="qualification" className="text-xs font-semibold mb-1 block">Qualification</Label>
+                                <select id="qualification" name="qualification" required className="flex h-9 w-full rounded-md border border-green-100 bg-green-50/50 px-3 py-1.5 text-sm focus:border-green-300 focus:outline-none focus:ring-green-200">
                                     <option value="">Select Qualification</option>
                                     <option value="High School">High School</option>
                                     <option value="Diploma">Diploma</option>
@@ -104,41 +104,44 @@ export default function EducationDetailsForm({
                                     <option value="Doctorate">Doctorate</option>
                                     <option value="Other">Other</option>
                                 </select>
-                                {createState?.errors?.qualification && <p className="text-red-500 text-xs">{createState.errors.qualification}</p>}
+                                {createState?.errors?.qualification && <p className="text-red-500 text-[10px] mt-1">{createState.errors.qualification}</p>}
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="stream">Stream / Major</Label>
-                                <Input id="stream" name="stream" placeholder="e.g. Computer Science" />
+                            <div>
+                                <Label htmlFor="stream" className="text-xs font-semibold mb-1 block">Stream / Major</Label>
+                                <Input id="stream" name="stream" placeholder="e.g. Computer Science" className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
                             </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="institution">Institution Name</Label>
-                                <Input id="institution" name="institution" placeholder="e.g. St. Xavier's College" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="university">University / Board</Label>
-                                <Input id="university" name="university" placeholder="e.g. Mumbai University" />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="passedYear">Passed Year</Label>
-                                <Input id="passedYear" name="passedYear" type="number" placeholder="YYYY" min="1950" max={new Date().getFullYear()} />
-                                {createState?.errors?.passedYear && <p className="text-red-500 text-xs">{createState.errors.passedYear}</p>}
+                            <div>
+                                <Label htmlFor="passedYear" className="text-xs font-semibold mb-1 block">Passed Year</Label>
+                                <Input id="passedYear" name="passedYear" type="number" placeholder="YYYY" min="1950" max={new Date().getFullYear()} className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
+                                {createState?.errors?.passedYear && <p className="text-red-500 text-[10px] mt-1">{createState.errors.passedYear}</p>}
                             </div>
                         </div>
 
-                        <div className="flex items-center space-x-2 pt-2">
-                            <input type="checkbox" id="isHighest" name="isHighest" className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600" />
-                            <Label htmlFor="isHighest" className="font-normal text-gray-700">This is my highest qualification</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <Label htmlFor="institution" className="text-xs font-semibold mb-1 block">Institution Name</Label>
+                                <Input id="institution" name="institution" placeholder="e.g. St. Xavier's College" className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
+                            </div>
+                            <div>
+                                <Label htmlFor="university" className="text-xs font-semibold mb-1 block">University / Board</Label>
+                                <Input id="university" name="university" placeholder="e.g. Mumbai University" className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
+                            </div>
                         </div>
 
-                        {createState?.message && <p className="text-red-500 text-sm mt-2">{createState.message}</p>}
+                        <div className="flex items-center space-x-2 pt-1">
+                            <input type="checkbox" id="isHighest" name="isHighest" className="h-4 w-4 rounded border-green-300 text-indigo-600 focus:ring-green-200 bg-green-50" />
+                            <Label htmlFor="isHighest" className="text-xs font-medium text-gray-700">This is my highest qualification</Label>
+                        </div>
 
-                        <div className="flex justify-end gap-3 pt-4">
-                            <Button type="button" variant="ghost" onClick={() => setIsAdding(false)} disabled={isCreating}>Cancel</Button>
-                            <Button type="submit" disabled={isCreating} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                        {createState?.message && <p className="text-red-500 text-xs mt-1">{createState.message}</p>}
+
+                        <div className="flex justify-end gap-2 pt-2">
+                            <Button type="button" variant="ghost" size="sm" onClick={() => setIsAdding(false)} disabled={isCreating}>Cancel</Button>
+                            <Button type="submit" size="sm" disabled={isCreating} className="bg-indigo-600 hover:bg-indigo-700 text-white">
                                 {isCreating ? "Adding..." : "Add Education"}
                             </Button>
                         </div>
-                    </form>
+                    </div>
                 </div>
             ) : (
                 initialData.length > 0 && (

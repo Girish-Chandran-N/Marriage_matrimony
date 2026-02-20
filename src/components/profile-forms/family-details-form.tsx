@@ -53,35 +53,35 @@ export default function FamilyDetailsForm({
     return (
         <div className="space-y-8">
 
-            <form action={action} className="space-y-6">
+            <form action={action} className="space-y-4">
 
                 {/* Family Background */}
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                        <Users className="w-5 h-5 text-indigo-600" />
+                    <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
+                        <Users className="w-4 h-4 text-indigo-600" />
                         Family Background
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label className="mb-2 block">Family Status</Label>
-                            <select name="familyStatus" defaultValue={initialData?.familyStatus || ""} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <Label className="mb-1 block text-xs font-semibold">Family Status</Label>
+                            <select name="familyStatus" defaultValue={initialData?.familyStatus || ""} className="flex h-9 w-full rounded-md border border-green-100 bg-green-50/50 px-3 py-1.5 text-sm focus:border-green-300 focus:outline-none focus:ring-green-200">
                                 <option value="">Select</option>
                                 <option value="Middle Class">Middle Class</option>
                                 <option value="Upper Middle Class">Upper Middle Class</option>
                                 <option value="Rich">Rich / Affluent</option>
                             </select>
                         </div>
-                        <div className="space-y-2">
-                            <Label className="mb-2 block">Family Type</Label>
-                            <select name="familyType" defaultValue={initialData?.familyType || ""} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <div>
+                            <Label className="mb-1 block text-xs font-semibold">Family Type</Label>
+                            <select name="familyType" defaultValue={initialData?.familyType || ""} className="flex h-9 w-full rounded-md border border-green-100 bg-green-50/50 px-3 py-1.5 text-sm focus:border-green-300 focus:outline-none focus:ring-green-200">
                                 <option value="">Select</option>
                                 <option value="Nuclear">Nuclear Family</option>
                                 <option value="Joint">Joint Family</option>
                             </select>
                         </div>
-                        <div className="space-y-2">
-                            <Label className="mb-2 block">Family Values</Label>
-                            <select name="familyValue" defaultValue={initialData?.familyValue || ""} className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                        <div>
+                            <Label className="mb-1 block text-xs font-semibold">Family Values</Label>
+                            <select name="familyValue" defaultValue={initialData?.familyValue || ""} className="flex h-9 w-full rounded-md border border-green-100 bg-green-50/50 px-3 py-1.5 text-sm focus:border-green-300 focus:outline-none focus:ring-green-200">
                                 <option value="">Select</option>
                                 <option value="Orthodox">Orthodox</option>
                                 <option value="Traditional">Traditional</option>
@@ -89,55 +89,55 @@ export default function FamilyDetailsForm({
                                 <option value="Liberal">Liberal</option>
                             </select>
                         </div>
-                        <div className="space-y-2">
-                            <Label className="mb-2 block">Family Name / House Name</Label>
-                            <Input name="familyName" defaultValue={initialData?.familyName || ""} placeholder="e.g. The Gupta Family" />
+                        <div>
+                            <Label className="mb-1 block text-xs font-semibold">Family Name</Label>
+                            <Input name="familyName" defaultValue={initialData?.familyName || ""} placeholder="e.g. The Gupta Family" className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
                         </div>
                     </div>
                 </div>
 
                 {/* Parents Details */}
-                <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-6">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                        <HeartHandshake className="w-5 h-5 text-indigo-600" />
+                <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-4">
+                    <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
+                        <HeartHandshake className="w-4 h-4 text-indigo-600" />
                         Parents Details
                     </h3>
 
                     {/* Father */}
-                    <div className="space-y-4">
-                        <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Father</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label className="mb-2 block">Father's Name</Label>
-                                <Input name="fatherName" defaultValue={initialData?.fatherName || ""} required />
-                                {state?.errors?.fatherName && <p className="text-red-500 text-xs">{state.errors.fatherName}</p>}
+                    <div className="space-y-2">
+                        <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Father</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <Label className="mb-1 block text-xs font-semibold">Name</Label>
+                                <Input name="fatherName" defaultValue={initialData?.fatherName || ""} required className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
+                                {state?.errors?.fatherName && <p className="text-red-500 text-[10px] mt-1">{state.errors.fatherName}</p>}
                             </div>
-                            <div className="space-y-2">
-                                <Label className="mb-2 block">Occupation</Label>
-                                <Input name="fatherOccupation" defaultValue={initialData?.fatherOccupation || ""} placeholder="e.g. Businessman" />
+                            <div>
+                                <Label className="mb-1 block text-xs font-semibold">Occupation</Label>
+                                <Input name="fatherOccupation" defaultValue={initialData?.fatherOccupation || ""} placeholder="Occupation" className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
                             </div>
-                            <div className="space-y-2">
-                                <Label className="mb-2 block">Native Place</Label>
-                                <Input name="fatherNativePlace" defaultValue={initialData?.fatherNativePlace || ""} />
+                            <div>
+                                <Label className="mb-1 block text-xs font-semibold">Native Place</Label>
+                                <Input name="fatherNativePlace" defaultValue={initialData?.fatherNativePlace || ""} placeholder="Native Place" className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
                             </div>
                         </div>
                     </div>
 
-                    <div className="border-t border-gray-100 pt-4 space-y-4">
-                        <h4 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Mother</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label className="mb-2 block">Mother's Name</Label>
-                                <Input name="motherName" defaultValue={initialData?.motherName || ""} required />
-                                {state?.errors?.motherName && <p className="text-red-500 text-xs">{state.errors.motherName}</p>}
+                    <div className="border-t border-gray-100 pt-3 space-y-2">
+                        <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider">Mother</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <Label className="mb-1 block text-xs font-semibold">Name</Label>
+                                <Input name="motherName" defaultValue={initialData?.motherName || ""} required className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
+                                {state?.errors?.motherName && <p className="text-red-500 text-[10px] mt-1">{state.errors.motherName}</p>}
                             </div>
-                            <div className="space-y-2">
-                                <Label className="mb-2 block">Occupation</Label>
-                                <Input name="motherOccupation" defaultValue={initialData?.motherOccupation || ""} placeholder="e.g. Homemaker" />
+                            <div>
+                                <Label className="mb-1 block text-xs font-semibold">Occupation</Label>
+                                <Input name="motherOccupation" defaultValue={initialData?.motherOccupation || ""} placeholder="Occupation" className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
                             </div>
-                            <div className="space-y-2">
-                                <Label className="mb-2 block">Native Place</Label>
-                                <Input name="motherNativePlace" defaultValue={initialData?.motherNativePlace || ""} />
+                            <div>
+                                <Label className="mb-1 block text-xs font-semibold">Native Place</Label>
+                                <Input name="motherNativePlace" defaultValue={initialData?.motherNativePlace || ""} placeholder="Native Place" className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
                             </div>
                         </div>
                     </div>
@@ -145,33 +145,33 @@ export default function FamilyDetailsForm({
 
                 {/* Sibling Counts (Manual) */}
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900">Sibling Summary</h3>
+                    <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">Sibling Summary</h3>
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <Label className="mb-2 block">No. of Brothers</Label>
-                            <Input type="number" name="brothers" defaultValue={initialData?.brothers || 0} min="0" />
+                        <div>
+                            <Label className="mb-1 block text-xs font-semibold">No. of Brothers</Label>
+                            <Input type="number" name="brothers" defaultValue={initialData?.brothers || 0} min="0" className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
                         </div>
-                        <div className="space-y-2">
-                            <Label className="mb-2 block">No. of Sisters</Label>
-                            <Input type="number" name="sisters" defaultValue={initialData?.sisters || 0} min="0" />
+                        <div>
+                            <Label className="mb-1 block text-xs font-semibold">No. of Sisters</Label>
+                            <Input type="number" name="sisters" defaultValue={initialData?.sisters || 0} min="0" className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
                         </div>
                     </div>
                 </div>
 
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                    <Label className="mb-2 block">About Family</Label>
+                    <Label className="mb-1 block text-xs font-semibold">About Family</Label>
                     <textarea
                         name="familyIntro"
                         defaultValue={initialData?.familyIntro || ""}
-                        className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
+                        className="flex min-h-[80px] w-full rounded-md border border-green-100 bg-green-50/50 px-3 py-2 text-sm focus:border-green-300 focus:outline-none focus:ring-green-200 resize-none"
                         placeholder="Write a brief introduction about your family..."
                     />
                 </div>
 
-                {state?.message && <p className="text-red-500 text-sm">{state.message}</p>}
+                {state?.message && <p className="text-red-500 text-xs">{state.message}</p>}
 
                 <div className="flex justify-end">
-                    <Button type="submit" disabled={isPending}>
+                    <Button type="submit" size="sm" disabled={isPending}>
                         {isPending ? "Saving..." : "Save Family Details"}
                     </Button>
                 </div>
@@ -179,60 +179,60 @@ export default function FamilyDetailsForm({
 
             {/* SIbling Details List */}
             <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <Users className="w-5 h-5 text-indigo-600" />
+                <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
+                    <Users className="w-4 h-4 text-indigo-600" />
                     Sibling Details
                 </h3>
 
                 <div className="grid gap-3">
                     {siblings.map((sib) => (
-                        <div key={sib.id} className="p-4 bg-white rounded-lg border border-gray-200 flex items-center justify-between">
+                        <div key={sib.id} className="p-3 bg-white rounded-lg border border-gray-200 flex items-center justify-between">
                             <div>
-                                <span className="font-medium text-gray-900">{sib.name || "Unnamed"}</span>
-                                <span className="ml-2 text-sm text-gray-500">({sib.gender})</span>
-                                <p className="text-xs text-gray-500">{sib.maritalStatus} {sib.spouseName && ` - Spouse: ${sib.spouseName}`}</p>
+                                <span className="font-medium text-sm text-gray-900">{sib.name || "Unnamed"}</span>
+                                <span className="ml-2 text-xs text-gray-500">({sib.gender})</span>
+                                <p className="text-[10px] text-gray-500">{sib.maritalStatus} {sib.spouseName && ` - Spouse: ${sib.spouseName}`}</p>
                             </div>
-                            <Button size="icon" variant="ghost" className="text-red-500 hover:bg-red-50" onClick={() => handleDeleteSibling(sib.id)}>
-                                <Trash2 className="w-4 h-4" />
+                            <Button size="icon" variant="ghost" className="text-red-500 hover:bg-red-50 h-6 w-6" onClick={() => handleDeleteSibling(sib.id)}>
+                                <Trash2 className="w-3 h-3" />
                             </Button>
                         </div>
                     ))}
                 </div>
 
                 {isAddingSibling ? (
-                    <form action={siblingAction} className="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-4 animate-in fade-in">
-                        <h4 className="text-sm font-medium">Add Sibling</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label className="mb-2 block">Gender</Label>
-                                <select name="gender" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                    <form action={siblingAction} className="p-4 bg-slate-50 rounded-lg border border-slate-200 space-y-3 animate-in fade-in">
+                        <h4 className="text-xs font-medium uppercase tracking-wide">Add Sibling</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                            <div>
+                                <Label className="mb-1 block text-xs font-semibold">Gender</Label>
+                                <select name="gender" className="flex h-9 w-full rounded-md border border-green-100 bg-green-50/50 px-3 py-1.5 text-sm focus:border-green-300 focus:outline-none focus:ring-green-200">
                                     <option value="Brother">Brother</option>
                                     <option value="Sister">Sister</option>
                                 </select>
                             </div>
-                            <div className="space-y-2">
-                                <Label className="mb-2 block">Name</Label>
-                                <Input name="name" placeholder="Name" />
+                            <div>
+                                <Label className="mb-1 block text-xs font-semibold">Name</Label>
+                                <Input name="name" placeholder="Name" className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
                             </div>
-                            <div className="space-y-2">
-                                <Label>Marital Status</Label>
-                                <select name="maritalStatus" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                            <div>
+                                <Label className="mb-1 block text-xs font-semibold">Marital Status</Label>
+                                <select name="maritalStatus" className="flex h-9 w-full rounded-md border border-green-100 bg-green-50/50 px-3 py-1.5 text-sm focus:border-green-300 focus:outline-none focus:ring-green-200">
                                     <option value="Single">Single</option>
                                     <option value="Married">Married</option>
                                 </select>
                             </div>
-                            <div className="space-y-2">
-                                <Label>Spouse Name (if married)</Label>
-                                <Input name="spouseName" placeholder="Spouse Name" />
+                            <div>
+                                <Label className="mb-1 block text-xs font-semibold">Spouse Name</Label>
+                                <Input name="spouseName" placeholder="If married" className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
                             </div>
                         </div>
                         <div className="flex justify-end gap-2">
-                            <Button type="button" variant="ghost" onClick={() => setIsAddingSibling(false)}>Cancel</Button>
-                            <Button type="submit" disabled={isSiblingPending}>Add</Button>
+                            <Button type="button" variant="ghost" size="sm" onClick={() => setIsAddingSibling(false)}>Cancel</Button>
+                            <Button type="submit" size="sm" disabled={isSiblingPending}>Add</Button>
                         </div>
                     </form>
                 ) : (
-                    <Button variant="outline" onClick={() => setIsAddingSibling(true)} className="w-full border-dashed">
+                    <Button variant="outline" size="sm" onClick={() => setIsAddingSibling(true)} className="w-full border-dashed">
                         <UserPlus className="w-4 h-4 mr-2" /> Add Sibling Details
                     </Button>
                 )}

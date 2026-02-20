@@ -58,18 +58,18 @@ export default function CareerDetailsForm({
         <div className="space-y-8">
 
             {/* 1. Career Status Section */}
-            <form action={statusAction} className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-6">
-                <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <Briefcase className="w-5 h-5 text-indigo-600" />
+            <form action={statusAction} className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-4">
+                <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
+                    <Briefcase className="w-4 h-4 text-indigo-600" />
                     Career Overview
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="">
-                        <Label className="mb-2 block">Current Status</Label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <Label className="mb-1 block text-xs font-semibold">Current Status</Label>
                         <select
                             name="currentStatus"
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
+                            className="flex h-9 w-full rounded-md border border-green-100 bg-green-50/50 px-3 py-1.5 text-sm focus:border-green-300 focus:outline-none focus:ring-green-200"
                             value={currentStatus}
                             onChange={(e) => setCurrentStatus(e.target.value)}
                             required
@@ -82,39 +82,39 @@ export default function CareerDetailsForm({
                         </select>
                     </div>
 
-                    <div className="">
-                        <Label className="mb-2 block">LinkedIn Profile</Label>
-                        <Input name="linkedinUrl" defaultValue={careerProfile?.linkedinUrl || ""} placeholder="https://linkedin.com/in/..." />
+                    <div className="md:col-span-2">
+                        <Label className="mb-1 block text-xs font-semibold">LinkedIn Profile</Label>
+                        <Input name="linkedinUrl" defaultValue={careerProfile?.linkedinUrl || ""} placeholder="https://linkedin.com/in/..." className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
                     </div>
 
                     {/* Internship Specific Fields */}
                     {currentStatus === "Internship" && (
                         <>
-                            <div className="">
-                                <Label className="mb-2 block">Internship Role</Label>
-                                <Input name="internshipRole" defaultValue={careerProfile?.internshipRole || ""} placeholder="e.g. Marketing Intern" />
+                            <div>
+                                <Label className="mb-1 block text-xs font-semibold">Internship Role</Label>
+                                <Input name="internshipRole" defaultValue={careerProfile?.internshipRole || ""} placeholder="e.g. Marketing Intern" className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
                             </div>
-                            <div className="">
-                                <Label className="mb-2 block">Company</Label>
-                                <Input name="internshipCompany" defaultValue={careerProfile?.internshipCompany || ""} placeholder="Company Name" />
+                            <div>
+                                <Label className="mb-1 block text-xs font-semibold">Company</Label>
+                                <Input name="internshipCompany" defaultValue={careerProfile?.internshipCompany || ""} placeholder="Company Name" className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
                             </div>
-                            <div className="">
-                                <Label className="mb-2 block">Duration</Label>
-                                <Input name="internshipDuration" defaultValue={careerProfile?.internshipDuration || ""} placeholder="e.g. 6 months" />
+                            <div>
+                                <Label className="mb-1 block text-xs font-semibold">Duration</Label>
+                                <Input name="internshipDuration" defaultValue={careerProfile?.internshipDuration || ""} placeholder="e.g. 6 months" className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
                             </div>
                         </>
                     )}
 
                     <div className="col-span-full">
-                        <Label className="mb-2 block">Career Goals / Summary</Label>
-                        <Input name="careerGoal" defaultValue={careerProfile?.careerGoal || ""} placeholder="Briefly describe your career aspirations..." />
+                        <Label className="mb-1 block text-xs font-semibold">Career Goals / Summary</Label>
+                        <Input name="careerGoal" defaultValue={careerProfile?.careerGoal || ""} placeholder="Briefly describe your career aspirations..." className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
                     </div>
                 </div>
 
-                {statusState?.message && <p className={statusState.success ? "text-green-600 text-sm" : "text-red-500 text-sm"}>{statusState.message}</p>}
+                {statusState?.message && <p className={statusState.success ? "text-green-600 text-xs" : "text-red-500 text-xs"}>{statusState.message}</p>}
 
                 <div className="flex justify-end">
-                    <Button type="submit" disabled={isStatusPending}>
+                    <Button type="submit" size="sm" disabled={isStatusPending}>
                         {isStatusPending ? "Updating..." : "Update Status"}
                     </Button>
                 </div>
@@ -123,27 +123,27 @@ export default function CareerDetailsForm({
             {/* 2. Job History (Only if Working or Previously Working) */}
             {(currentStatus === "Working" || currentStatus === "Not Working") && (
                 <div className="space-y-4">
-                    <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                        <Building2 className="w-5 h-5 text-indigo-600" />
+                    <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
+                        <Building2 className="w-4 h-4 text-indigo-600" />
                         Work Experience
                     </h3>
 
                     {jobs.length === 0 && !isAddingJob && (
-                        <div className="text-center p-8 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50">
-                            <p className="text-gray-500 text-sm">No work experience added.</p>
-                            <Button variant="link" onClick={() => setIsAddingJob(true)} className="mt-2 text-indigo-600">
+                        <div className="text-center p-6 border-2 border-dashed border-gray-200 rounded-xl bg-gray-50/50">
+                            <p className="text-gray-500 text-xs">No work experience added.</p>
+                            <Button variant="link" size="sm" onClick={() => setIsAddingJob(true)} className="mt-1 text-indigo-600">
                                 + Add Job Details
                             </Button>
                         </div>
                     )}
 
-                    <div className="grid gap-4">
+                    <div className="grid gap-3">
                         {jobs.map((job) => (
-                            <div key={job.id} className="p-4 bg-white rounded-xl border border-gray-100 shadow-sm flex items-start justify-between group hover:border-indigo-100 transition-colors">
+                            <div key={job.id} className="p-3 bg-white rounded-lg border border-gray-100 shadow-sm flex items-start justify-between group hover:border-indigo-100 transition-colors">
                                 <div>
-                                    <h4 className="font-semibold text-gray-900">{job.title}</h4>
-                                    <p className="text-sm font-medium text-indigo-600">{job.company}</p>
-                                    <div className="flex items-center gap-3 text-xs text-gray-400 mt-2">
+                                    <h4 className="font-semibold text-sm text-gray-900">{job.title}</h4>
+                                    <p className="text-xs font-medium text-indigo-600">{job.company}</p>
+                                    <div className="flex items-center gap-3 text-[10px] text-gray-400 mt-1">
                                         <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {job.city || job.country || "Location N/A"}</span>
                                         <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {job.isCurrent ? "Present" : `${job.toMonth}/${job.toYear}`}</span>
                                     </div>
@@ -151,32 +151,32 @@ export default function CareerDetailsForm({
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700"
+                                    className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 h-6 w-6"
                                     onClick={() => handleDeleteJob(job.id)}
                                 >
-                                    <Trash2 className="w-4 h-4" />
+                                    <Trash2 className="w-3 h-3" />
                                 </Button>
                             </div>
                         ))}
                     </div>
 
                     {isAddingJob ? (
-                        <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200 animate-in slide-in-from-top-4 fade-in">
-                            <h4 className="text-sm font-semibold text-gray-900 mb-4">Add Job</h4>
-                            <form action={jobAction} className="space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="">
-                                        <Label className="mb-2 block">Job Title</Label>
-                                        <Input name="title" required placeholder="e.g. Senior Manager" />
+                        <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 animate-in slide-in-from-top-4 fade-in">
+                            <h4 className="text-xs font-semibold text-gray-900 mb-3 uppercase">Add Job Details</h4>
+                            <form action={jobAction} className="space-y-3">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                    <div>
+                                        <Label className="mb-1 block text-xs font-semibold">Job Title</Label>
+                                        <Input name="title" required placeholder="e.g. Senior Manager" className="h-9 bg-green-50/50 border-green-100" />
                                     </div>
-                                    <div className="">
-                                        <Label className="mb-2 block">Company Name</Label>
-                                        <Input name="company" required placeholder="e.g. Tech Solutions Inc." />
+                                    <div>
+                                        <Label className="mb-1 block text-xs font-semibold">Company Name</Label>
+                                        <Input name="company" required placeholder="e.g. Tech Solutions" className="h-9 bg-green-50/50 border-green-100" />
                                     </div>
 
-                                    <div className="col-span-full md:col-span-1">
-                                        <Label className="mb-2 block">Employment Category</Label>
-                                        <select name="employmentCategory" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600">
+                                    <div>
+                                        <Label className="mb-1 block text-xs font-semibold">Category</Label>
+                                        <select name="employmentCategory" className="flex h-9 w-full rounded-md border border-green-100 bg-green-50/50 px-3 py-1.5 text-sm">
                                             <option value="">Select Category</option>
                                             {EMPLOYMENT_CATEGORIES.map((cat) => (
                                                 <option key={cat} value={cat}>{cat}</option>
@@ -184,33 +184,17 @@ export default function CareerDetailsForm({
                                         </select>
                                     </div>
 
-                                    <div className="">
-                                        <Label className="mb-2 block">City</Label>
-                                        <Input name="city" placeholder="e.g. New York" />
+                                    <div>
+                                        <Label className="mb-1 block text-xs font-semibold">City</Label>
+                                        <Input name="city" placeholder="e.g. New York" className="h-9 bg-green-50/50 border-green-100" />
                                     </div>
-                                    <div className="">
-                                        <Label className="mb-2 block">Country</Label>
-                                        <Input name="country" placeholder="e.g. USA" />
+                                    <div>
+                                        <Label className="mb-1 block text-xs font-semibold">Country</Label>
+                                        <Input name="country" placeholder="e.g. USA" className="h-9 bg-green-50/50 border-green-100" />
                                     </div>
-
-                                    <div className="">
-                                        <Label className="mb-2 block">From (Month/Year)</Label>
-                                        <div className="flex gap-2">
-                                            <Input name="fromMonth" type="number" placeholder="MM" min="1" max="12" className="w-20" />
-                                            <Input name="fromYear" type="number" placeholder="YYYY" min="1970" max={new Date().getFullYear()} />
-                                        </div>
-                                    </div>
-                                    <div className="">
-                                        <Label className="mb-2 block">To (Month/Year)</Label>
-                                        <div className="flex gap-2">
-                                            <Input name="toMonth" type="number" placeholder="MM" min="1" max="12" className="w-20" />
-                                            <Input name="toYear" type="number" placeholder="YYYY" min="1970" max={new Date().getFullYear()} />
-                                        </div>
-                                    </div>
-
-                                    <div className="">
-                                        <Label className="mb-2 block">Annual Income</Label>
-                                        <select name="annualIncome" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                                    <div>
+                                        <Label className="mb-1 block text-xs font-semibold">Annual Income</Label>
+                                        <select name="annualIncome" className="flex h-9 w-full rounded-md border border-green-100 bg-green-50/50 px-3 py-1.5 text-sm">
                                             <option value="">Select Income</option>
                                             <option value="0-3 LPA">0-3 LPA</option>
                                             <option value="3-5 LPA">3-5 LPA</option>
@@ -222,9 +206,24 @@ export default function CareerDetailsForm({
                                         </select>
                                     </div>
 
-                                    <div className="">
-                                        <Label className="mb-2 block">Work Type</Label>
-                                        <select name="workType" className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
+                                    <div>
+                                        <Label className="mb-1 block text-xs font-semibold">From (M/Y)</Label>
+                                        <div className="flex gap-2">
+                                            <Input name="fromMonth" type="number" placeholder="MM" min="1" max="12" className="w-16 h-9 bg-green-50/50 border-green-100" />
+                                            <Input name="fromYear" type="number" placeholder="YYYY" min="1970" max={new Date().getFullYear()} className="flex-1 h-9 bg-green-50/50 border-green-100" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <Label className="mb-1 block text-xs font-semibold">To (M/Y)</Label>
+                                        <div className="flex gap-2">
+                                            <Input name="toMonth" type="number" placeholder="MM" min="1" max="12" className="w-16 h-9 bg-green-50/50 border-green-100" />
+                                            <Input name="toYear" type="number" placeholder="YYYY" min="1970" max={new Date().getFullYear()} className="flex-1 h-9 bg-green-50/50 border-green-100" />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <Label className="mb-1 block text-xs font-semibold">Work Type</Label>
+                                        <select name="workType" className="flex h-9 w-full rounded-md border border-green-100 bg-green-50/50 px-3 py-1.5 text-sm">
                                             <option value="Full-time">Full-time</option>
                                             <option value="Part-time">Part-time</option>
                                             <option value="Contract">Contract</option>
@@ -233,16 +232,16 @@ export default function CareerDetailsForm({
                                     </div>
                                 </div>
 
-                                <div className="flex items-center space-x-2 pt-2">
-                                    <input type="checkbox" id="isCurrent" name="isCurrent" className="h-4 w-4 rounded border-gray-300 text-indigo-600" />
-                                    <Label htmlFor="isCurrent" className="font-normal text-gray-700">I currently work here</Label>
+                                <div className="flex items-center space-x-2 pt-1">
+                                    <input type="checkbox" id="isCurrent" name="isCurrent" className="h-4 w-4 rounded border-gray-300 text-indigo-600 bg-green-50" />
+                                    <Label htmlFor="isCurrent" className="text-xs font-medium text-gray-700">I currently work here</Label>
                                 </div>
 
-                                {jobState?.message && <p className="text-red-500 text-sm">{jobState.message}</p>}
+                                {jobState?.message && <p className="text-red-500 text-xs">{jobState.message}</p>}
 
-                                <div className="flex justify-end gap-3 pt-4">
-                                    <Button type="button" variant="ghost" onClick={() => setIsAddingJob(false)}>Cancel</Button>
-                                    <Button type="submit" disabled={isJobPending} className="bg-indigo-600 text-white">
+                                <div className="flex justify-end gap-2 pt-2">
+                                    <Button type="button" variant="ghost" size="sm" onClick={() => setIsAddingJob(false)}>Cancel</Button>
+                                    <Button type="submit" size="sm" disabled={isJobPending} className="bg-indigo-600 text-white">
                                         {isJobPending ? "Saving..." : "Save Job"}
                                     </Button>
                                 </div>

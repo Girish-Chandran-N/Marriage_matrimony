@@ -17,6 +17,10 @@ const profileDetailsValidator = Prisma.validator<Prisma.UserDefaultArgs>()({
         matchPreferences: true, // Useful for showing "Match %" later
         photos: {
             orderBy: { order: "asc" }
+        },
+        verificationRequests: {
+            orderBy: { createdAt: "desc" },
+            take: 1
         }
     }
 });
