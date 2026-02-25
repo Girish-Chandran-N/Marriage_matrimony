@@ -684,3 +684,42 @@ export async function updateMatchPreferences(prevState: any, formData: FormData)
         return { message: "Failed to save preferences." };
     }
 }
+
+// --- Contact & Guardian Actions ---
+
+const ContactDetailsSchema = z.object({
+    custodianRelation: z.string().optional(),
+    custodianName: z.string().optional(),
+    primaryContact: z.string().optional(),
+    whatsapp: z.coerce.boolean().optional(),
+    preferredTime: z.string().optional(),
+    communicationAddress: z.string().optional(),
+    permanentAddress: z.string().optional(),
+});
+
+export async function updateContactDetails(prevState: any, formData: FormData) {
+    const session = await auth();
+    if (!session?.user?.id) return { message: "Unauthorized" };
+
+    const rawData = Object.fromEntries(formData.entries());
+    const validation = ContactDetailsSchema.safeParse({
+        ...rawData,
+        whatsapp: formData.get("whatsapp") === "on",
+    });
+
+    if (!validation.success) {
+        return { errors: validation.error.flatten().fieldErrors, message: "Invalid Data" };
+    }
+
+    try {
+        await db.personalDetails.upsert({
+            where: { userId: session.user.id },
+            update: validation.data,
+            create: { ...validation.data, userId: session.user.id },
+        });
+        revalidatePath("/profile", "layout");
+        return { success: true, message: "Contact & Guardian details saved!" };
+    } catch (error) {
+        return { message: "Failed to save contact details." };
+    }
+}

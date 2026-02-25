@@ -6,8 +6,9 @@ import ReligionDetailsForm from "@/components/profile-forms/religion-details-for
 import EducationDetailsForm from "@/components/profile-forms/education-details-form";
 import CareerDetailsForm from "@/components/profile-forms/career-details-form";
 import FamilyDetailsForm from "@/components/profile-forms/family-details-form";
+import ContactDetailsForm from "@/components/profile-forms/contact-details-form";
 import LifestyleDetailsForm from "@/components/profile-forms/lifestyle-details-form";
-import { User, GraduationCap, Briefcase, Users, Coffee, ChevronRight, CheckCircle2, Sparkles, BookMarked } from "lucide-react";
+import { User, GraduationCap, Briefcase, Users, Coffee, ChevronRight, CheckCircle2, Sparkles, BookMarked, PhoneCall } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ const SECTIONS = [
     { id: "education", label: "Education", icon: GraduationCap, desc: "Your qualifications" },
     { id: "career", label: "Career & Finances", icon: Briefcase, desc: "Work and income" },
     { id: "family", label: "Family Information", icon: Users, desc: "Family details" },
+    { id: "contact", label: "Contact & Guardian", icon: PhoneCall, desc: "Address and contacts" },
     { id: "lifestyle", label: "Lifestyle & Interests", icon: Coffee, desc: "Habits and hobbies" },
 ];
 
@@ -35,9 +37,11 @@ export default function ProfileSetupPage() {
             case "career":
                 return <CareerDetailsForm onNext={() => setActiveSection("family")} onBack={() => setActiveSection("education")} />;
             case "family":
-                return <FamilyDetailsForm onNext={() => setActiveSection("lifestyle")} onBack={() => setActiveSection("career")} />;
+                return <FamilyDetailsForm onNext={() => setActiveSection("contact")} onBack={() => setActiveSection("career")} />;
+            case "contact":
+                return <ContactDetailsForm onNext={() => setActiveSection("lifestyle")} onBack={() => setActiveSection("family")} />;
             case "lifestyle":
-                return <LifestyleDetailsForm onNext={() => window.location.href = "/profile"} onBack={() => setActiveSection("family")} />; // Final step redirect
+                return <LifestyleDetailsForm onNext={() => window.location.href = "/profile"} onBack={() => setActiveSection("contact")} />; // Final step redirect
             default:
                 return null;
         }

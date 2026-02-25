@@ -221,6 +221,7 @@ model PersonalDetails {
   custodianRelation String?
   preferredTime  String?
   communicationAddress String?
+  permanentAddress     String?
   email          String? // Auto fetched from registration usually, but if different?
   
   // Reference

@@ -6,10 +6,11 @@ import ReligionDetailsForm from "@/components/profile-forms/religion-details-for
 import EducationDetailsForm from "@/components/profile-forms/education-details-form";
 import CareerDetailsForm from "@/components/profile-forms/career-details-form";
 import FamilyDetailsForm from "@/components/profile-forms/family-details-form";
+import ContactDetailsForm from "@/components/profile-forms/contact-details-form";
 import LifestyleDetailsForm from "@/components/profile-forms/lifestyle-details-form";
 import MatchPreferencesForm from "@/components/profile-forms/match-preferences-form";
 import PhotoManager from "@/components/profile-forms/photo-manager";
-import { User, GraduationCap, Briefcase, Users, Coffee, ChevronRight, Image as ImageIcon, Heart, BookMarked } from "lucide-react";
+import { User, GraduationCap, Briefcase, Users, Coffee, ChevronRight, Image as ImageIcon, Heart, BookMarked, PhoneCall } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const SECTIONS = [
@@ -18,6 +19,7 @@ const SECTIONS = [
     { id: "education", label: "Education", icon: GraduationCap },
     { id: "career", label: "Career & Finances", icon: Briefcase },
     { id: "family", label: "Family Information", icon: Users },
+    { id: "contact", label: "Contact & Guardian", icon: PhoneCall },
     { id: "lifestyle", label: "Lifestyle & Interests", icon: Coffee },
     { id: "preferences", label: "Partner Preferences", icon: Heart },
     { id: "photos", label: "Manage Photos", icon: ImageIcon },
@@ -39,6 +41,8 @@ export default function ProfileEditClient({ profile }: { profile: any }) {
                 return <CareerDetailsForm careerProfile={profile.careerProfile} jobs={profile.jobs} />;
             case "family":
                 return <FamilyDetailsForm initialData={profile.familyDetails} siblings={profile.siblings} />;
+            case "contact":
+                return <ContactDetailsForm initialData={profile.personalDetails} />;
             case "lifestyle":
                 return <LifestyleDetailsForm initialData={profile.lifestyleDetails} isEditMode={true} />;
             case "preferences":
