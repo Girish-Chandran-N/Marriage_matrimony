@@ -120,8 +120,8 @@ export default function CareerDetailsForm({
                 </div>
             </form>
 
-            {/* 2. Job History (Only if Working or Previously Working) */}
-            {(currentStatus === "Working" || currentStatus === "Not Working") && (
+            {/* 2. Job History (Only if Working) */}
+            {currentStatus === "Working" && (
                 <div className="space-y-4">
                     <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
                         <Building2 className="w-4 h-4 text-indigo-600" />
