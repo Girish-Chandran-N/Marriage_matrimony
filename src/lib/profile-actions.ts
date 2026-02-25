@@ -274,6 +274,35 @@ export async function createJob(prevState: any, formData: FormData) {
     }
 }
 
+export async function updateJob(prevState: any, formData: FormData) {
+    const session = await auth();
+    if (!session?.user?.id) return { message: "Unauthorized" };
+
+    const jobId = formData.get("jobId") as string;
+    if (!jobId) return { message: "Job ID is required" };
+
+    const rawData = Object.fromEntries(formData.entries());
+    const validation = JobSchema.safeParse({
+        ...rawData,
+        isCurrent: formData.get("isCurrent") === "on",
+    });
+
+    if (!validation.success) {
+        return { errors: validation.error.flatten().fieldErrors, message: "Invalid Data" };
+    }
+
+    try {
+        await db.job.update({
+            where: { id: jobId, userId: session.user.id },
+            data: { ...validation.data }
+        });
+        revalidatePath("/profile", "layout");
+        return { success: true, message: "Job updated!" };
+    } catch (error) {
+        return { message: "Failed to update job." };
+    }
+}
+
 export async function deleteJob(jobId: string) {
     const session = await auth();
     if (!session?.user?.id) return { message: "Unauthorized" };
