@@ -2,17 +2,19 @@
 
 import { useState } from "react";
 import PersonalDetailsForm from "@/components/profile-forms/personal-details-form";
+import ReligionDetailsForm from "@/components/profile-forms/religion-details-form";
 import EducationDetailsForm from "@/components/profile-forms/education-details-form";
 import CareerDetailsForm from "@/components/profile-forms/career-details-form";
 import FamilyDetailsForm from "@/components/profile-forms/family-details-form";
 import LifestyleDetailsForm from "@/components/profile-forms/lifestyle-details-form";
-import { User, GraduationCap, Briefcase, Users, Coffee, ChevronRight, CheckCircle2, Sparkles } from "lucide-react";
+import { User, GraduationCap, Briefcase, Users, Coffee, ChevronRight, CheckCircle2, Sparkles, BookMarked } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 const SECTIONS = [
     { id: "personal", label: "Personal Details", icon: User, desc: "Basic info about you" },
+    { id: "religion", label: "Religion Information", icon: BookMarked, desc: "Beliefs and community" },
     { id: "education", label: "Education", icon: GraduationCap, desc: "Your qualifications" },
     { id: "career", label: "Career & Finances", icon: Briefcase, desc: "Work and income" },
     { id: "family", label: "Family Information", icon: Users, desc: "Family details" },
@@ -25,9 +27,11 @@ export default function ProfileSetupPage() {
     const renderSection = () => {
         switch (activeSection) {
             case "personal":
-                return <PersonalDetailsForm onNext={() => setActiveSection("education")} />;
+                return <PersonalDetailsForm onNext={() => setActiveSection("religion")} />;
+            case "religion":
+                return <ReligionDetailsForm onNext={() => setActiveSection("education")} />;
             case "education":
-                return <EducationDetailsForm onNext={() => setActiveSection("career")} onBack={() => setActiveSection("personal")} />;
+                return <EducationDetailsForm onNext={() => setActiveSection("career")} onBack={() => setActiveSection("religion")} />;
             case "career":
                 return <CareerDetailsForm onNext={() => setActiveSection("family")} onBack={() => setActiveSection("education")} />;
             case "family":

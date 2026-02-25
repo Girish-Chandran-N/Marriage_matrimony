@@ -135,6 +135,39 @@ export async function updatePersonalDetails(prevState: any, formData: FormData) 
     }
 }
 
+const ReligionDetailsSchema = z.object({
+    religion: z.string().min(1, "Religion is required"),
+    caste: z.string().min(1, "Caste is required"),
+    subCaste: z.string().optional(),
+});
+
+export async function updateReligionDetails(prevState: any, formData: FormData) {
+    const session = await auth();
+    if (!session?.user?.id) return { message: "Unauthorized" };
+
+    const validation = ReligionDetailsSchema.safeParse({
+        religion: formData.get("religion"),
+        caste: formData.get("caste"),
+        subCaste: formData.get("subCaste"),
+    });
+
+    if (!validation.success) {
+        return { errors: validation.error.flatten().fieldErrors, message: "Invalid Data" };
+    }
+
+    try {
+        await db.personalDetails.upsert({
+            where: { userId: session.user.id },
+            update: validation.data,
+            create: { ...validation.data, userId: session.user.id }
+        });
+        revalidatePath("/profile", "layout");
+        return { success: true, message: "Religion information saved!" };
+    } catch (error) {
+        return { message: "Failed to save religion details." };
+    }
+}
+
 const EducationSchema = z.object({
     qualification: z.string().min(1, "Qualification is required"),
     institution: z.string().optional(),

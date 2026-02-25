@@ -2,17 +2,19 @@
 
 import { useState } from "react";
 import PersonalDetailsForm from "@/components/profile-forms/personal-details-form";
+import ReligionDetailsForm from "@/components/profile-forms/religion-details-form";
 import EducationDetailsForm from "@/components/profile-forms/education-details-form";
 import CareerDetailsForm from "@/components/profile-forms/career-details-form";
 import FamilyDetailsForm from "@/components/profile-forms/family-details-form";
 import LifestyleDetailsForm from "@/components/profile-forms/lifestyle-details-form";
 import MatchPreferencesForm from "@/components/profile-forms/match-preferences-form";
 import PhotoManager from "@/components/profile-forms/photo-manager";
-import { User, GraduationCap, Briefcase, Users, Coffee, ChevronRight, Image as ImageIcon, Heart } from "lucide-react";
+import { User, GraduationCap, Briefcase, Users, Coffee, ChevronRight, Image as ImageIcon, Heart, BookMarked } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const SECTIONS = [
     { id: "personal", label: "Personal Details", icon: User },
+    { id: "religion", label: "Religion Information", icon: BookMarked },
     { id: "education", label: "Education", icon: GraduationCap },
     { id: "career", label: "Career & Finances", icon: Briefcase },
     { id: "family", label: "Family Information", icon: Users },
@@ -29,6 +31,8 @@ export default function ProfileEditClient({ profile }: { profile: any }) {
             case "personal":
                 const verificationStatus = profile.verificationRequests?.[0]?.status;
                 return <PersonalDetailsForm initialData={profile.personalDetails} userName={profile.name} verificationStatus={verificationStatus} />;
+            case "religion":
+                return <ReligionDetailsForm initialData={profile.personalDetails} />;
             case "education":
                 return <EducationDetailsForm initialData={profile.educations} />;
             case "career":
