@@ -47,18 +47,17 @@ export default async function DashboardPage() {
 
     return (
         <div className="h-[calc(100vh-80px)] bg-slate-50/50 px-6 py-2 overflow-hidden relative">
-            {/* Ambient Background */}
             {/* Ambient Background with Noise */}
             <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
                 <div className="absolute inset-0 bg-slate-50/80"></div>
-                <div className="absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b from-blue-100/40 via-purple-50/40 to-transparent"></div>
+                <div className="absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b from-indigo-100/50 via-purple-50/50 to-transparent"></div>
 
-                <div className="absolute -top-32 -right-32 w-[500px] h-[500px] bg-purple-300/30 rounded-full mix-blend-multiply filter blur-[80px] opacity-60 animate-blob"></div>
-                <div className="absolute top-1/4 -left-32 w-[600px] h-[600px] bg-blue-300/30 rounded-full mix-blend-multiply filter blur-[80px] opacity-60 animate-blob animation-delay-2000"></div>
-                <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-pink-300/30 rounded-full mix-blend-multiply filter blur-[80px] opacity-50 animate-blob animation-delay-4000"></div>
+                <div className="absolute -top-32 -right-32 w-[600px] h-[600px] bg-purple-400/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob"></div>
+                <div className="absolute top-1/4 -left-32 w-[700px] h-[700px] bg-indigo-400/20 rounded-full mix-blend-multiply filter blur-[120px] opacity-70 animate-blob animation-delay-2000"></div>
+                <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-pink-400/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-60 animate-blob animation-delay-4000"></div>
             </div>
 
-            <div className="max-w-[1600px] mx-auto h-full grid grid-cols-12 gap-6 relative z-10 text-slate-900">
+            <div className="max-w-[1600px] mx-auto h-full grid grid-cols-12 gap-8 relative z-10 text-slate-900">
 
                 {/* Left Sidebar (3 cols) - Profile Card */}
                 <div className="col-span-12 lg:col-span-3 h-full">
@@ -66,10 +65,10 @@ export default async function DashboardPage() {
                 </div>
 
                 {/* Right Content (9 cols) */}
-                <div className="col-span-12 lg:col-span-9 h-full flex flex-col gap-6">
+                <div className="col-span-12 lg:col-span-9 h-full flex flex-col gap-8">
 
                     {/* Top Header & Actions Row */}
-                    <div className="flex flex-col xl:flex-row justify-between items-center gap-4 bg-white p-4 rounded-[24px] shadow-sm border border-slate-100">
+                    <div className="flex flex-col xl:flex-row justify-between items-center gap-4 bg-white/90 backdrop-blur-md p-5 rounded-[32px] shadow-sm border border-slate-100/60">
                         <div className="flex flex-wrap gap-3 items-center w-full">
                             {verificationStatus === "APPROVED" ? (
                                 <div className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-green-50 border border-green-200 text-green-700 font-bold text-xs h-9 shadow-sm">
@@ -93,6 +92,10 @@ export default async function DashboardPage() {
                                 <Link href="/profile/edit">
                                     90% Ensure Profile Completeness
                                 </Link>
+                            </Button>
+
+                            <Button variant="outline" className="rounded-full border-slate-200 hover:bg-slate-50 font-bold text-xs h-9" asChild>
+                                <Link href="/profile/edit">Edit Profile</Link>
                             </Button>
 
                             <Button variant="outline" className="rounded-full border-slate-200 hover:bg-slate-50 font-bold text-xs h-9" asChild>
