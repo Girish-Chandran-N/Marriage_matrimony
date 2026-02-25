@@ -517,9 +517,21 @@ export async function updateLifestyleDetails(prevState: any, formData: FormData)
     if (!session?.user?.id) return { message: "Unauthorized" };
 
     const rawData = Object.fromEntries(formData.entries());
+
+    // Join multiple checkbox values into a comma-separated string for Zod
+    const arraysToJoin = ["hobbies", "music", "books", "movies", "sports", "favoriteCuisine", "dressStyle"];
+    const joinedData: Record<string, any> = {};
+    for (const key of arraysToJoin) {
+        const values = formData.getAll(key);
+        if (values.length > 0) {
+            joinedData[key] = values.map(v => v.toString().trim()).filter(Boolean).join(", ");
+        }
+    }
+
     // Convert common checkbox/boolean fields if any
     const validation = LifestyleDetailsSchema.safeParse({
         ...rawData,
+        ...joinedData,
         drivingLicense: formData.get("drivingLicense") === "on",
     });
 
@@ -527,7 +539,7 @@ export async function updateLifestyleDetails(prevState: any, formData: FormData)
         return { errors: validation.error.flatten().fieldErrors, message: "Invalid Data" };
     }
 
-    const processList = (val: string | undefined | null) => val ? val.split(",").map(v => v.trim()) : [];
+    const processList = (val: string | undefined | null) => val ? val.split(",").map(v => v.trim()).filter(Boolean) : [];
 
     try {
         const dataToSave = {
