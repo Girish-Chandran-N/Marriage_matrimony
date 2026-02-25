@@ -170,6 +170,9 @@ const CareerProfileSchema = z.object({
     internshipDuration: z.string().optional(),
     careerGoal: z.string().optional(),
     linkedinUrl: z.string().optional(),
+    country: z.string().optional(),
+    visaStatus: z.string().optional(),
+    willingToRelocate: z.boolean().optional(),
 });
 
 // --- Education Actions ---
@@ -230,6 +233,9 @@ export async function updateCareerProfile(prevState: any, formData: FormData) {
         internshipDuration: formData.get("internshipDuration"),
         careerGoal: formData.get("careerGoal"),
         linkedinUrl: formData.get("linkedinUrl"),
+        country: formData.get("country"),
+        visaStatus: formData.get("visaStatus"),
+        willingToRelocate: formData.get("willingToRelocate") === "on",
     });
 
     if (!validation.success) {

@@ -295,6 +295,10 @@ model CareerProfile {
   
   linkedinUrl     String?
   
+  country         String?
+  visaStatus      String?
+  willingToRelocate Boolean @default(false)
+  
   // Backward compatibility fields (can be removed later or mapped to latest Job)
   jobTitle        String?
   companyName     String?

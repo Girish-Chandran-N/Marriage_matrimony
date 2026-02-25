@@ -98,6 +98,28 @@ export default function CareerDetailsForm({
                         <Input name="linkedinUrl" defaultValue={careerProfile?.linkedinUrl || ""} placeholder="https://linkedin.com/in/..." className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
                     </div>
 
+                    <div>
+                        <Label className="mb-1 block text-xs font-semibold">Current Country</Label>
+                        <Input name="country" defaultValue={careerProfile?.country || ""} placeholder="e.g. India, USA, UK" className="h-9 bg-green-50/50 border-green-100 focus:border-green-300 focus:ring-green-200" />
+                    </div>
+
+                    <div>
+                        <Label className="mb-1 block text-xs font-semibold">Visa Status (If Abroad)</Label>
+                        <select name="visaStatus" defaultValue={careerProfile?.visaStatus || ""} className="flex h-9 w-full rounded-md border border-green-100 bg-green-50/50 px-3 py-1.5 text-sm focus:border-green-300 focus:outline-none focus:ring-green-200">
+                            <option value="">Select Visa Status</option>
+                            <option value="Citizen">Citizen</option>
+                            <option value="Permanent Resident (PR)">Permanent Resident (PR)</option>
+                            <option value="Work Visa">Work Visa</option>
+                            <option value="Student Visa">Student Visa</option>
+                            <option value="Not Applicable">Not Applicable</option>
+                        </select>
+                    </div>
+
+                    <div className="flex items-center space-x-2 pt-6">
+                        <input type="checkbox" id="willingToRelocate" name="willingToRelocate" defaultChecked={careerProfile?.willingToRelocate} className="h-4 w-4 rounded border-gray-300 text-indigo-600 bg-green-50" />
+                        <Label htmlFor="willingToRelocate" className="text-xs font-medium text-gray-700">Willing to relocate after marriage</Label>
+                    </div>
+
                     {/* Internship Specific Fields */}
                     {currentStatus === "Internship" && (
                         <>
