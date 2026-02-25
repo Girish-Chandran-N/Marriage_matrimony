@@ -15,7 +15,7 @@ const SECTIONS = [
     { id: "personal", label: "Personal Details", icon: User, desc: "Basic info about you" },
     { id: "education", label: "Education", icon: GraduationCap, desc: "Your qualifications" },
     { id: "career", label: "Career & Finances", icon: Briefcase, desc: "Work and income" },
-    { id: "family", label: "Family Background", icon: Users, desc: "Family details" },
+    { id: "family", label: "Family Information", icon: Users, desc: "Family details" },
     { id: "lifestyle", label: "Lifestyle & Interests", icon: Coffee, desc: "Habits and hobbies" },
 ];
 

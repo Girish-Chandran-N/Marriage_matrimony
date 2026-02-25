@@ -55,11 +55,11 @@ export default function FamilyDetailsForm({
 
             <form action={action} className="space-y-4">
 
-                {/* Family Background */}
+                {/* Family Information */}
                 <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-4">
                     <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
                         <Users className="w-4 h-4 text-indigo-600" />
-                        Family Background
+                        Family Information
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div>

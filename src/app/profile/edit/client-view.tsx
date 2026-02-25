@@ -15,7 +15,7 @@ const SECTIONS = [
     { id: "personal", label: "Personal Details", icon: User },
     { id: "education", label: "Education", icon: GraduationCap },
     { id: "career", label: "Career & Finances", icon: Briefcase },
-    { id: "family", label: "Family Background", icon: Users },
+    { id: "family", label: "Family Information", icon: Users },
     { id: "lifestyle", label: "Lifestyle & Interests", icon: Coffee },
     { id: "preferences", label: "Partner Preferences", icon: Heart },
     { id: "photos", label: "Manage Photos", icon: ImageIcon },
