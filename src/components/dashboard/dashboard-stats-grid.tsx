@@ -23,88 +23,88 @@ export function DashboardStatsGrid({ stats }: DashboardStatsGridProps) {
         {
             title: "Interest Sent",
             value: stats.interestSent,
-            // Gradient Blue
-            className: "bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-xl hover:shadow-blue-200/50",
-            iconBg: "bg-blue-500",
+            className: "bg-white border-slate-100 hover:border-blue-300 hover:shadow-xl hover:shadow-blue-200/50",
+            iconBg: "bg-gradient-to-br from-blue-400 to-blue-600 shadow-blue-300/50",
             iconColor: "text-white",
-            text: "text-blue-900",
+            text: "text-slate-800",
+            glowColor: "bg-blue-500",
             href: "/dashboard/interests/sent",
             icon: ArrowUpRight
         },
         {
             title: "Interest Received",
             value: stats.interestReceived,
-            // Gradient Pink
-            className: "bg-gradient-to-br from-pink-50 to-pink-100 border-pink-200 hover:shadow-xl hover:shadow-pink-200/50",
-            iconBg: "bg-pink-500",
+            className: "bg-white border-slate-100 hover:border-pink-300 hover:shadow-xl hover:shadow-pink-200/50",
+            iconBg: "bg-gradient-to-br from-pink-400 to-pink-600 shadow-pink-300/50",
             iconColor: "text-white",
-            text: "text-pink-900",
+            text: "text-slate-800",
+            glowColor: "bg-pink-500",
             href: "/dashboard/interests/received",
             icon: ArrowDownLeft
         },
         {
             title: "Profile Views",
             value: stats.profileViews,
-            // Gradient Purple
-            className: "bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:shadow-xl hover:shadow-purple-200/50",
-            iconBg: "bg-purple-500",
+            className: "bg-white border-slate-100 hover:border-purple-300 hover:shadow-xl hover:shadow-purple-200/50",
+            iconBg: "bg-gradient-to-br from-purple-400 to-purple-600 shadow-purple-300/50",
             iconColor: "text-white",
-            text: "text-purple-900",
+            text: "text-slate-800",
+            glowColor: "bg-purple-500",
             href: "/dashboard/profile-views",
             icon: Eye
         },
         {
             title: "Profile Visited",
             value: stats.profileVisited,
-            // Gradient Indigo
-            className: "bg-gradient-to-br from-indigo-50 to-indigo-100 border-indigo-200 hover:shadow-xl hover:shadow-indigo-200/50",
-            iconBg: "bg-indigo-500",
+            className: "bg-white border-slate-100 hover:border-indigo-300 hover:shadow-xl hover:shadow-indigo-200/50",
+            iconBg: "bg-gradient-to-br from-indigo-400 to-indigo-600 shadow-indigo-300/50",
             iconColor: "text-white",
-            text: "text-indigo-900",
+            text: "text-slate-800",
+            glowColor: "bg-indigo-500",
             href: "/dashboard/profile-visited",
             icon: Telescope
         },
         {
             title: "Shortlisted",
             value: stats.shortlisted,
-            // Gradient Red/Rose
-            className: "bg-gradient-to-br from-rose-50 to-rose-100 border-rose-200 hover:shadow-xl hover:shadow-rose-200/50",
-            iconBg: "bg-rose-500",
+            className: "bg-white border-slate-100 hover:border-rose-300 hover:shadow-xl hover:shadow-rose-200/50",
+            iconBg: "bg-gradient-to-br from-rose-400 to-rose-600 shadow-rose-300/50",
             iconColor: "text-white",
-            text: "text-rose-900",
+            text: "text-slate-800",
+            glowColor: "bg-rose-500",
             href: "/dashboard/shortlisted",
             icon: Heart
         },
         {
             title: "Contacts Viewed",
             value: stats.contactsViewed,
-            // Gradient Teal
-            className: "bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200 hover:shadow-xl hover:shadow-teal-200/50",
-            iconBg: "bg-teal-500",
+            className: "bg-white border-slate-100 hover:border-teal-300 hover:shadow-xl hover:shadow-teal-200/50",
+            iconBg: "bg-gradient-to-br from-teal-400 to-teal-600 shadow-teal-300/50",
             iconColor: "text-white",
-            text: "text-teal-900",
+            text: "text-slate-800",
+            glowColor: "bg-teal-500",
             href: "/dashboard/contacts-viewed",
             icon: Contact
         },
         {
             title: "Contacts Visited",
             value: stats.contactsVisited,
-            // Gradient Cyan
-            className: "bg-gradient-to-br from-cyan-50 to-cyan-100 border-cyan-200 hover:shadow-xl hover:shadow-cyan-200/50",
-            iconBg: "bg-cyan-500",
+            className: "bg-white border-slate-100 hover:border-cyan-300 hover:shadow-xl hover:shadow-cyan-200/50",
+            iconBg: "bg-gradient-to-br from-cyan-400 to-cyan-600 shadow-cyan-300/50",
             iconColor: "text-white",
-            text: "text-cyan-900",
+            text: "text-slate-800",
+            glowColor: "bg-cyan-500",
             href: "/dashboard/contacts-visited",
             icon: Users
         },
         {
             title: "Ignored/Blocked",
             value: stats.blockedUsers,
-            // Gradient Slate
-            className: "bg-gradient-to-br from-slate-50 to-slate-100 border-slate-200 hover:shadow-xl hover:shadow-slate-200/50",
-            iconBg: "bg-slate-500",
+            className: "bg-white border-slate-100 hover:border-slate-300 hover:shadow-xl hover:shadow-slate-200/50",
+            iconBg: "bg-gradient-to-br from-slate-400 to-slate-600 shadow-slate-300/50",
             iconColor: "text-white",
-            text: "text-slate-900",
+            text: "text-slate-800",
+            glowColor: "bg-slate-500",
             href: "/dashboard/blocked",
             icon: EyeOff
         }
@@ -115,30 +115,30 @@ export function DashboardStatsGrid({ stats }: DashboardStatsGridProps) {
             {STATS_ITEMS.map((item, index) => (
                 <Link href={item.href} key={index} className="group block h-full">
                     <div className={`
-                        relative h-full rounded-[24px] border border-white/50 p-6 
+                        relative h-full rounded-[24px] border p-6 
                         flex flex-col items-center justify-center text-center gap-4
                         transition-all duration-300 hover:-translate-y-1 overflow-hidden
                         ${item.className}
                     `}>
                         {/* Ambient Glow */}
-                        <div className={`absolute -top-10 -right-10 w-24 h-24 rounded-full opacity-20 blur-2xl ${item.iconBg}`} />
-                        <div className={`absolute -bottom-10 -left-10 w-24 h-24 rounded-full opacity-20 blur-2xl ${item.iconBg}`} />
+                        <div className={`absolute -top-10 -right-10 w-24 h-24 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-2xl ${item.glowColor}`} />
+                        <div className={`absolute -bottom-10 -left-10 w-24 h-24 rounded-full opacity-0 group-hover:opacity-20 transition-opacity duration-300 blur-2xl ${item.glowColor}`} />
 
                         {/* Icon Container */}
                         <div className={`
-                            relative w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg
+                            relative w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg
                             ${item.iconBg} ${item.iconColor}
-                            group-hover:scale-110 transition-transform duration-300
+                            group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300
                         `}>
-                            <item.icon className="w-6 h-6" />
+                            <item.icon className="w-7 h-7" />
                         </div>
 
                         {/* Value */}
-                        <div className="relative z-10">
-                            <h3 className={`text-xs font-bold uppercase tracking-wider mb-1 opacity-70 ${item.text}`}>
+                        <div className="relative z-10 flex flex-col gap-1">
+                            <h3 className="text-xs font-bold uppercase tracking-wider opacity-60 text-slate-500">
                                 {item.title}
                             </h3>
-                            <span className={`text-3xl font-black tracking-tight ${item.text}`}>
+                            <span className={`text-4xl font-black tracking-tight ${item.text}`}>
                                 {item.value}
                             </span>
                         </div>
