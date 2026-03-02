@@ -434,12 +434,16 @@ model MatchPreferences {
   jobStatus           String[]
   employmentCategory  String[]
   incomeRange         String[] // Array or String? User said "Income* (CB)" which implies checkboxes -> Array
-  workingCountry      String[]
-  readyToRelocate     Boolean?
-  
   // Location
-  preferredLocations  String[] // Country/State?
-  
+  nativeCountry       String[]
+  nativeState         String[]
+  nativeDistrict      String[]
+  workingCountry      String[]
+  workingState        String[]
+  workingDistrict     String[]
+  readyToRelocate     Boolean?
+  preferredLocations  String[] // Legacy/Broad locations
+
   // Religion
   preferredReligions  String[]
   preferredCastes     String[] // If needed
@@ -456,6 +460,7 @@ model MatchPreferences {
   
   // Backward compatibility / Deprecated
   preferredIndustries String[]
+  preferredProfessions String[]
   minExperience       Int?
   maxExperience       Int?
   minIncome           String? // Deprecated for incomeRange list

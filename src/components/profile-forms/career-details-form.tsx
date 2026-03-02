@@ -395,19 +395,19 @@ export default function CareerDetailsForm({
                 </div>
             )}
 
-            <div className="flex justify-between pt-6 border-t border-gray-100">
+            <div className="flex justify-between pt-6 border-t border-gray-100 mt-6">
                 {onBack ? (
                     <Button type="button" variant="outline" onClick={onBack}>
                         Back
                     </Button>
                 ) : <div></div>}
-                <Button
-                    type="button"
-                    onClick={onNext} // Note: This Next doesn't submit status, it just navigates. To save status, user must click "Update Status"
-                    className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-200"
-                >
-                    Next: Family Details
-                </Button>
+                <div className="flex justify-end gap-4">
+                    {onNext && (
+                        <Button type="button" variant="outline" onClick={onNext}>
+                            Next
+                        </Button>
+                    )}
+                </div>
             </div>
         </div>
     );

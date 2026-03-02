@@ -119,12 +119,21 @@ export default function ContactDetailsForm({ onNext, onBack, initialData }: Cont
             {state?.message && <p className={`text-sm ${state.success ? 'text-green-600' : 'text-red-500'}`}>{state.message}</p>}
 
             <div className="flex justify-between mt-6">
-                <Button type="button" variant="outline" onClick={onBack} disabled={isPending}>
-                    Back
-                </Button>
-                <Button type="submit" disabled={isPending}>
-                    {isPending ? "Saving..." : onNext ? "Next: Lifestyle" : "Save Changes"}
-                </Button>
+                {onBack ? (
+                    <Button type="button" variant="outline" onClick={onBack} disabled={isPending}>
+                        Back
+                    </Button>
+                ) : <div />}
+                <div className="flex gap-4">
+                    <Button type="submit" disabled={isPending}>
+                        {isPending ? "Saving..." : "Save"}
+                    </Button>
+                    {onNext && (
+                        <Button type="button" variant="outline" onClick={onNext}>
+                            Next
+                        </Button>
+                    )}
+                </div>
             </div>
         </form>
     );

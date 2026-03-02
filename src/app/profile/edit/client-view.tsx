@@ -32,21 +32,21 @@ export default function ProfileEditClient({ profile }: { profile: any }) {
         switch (activeSection) {
             case "personal":
                 const verificationStatus = profile.verificationRequests?.[0]?.status;
-                return <PersonalDetailsForm initialData={profile.personalDetails} userName={profile.name} verificationStatus={verificationStatus} />;
+                return <PersonalDetailsForm initialData={profile.personalDetails} userName={profile.name} verificationStatus={verificationStatus} onNext={() => setActiveSection("religion")} />;
             case "religion":
-                return <ReligionDetailsForm initialData={profile.personalDetails} />;
+                return <ReligionDetailsForm initialData={profile.personalDetails} onNext={() => setActiveSection("education")} />;
             case "education":
-                return <EducationDetailsForm initialData={profile.educations} />;
+                return <EducationDetailsForm initialData={profile.educations} onNext={() => setActiveSection("career")} />;
             case "career":
-                return <CareerDetailsForm careerProfile={profile.careerProfile} jobs={profile.jobs} />;
+                return <CareerDetailsForm careerProfile={profile.careerProfile} jobs={profile.jobs} onNext={() => setActiveSection("family")} />;
             case "family":
-                return <FamilyDetailsForm initialData={profile.familyDetails} siblings={profile.siblings} />;
+                return <FamilyDetailsForm initialData={profile.familyDetails} siblings={profile.siblings} onNext={() => setActiveSection("contact")} />;
             case "contact":
-                return <ContactDetailsForm initialData={profile.personalDetails} />;
+                return <ContactDetailsForm initialData={profile.personalDetails} onNext={() => setActiveSection("lifestyle")} />;
             case "lifestyle":
-                return <LifestyleDetailsForm initialData={profile.lifestyleDetails} isEditMode={true} />;
+                return <LifestyleDetailsForm initialData={profile.lifestyleDetails} isEditMode={true} onNext={() => setActiveSection("preferences")} />;
             case "preferences":
-                return <MatchPreferencesForm initialData={profile.matchPreferences} />;
+                return <MatchPreferencesForm initialData={profile.matchPreferences} onNext={() => setActiveSection("photos")} />;
             case "photos":
                 return <PhotoManager
                     currentProfileImage={profile.profileImage}

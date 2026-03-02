@@ -178,13 +178,20 @@ export default function LifestyleDetailsForm({
                         Back
                     </Button>
                 ) : <div></div>}
-                <Button
-                    type="submit"
-                    disabled={isPending}
-                    className="bg-indigo-600 text-white"
-                >
-                    {isPending ? "Saving..." : isEditMode ? "Save Changes" : "Finish & Save"}
-                </Button>
+                <div className="flex gap-4">
+                    <Button
+                        type="submit"
+                        disabled={isPending}
+                        className="bg-indigo-600 text-white"
+                    >
+                        {isPending ? "Saving..." : "Save"}
+                    </Button>
+                    {onNext && (
+                        <Button type="button" variant="outline" onClick={onNext}>
+                            Next
+                        </Button>
+                    )}
+                </div>
             </div>
         </form>
     );

@@ -370,10 +370,15 @@ export default function PersonalDetailsForm({ onNext, initialData, userName, ver
 
             {state?.message && <p className={`text-sm ${state.success ? 'text-green-600' : 'text-red-500'}`}>{state.message}</p>}
 
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-4">
                 <Button type="submit" disabled={isPending}>
-                    {isPending ? "Saving..." : onNext ? "Next: Education" : "Save & Exit"}
+                    {isPending ? "Saving..." : "Save"}
                 </Button>
+                {onNext && (
+                    <Button type="button" variant="outline" onClick={onNext}>
+                        Next
+                    </Button>
+                )}
             </div>
         </form>
     );

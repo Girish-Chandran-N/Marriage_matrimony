@@ -151,19 +151,20 @@ export default function EducationDetailsForm({
                 )
             )}
 
-            <div className="flex justify-between pt-6 border-t border-gray-100">
+            <div className="flex justify-between pt-6 border-t border-gray-100 mt-6">
                 {onBack ? (
                     <Button type="button" variant="outline" onClick={onBack}>
                         Back
                     </Button>
                 ) : <div></div>}
-                <Button
-                    type="button"
-                    onClick={onNext}
-                    className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white shadow-md shadow-indigo-200 transition-all hover:scale-[1.02]"
-                >
-                    Next: Career & Finances
-                </Button>
+
+                <div className="flex justify-end gap-4">
+                    {onNext && (
+                        <Button type="button" variant="outline" onClick={onNext}>
+                            Next
+                        </Button>
+                    )}
+                </div>
             </div>
         </div>
     );
