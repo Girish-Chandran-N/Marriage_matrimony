@@ -5,7 +5,7 @@ import { AuthError } from "next-auth";
 import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-import { sendPasswordResetEmail } from "@/lib/mail";
+import { sendPasswordResetEmail, sendWelcomeEmail } from "@/lib/mail";
 import crypto from "crypto";
 
 const RegisterSchema = z.object({
@@ -119,6 +119,9 @@ export async function register(prevState: any, formData: FormData) {
                 familyDetails: { create: {} },
             },
         });
+
+        // Fire-and-forget welcome email
+        sendWelcomeEmail(email, name).catch(() => {});
     } catch (error) {
         console.error("Registration error:", error);
         return {

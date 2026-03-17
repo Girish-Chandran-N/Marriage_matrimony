@@ -3,6 +3,11 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import {
+    sendInterestReceivedEmail,
+    sendInterestAcceptedEmail,
+    sendProfileViewedEmail,
+} from "@/lib/mail";
 
 async function getSessionUser() {
     const session = await auth();
@@ -26,6 +31,17 @@ export async function sendInterest(targetUserId: string) {
         });
         revalidatePath("/matches");
         revalidatePath("/dashboard/interests/sent");
+
+        // Fire-and-forget: notify the receiver by email
+        db.user.findUnique({
+            where: { id: targetUserId },
+            select: { email: true, name: true }
+        }).then((receiver) => {
+            if (receiver?.email && receiver?.name) {
+                sendInterestReceivedEmail(receiver.email, receiver.name, user.name || "Someone");
+            }
+        }).catch(() => {});
+
         return { success: true, message: "Interest sent successfully" };
     } catch (error) {
         return { message: "Interest already sent or failed" };
@@ -51,14 +67,25 @@ export async function withdrawInterest(interestId: string) {
 export async function acceptInterest(interestId: string) {
     const user = await getSessionUser();
     try {
-        await db.interest.update({
+        const interest = await db.interest.update({
             where: {
                 id: interestId,
                 receiverId: user.id // Ensure is receiver
             },
-            data: { status: "ACCEPTED" }
+            data: { status: "ACCEPTED" },
+            include: { sender: { select: { email: true, name: true } } }
         });
         revalidatePath("/dashboard/interests/received");
+
+        // Fire-and-forget: notify the original sender that their interest was accepted
+        if (interest.sender?.email && interest.sender?.name) {
+            sendInterestAcceptedEmail(
+                interest.sender.email,
+                interest.sender.name,
+                user.name || "Someone"
+            ).catch(() => {});
+        }
+
         return { success: true, message: "Interest accepted" };
     } catch (error) {
         return { message: "Failed to accept interest" };
@@ -119,30 +146,35 @@ export async function recordProfileView(profileId: string) {
     if (!session?.user?.id || session.user.id === profileId) return;
 
     try {
-        // Check if viewed recently (e.g., last 24h) to avoid spamming DB? 
-        // For now, let's toggle: if exists, update time. If not, create.
-        // Actually, dashboard requirements usually want "who viewed me". 
-        // A simple create-or-update logic is fine.
-
-        // Upsert is tricky without unique constraint on [viewer, profile].
-        // Schema probably doesn't have unique constraint.
-        // Let's just add a new record for now, or check first.
-        // Ideally we only want one record per day or just one unique record updated.
-        // Let's assume unique interaction for simplicity or check existence.
-
         const existing = await db.profileView.findFirst({
             where: { viewerId: session.user.id, profileId: profileId }
         });
 
+        const now = new Date();
+        const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        const shouldNotifyByEmail = !existing || existing.viewedAt < twentyFourHoursAgo;
+
         if (existing) {
             await db.profileView.update({
                 where: { id: existing.id },
-                data: { viewedAt: new Date() }
+                data: { viewedAt: now }
             });
         } else {
             await db.profileView.create({
                 data: { viewerId: session.user.id, profileId }
             });
+        }
+
+        // Fire-and-forget profile view email (rate-limited to once per 24h)
+        if (shouldNotifyByEmail) {
+            Promise.all([
+                db.user.findUnique({ where: { id: profileId }, select: { email: true, name: true } }),
+                db.user.findUnique({ where: { id: session.user.id }, select: { name: true } })
+            ]).then(([profileOwner, viewer]) => {
+                if (profileOwner?.email && profileOwner?.name && viewer?.name) {
+                    sendProfileViewedEmail(profileOwner.email, profileOwner.name, viewer.name);
+                }
+            }).catch(() => {});
         }
     } catch (error) {
         console.error("Failed to record view", error);

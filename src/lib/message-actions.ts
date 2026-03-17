@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { sendNewMessageEmail } from "@/lib/mail";
 
 const SendMessageSchema = z.object({
     receiverId: z.string().min(1),
@@ -37,6 +38,7 @@ export async function sendMessage(formData: FormData) {
 
     try {
         // Use a transaction to ensure Conversation existence and Message creation happen atomically
+        let isNewConversation = false;
         const message = await db.$transaction(async (tx) => {
             // 1. Find existing conversation OR create new one
             let conversation = await tx.conversation.findFirst({
@@ -49,6 +51,7 @@ export async function sendMessage(formData: FormData) {
             });
 
             if (!conversation) {
+                isNewConversation = true;
                 conversation = await tx.conversation.create({
                     data: {
                         participants: {
@@ -82,6 +85,18 @@ export async function sendMessage(formData: FormData) {
 
         revalidatePath(`/messages/${receiverId}`);
         revalidatePath("/messages");
+
+        // Fire-and-forget: email the receiver only on the first message (new conversation)
+        if (isNewConversation) {
+            Promise.all([
+                db.user.findUnique({ where: { id: receiverId }, select: { email: true, name: true } }),
+                db.user.findUnique({ where: { id: senderId }, select: { name: true } })
+            ]).then(([receiver, sender]) => {
+                if (receiver?.email && receiver?.name && sender?.name) {
+                    sendNewMessageEmail(receiver.email, receiver.name, sender.name, content);
+                }
+            }).catch(() => {});
+        }
 
         // Trigger Real-time Event
         try {
