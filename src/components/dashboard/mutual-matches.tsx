@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { MatchCard } from "@/components/matches/match-card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, HeartCrack } from "lucide-react";
 
 interface MutualMatchesProps {
     matches: any[];
@@ -25,7 +25,8 @@ export function MutualMatches({ matches }: MutualMatchesProps) {
 
     if (!matches || matches.length === 0) {
         return (
-            <div className="h-full flex items-center justify-center text-slate-400 text-sm border-2 border-dashed border-slate-200 rounded-[24px]">
+            <div className="h-40 flex flex-col items-center justify-center text-slate-500 text-sm border-2 border-dashed border-slate-800 rounded-3xl gap-2 mt-4">
+                <HeartCrack className="w-8 h-8 opacity-50" />
                 No new matches found yet.
             </div>
         );
@@ -34,14 +35,14 @@ export function MutualMatches({ matches }: MutualMatchesProps) {
     return (
         <div className="relative group">
             <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-slate-800">
+                <h2 className="text-xl font-bold text-white">
                     Mutual Matches <span className="text-slate-400 font-medium ml-2 text-sm">({matches.length} profiles)</span>
                 </h2>
                 <div className="flex gap-2">
                     <Button
                         variant="outline"
                         size="icon"
-                        className="h-8 w-8 rounded-full border-slate-200 hover:bg-slate-100"
+                        className="h-8 w-8 rounded-full border-slate-700 bg-transparent text-slate-300 hover:bg-slate-800"
                         onClick={() => scroll("left")}
                     >
                         <ChevronLeft className="h-4 w-4 text-slate-600" />
@@ -49,7 +50,7 @@ export function MutualMatches({ matches }: MutualMatchesProps) {
                     <Button
                         variant="outline"
                         size="icon"
-                        className="h-8 w-8 rounded-full border-slate-200 hover:bg-slate-100"
+                        className="h-8 w-8 rounded-full border-slate-700 bg-transparent text-slate-300 hover:bg-slate-800"
                         onClick={() => scroll("right")}
                     >
                         <ChevronRight className="h-4 w-4 text-slate-600" />

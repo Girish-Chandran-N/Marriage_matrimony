@@ -8,6 +8,7 @@ import FilterSidebar from "@/components/filter-sidebar";
 import { MatchCard } from "@/components/matches/match-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import AdPlacement from "@/components/ad-placement";
+import { Heart } from "lucide-react";
 
 export default async function MatchesPage({
     searchParams,
@@ -63,14 +64,13 @@ export default async function MatchesPage({
 
     if ('message' in (result as any)) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-gray-50">
-                <div className="bg-white p-8 rounded-lg shadow-md text-center max-w-md">
-                    <h1 className="text-2xl font-bold mb-4">No Matches Yet</h1>
-                    <p className="text-gray-600 mb-6">{(result as any).message}</p>
-                    <Link href="/matches/preferences">
-                        <Button>Set Compatibility Preferences</Button>
-                    </Link>
-                </div>
+            <div className="flex flex-col items-center justify-center min-h-[calc(100vh-70px)] bg-[#09090b] text-center px-4">
+                <Heart size={64} className="text-slate-500 mb-6" strokeWidth={1.5} />
+                <h2 className="text-2xl font-bold text-white mb-2">No matches yet</h2>
+                <p className="text-slate-400 mb-8 max-w-xs">{ (result as any).message }</p>
+                <Link href="/matches/preferences">
+                    <Button variant="outline" className="text-slate-300 border-slate-700 bg-transparent hover:bg-slate-800">Set Preferences</Button>
+                </Link>
             </div>
         );
     }
@@ -81,7 +81,65 @@ export default async function MatchesPage({
     console.log("Matches Debug:", matches.map(m => ({ name: m.user.name, image: m.user.profileImage })));
 
     return (
-        <div className="min-h-screen bg-slate-50/50 relative overflow-hidden">
+        <>
+        {/* MOBILE VIEW (<lg) */}
+        <div className="block lg:hidden min-h-screen bg-[#09090b] text-white pb-24 relative overflow-x-hidden">
+            {/* Native Mobile Header */}
+            <div className="sticky top-0 z-40 bg-[#121214]/80 backdrop-blur-md border-b border-[#222] px-4 py-4 flex items-center justify-between">
+                <h1 className="text-2xl font-black text-white px-2">
+                    {Object.keys(filters).some(k => filters[k as keyof typeof filters]) ? "Filtered Matches" : "Top Matches"}
+                </h1>
+                <Link href="/matches/preferences">
+                    <Button variant="ghost" className="rounded-full bg-[#1a1a1a] border border-[#333] text-sm text-slate-300 hover:text-white hover:bg-[#222]">
+                        Preferences
+                    </Button>
+                </Link>
+            </div>
+
+            <div className="p-4 mx-auto max-w-7xl pt-6">
+                <div className="flex flex-col items-start gap-6">
+                    {/* Main Content */}
+                    <div className="flex-1 min-w-0 w-full">
+                        {matches.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-32 bg-[#121214] rounded-3xl text-center px-4 h-full border border-[#222]">
+                                <Heart size={64} className="text-slate-500 mb-6" strokeWidth={1.5} />
+                                <h2 className="text-2xl font-bold text-white mb-2">No matches yet</h2>
+                                <p className="text-slate-400 mb-8">Start swiping to find your match!</p>
+                                <Link href="/discover">
+                                    <Button size="lg" className="bg-gradient-to-r from-rose-500 to-pink-600 border-0 shadow-lg text-white font-bold rounded-full px-8 hover:scale-105 transition-transform">
+                                        Discover Matches
+                                    </Button>
+                                </Link>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {matches.map(({ user, score }, idx) => (
+                                    <Fragment key={user.id}>
+                                        <div
+                                            className="animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both"
+                                            style={{ animationDelay: `${idx * 100}ms` }}
+                                        >
+                                            <MatchCard user={user} score={score} />
+                                        </div>
+                                        {/* In-Feed Ad: Spans full width to act as a breaker between rows */}
+                                        {idx === 3 && (
+                                            <div key="ad-feed" className="col-span-1 md:col-span-2 animate-in fade-in slide-in-from-bottom-4 duration-700 my-4">
+                                                <div className="bg-[#121214] rounded-xl border border-[#222] p-1">
+                                                    <AdPlacement placement="FEED" className="h-32 md:h-40 w-full" />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </Fragment>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {/* DESKTOP VIEW (>=lg) */}
+        <div className="hidden lg:block min-h-screen bg-slate-50/50 relative overflow-hidden">
             {/* Vibrant Background */}
             <div className="absolute inset-0 z-0 pointer-events-none">
                 <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-indigo-50 via-purple-50 to-transparent"></div>
@@ -125,11 +183,11 @@ export default async function MatchesPage({
                         {matches.length === 0 ? (
                             <div className="text-center py-24 bg-white/60 backdrop-blur-md rounded-3xl border border-white/50 shadow-lg">
                                 <div className="text-6xl mb-4">🧞‍♂️</div>
-                                <h2 className="text-2xl font-bold text-gray-800 mb-2">No matches found</h2>
-                                <p className="text-gray-500 mb-8 max-w-md mx-auto">It seems we couldn't find anyone matching your specific criteria. Try loosening your filters!</p>
-                                <Link href="/matches">
-                                    <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 border-0 shadow-lg shadow-purple-200 hover:shadow-purple-300 transition-all hover:-translate-y-1">
-                                        Clear All Filters
+                                <h2 className="text-2xl font-bold text-gray-800 mb-2">No matches yet.</h2>
+                                <p className="text-gray-600 mb-8">Update your preferences or complete your profile to get matches.</p>
+                                <Link href="/matches/preferences">
+                                    <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-500 border-0 shadow-lg text-white font-bold rounded-full px-8 hover:scale-105 transition-transform">
+                                        Update Preferences
                                     </Button>
                                 </Link>
                             </div>
@@ -168,6 +226,7 @@ export default async function MatchesPage({
                 </div>
             </div>
         </div>
+        </>
     );
 }
 

@@ -185,6 +185,8 @@ model PersonalDetails {
   // Bio
   bio           String?  @db.Text
   about         String?  @db.Text
+  datingIntent  String?
+  familyInvolvement String?
   
   // Religion
   religion      String?
@@ -555,6 +557,7 @@ model Interest {
   receiverId String
   receiver  User     @relation("ReceivedInterests", fields: [receiverId], references: [id], onDelete: Cascade)
   status    InterestStatus @default(PENDING)
+  isSuperLike Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

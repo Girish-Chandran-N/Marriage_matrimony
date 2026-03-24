@@ -4,14 +4,16 @@ import AdPlacement from "@/components/ad-placement";
 import ProfessionFilterSidebar from "@/components/search/profession-filter-sidebar";
 
 interface PageProps {
-    params: {
+    params: Promise<{
         category: string;
-    };
-    searchParams: { [key: string]: string | string[] | undefined };
+    }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function ProfessionSearchPage({ params, searchParams }: PageProps) {
-    const category = decodeURIComponent(params.category);
+    const resolvedParams = await params;
+    const resolvedSearchParams = await searchParams;
+    const category = decodeURIComponent(resolvedParams.category);
 
     // Construct filters including the profession category
     const filters: MatchFilters = {
@@ -21,17 +23,17 @@ export default async function ProfessionSearchPage({ params, searchParams }: Pag
         // So this is correct.
 
         // Map other searchParams to filters
-        ageMin: searchParams.ageMin ? Number(searchParams.ageMin) : undefined,
-        ageMax: searchParams.ageMax ? Number(searchParams.ageMax) : undefined,
-        minHeight: searchParams.minHeight ? Number(searchParams.minHeight) : undefined,
-        maxHeight: searchParams.maxHeight ? Number(searchParams.maxHeight) : undefined,
+        ageMin: resolvedSearchParams.ageMin ? Number(resolvedSearchParams.ageMin) : undefined,
+        ageMax: resolvedSearchParams.ageMax ? Number(resolvedSearchParams.ageMax) : undefined,
+        minHeight: resolvedSearchParams.minHeight ? Number(resolvedSearchParams.minHeight) : undefined,
+        maxHeight: resolvedSearchParams.maxHeight ? Number(resolvedSearchParams.maxHeight) : undefined,
 
-        religion: searchParams.religion as string,
-        caste: searchParams.caste as string,
-        gender: searchParams.gender as string,
+        religion: resolvedSearchParams.religion as string,
+        caste: resolvedSearchParams.caste as string,
+        gender: resolvedSearchParams.gender as string,
 
         // Locations (Arrays)
-        workingCountry: searchParams.workingCountry as string, // Sidebar sends comma separated? 
+        workingCountry: resolvedSearchParams.workingCountry as string, // Sidebar sends comma separated? 
         // Sidebar logic: params.set(key, value.join(","))
         // So searchParams.workingCountry might be "India,USA".
         // getMatches logic: 

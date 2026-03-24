@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { sendNewMessageEmail } from "@/lib/mail";
+import { checkCanChat } from "@/lib/subscription-actions";
 
 const SendMessageSchema = z.object({
     receiverId: z.string().min(1),
@@ -35,6 +36,12 @@ export async function sendMessage(formData: FormData) {
 
     if (!senderExists) return { error: "Sender account not found" };
     if (!receiverExists) return { error: `Receiver account (ID: ${receiverId}) not found` };
+
+    // ── Plan limit check: chat requires a paid plan ────────────────────────────
+    const chatCheck = await checkCanChat(senderId);
+    if (!chatCheck.allowed) {
+        return { error: chatCheck.error, message: chatCheck.message };
+    }
 
     try {
         // Use a transaction to ensure Conversation existence and Message creation happen atomically

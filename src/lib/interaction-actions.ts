@@ -8,6 +8,7 @@ import {
     sendInterestAcceptedEmail,
     sendProfileViewedEmail,
 } from "@/lib/mail";
+import { checkInterestLimit } from "@/lib/subscription-actions";
 
 async function getSessionUser() {
     const session = await auth();
@@ -16,17 +17,24 @@ async function getSessionUser() {
 }
 
 // 1. Interest Actions
-export async function sendInterest(targetUserId: string) {
+export async function sendInterest(targetUserId: string, isSuperLike: boolean = false) {
     const user = await getSessionUser();
 
     if (user.id === targetUserId) return { message: "Cannot send interest to yourself" };
+
+    // ── Plan limit check ────────────────────────────────────────────────────────
+    const limitCheck = await checkInterestLimit(user.id);
+    if (!limitCheck.allowed) {
+        return { error: limitCheck.error, message: limitCheck.message };
+    }
 
     try {
         await db.interest.create({
             data: {
                 senderId: user.id,
                 receiverId: targetUserId,
-                status: "PENDING"
+                status: "PENDING",
+                isSuperLike: isSuperLike
             }
         });
         revalidatePath("/matches");

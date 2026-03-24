@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { Providers } from "@/components/providers";
+import { MobileBottomNav } from "@/components/MobileBottomNav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,8 +18,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Career Matrimonial",
+  title: "Premly Matchmaking",
   description: "Trusted career-focused matrimonial platform",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Premly Matchmaking",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({
@@ -33,11 +44,16 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         <Providers>
-          <Navbar />
-          <main className="flex-1 flex flex-col w-full">
+          <div className="hidden md:block">
+            <Navbar />
+          </div>
+          <main className="flex-1 flex flex-col w-full pb-[70px] md:pb-0">
             {children}
           </main>
-          <Footer />
+          <div className="hidden md:block">
+            <Footer />
+          </div>
+          <MobileBottomNav />
         </Providers>
       </body>
     </html>
