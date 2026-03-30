@@ -106,3 +106,28 @@ export async function getProfessionCounts() {
         return [];
     }
 }
+
+export async function deleteMyAccount() {
+    const session = await auth();
+    if (!session?.user?.id) return { success: false, error: "Unauthorized" };
+
+    try {
+        const userId = session.user.id;
+        // Perform a safe cascading delete inside a transaction for entities missing onDelete: Cascade
+        await db.$transaction([
+            db.interest.deleteMany({ where: { OR: [{ senderId: userId }, { receiverId: userId }] } }),
+            db.message.deleteMany({ where: { OR: [{ senderId: userId }, { receiverId: userId }] } }),
+            db.profileView.deleteMany({ where: { OR: [{ viewerId: userId }, { profileId: userId }] } }),
+            db.contactView.deleteMany({ where: { OR: [{ viewerId: userId }, { profileId: userId }] } }),
+            db.shortlist.deleteMany({ where: { OR: [{ userId: userId }, { shortlistedUserId: userId }] } }),
+            db.block.deleteMany({ where: { OR: [{ blockerId: userId }, { blockedId: userId }] } }),
+            // Finally delete the user which will cascade delete jobs, education, personalDetails etc.
+            db.user.delete({ where: { id: userId } })
+        ]);
+        
+        return { success: true };
+    } catch (error) {
+        console.error("Failed to delete account:", error);
+        return { success: false, error: "Failed to delete account data." };
+    }
+}
