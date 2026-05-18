@@ -6,6 +6,8 @@ import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { Providers } from "@/components/providers";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,6 +28,28 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "Premly Matchmaking",
   },
+  openGraph: {
+    title: "Premly Matchmaking",
+    description: "Find your perfect life partner. The trusted, career-focused matrimonial platform.",
+    url: "https://premly.com", // You can update this to the actual domain later
+    siteName: "Premly Matchmaking",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Premly Matchmaking Platform",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Premly Matchmaking",
+    description: "Trusted career-focused matrimonial platform for professionals.",
+    images: ["/og-image.jpg"],
+  },
 };
 
 export const viewport: Viewport = {
@@ -40,7 +64,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen bg-[#09090b] lg:bg-slate-50`}
         suppressHydrationWarning={true}
       >
         <Providers>
@@ -55,6 +79,8 @@ export default function RootLayout({
           </div>
           <MobileBottomNav />
         </Providers>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

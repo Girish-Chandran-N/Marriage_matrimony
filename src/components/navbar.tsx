@@ -44,8 +44,8 @@ export async function Navbar() {
                     {session?.user ? (
                         <>
                             <NavLink href="/dashboard">Dashboard</NavLink>
-                            <NavLink href="/matches">Find Matches</NavLink>
-                            <NavLink href="/search/profession">Search by Professions</NavLink>
+                            <NavLink href="/discover">Discover</NavLink>
+                            <NavLink href="/search/profession">Search</NavLink>
                             <NavLink href="/messages">Messages</NavLink>
                             {session.user.role === "ADMIN" && (
                                 <NavLink href="/admin" className="text-red-500 hover:text-red-600">Admin</NavLink>

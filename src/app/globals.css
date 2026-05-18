@@ -179,4 +179,19 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Premium Global Micro-Animations */
+  button, 
+  a, 
+  input, 
+  select, 
+  textarea,
+  .card-hover {
+    @apply transition-all duration-300 ease-in-out;
+  }
+
+  button:active, 
+  a:active {
+    @apply scale-[0.98];
+  }
 }

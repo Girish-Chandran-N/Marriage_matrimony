@@ -14,14 +14,27 @@ async function getSessionUser() {
 
 // Helper: Attach scores to a list of items containing a user profile
 async function withScores(items: any[], userKey: string, currentUserPreferences: any) {
-    if (!currentUserPreferences) return items.map(item => ({ ...item, score: 0 }));
+    if (!currentUserPreferences) {
+        return items.map(item => {
+            const targetUser = item[userKey];
+            if (targetUser) {
+                const { password, email, emailVerified, role, ...safeUser } = targetUser as any;
+                item[userKey] = safeUser;
+            }
+            return { ...item, score: 0 };
+        });
+    }
 
     return items.map(item => {
         const targetUser = item[userKey];
         if (!targetUser) return { ...item, score: 0 };
         const score = calculateMatchScore(targetUser, currentUserPreferences);
+        
+        const { password, email, emailVerified, role, ...safeUser } = targetUser as any;
+        item[userKey] = safeUser;
+
         return { ...item, score };
-    }).sort((a, b) => b.score - a.score); // Default sort by score? Or keep time-based? 
+    }); // Default sort by score? Or keep time-based? 
     // Usually dashboard items are time-based (recent first). Let's keep existing order (time) but add score.
     // Actually, keeping original order (likely date desc) is better for "History" views. 
     // Let's NOT sort by score here, but just attach it.
@@ -209,7 +222,8 @@ export async function getNewMatches() {
 
     const scoredMatches = candidates.map((candidate) => {
         const score = calculateMatchScore(candidate, preferences);
-        return { user: candidate, score };
+        const { password, email, emailVerified, role, ...safeUser } = candidate as any;
+        return { user: safeUser, score };
     });
 
     // Return top 10 matches
@@ -235,7 +249,15 @@ export async function getBlockedUsers() {
         orderBy: { createdAt: "desc" }
     });
     // We might not need scores for blocked users, but keeping data structure consistent is helpful
-    return data.map(item => ({ ...item, user: item.blocked }));
+    return data.map(item => {
+        const targetUser = item.blocked;
+        let safeUser = null;
+        if (targetUser) {
+            const { password, email, emailVerified, role, ...rest } = targetUser as any;
+            safeUser = rest;
+        }
+        return { ...item, user: safeUser };
+    });
 }
 
 // Aggregated Stats for Dashboard Cards

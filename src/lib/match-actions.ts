@@ -391,7 +391,8 @@ export async function getMatches(filters?: MatchFilters) {
     // Imported from centralized matching service
     const scoredMatches = filteredCandidates.map((candidate: any) => {
         const score = calculateMatchScore(candidate, preferences);
-        return { user: candidate, score };
+        const { password, email, emailVerified, role, ...safeUser } = candidate as any;
+        return { user: safeUser, score };
     });
 
     // Sort by score

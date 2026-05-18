@@ -66,6 +66,68 @@ export default async function DashboardPage() {
                         <h2 className="text-xl font-bold text-white mb-4">Insights</h2>
                         <DashboardStatsGrid stats={stats} />
                     </div>
+
+                    {/* NEW SECTION: Web View Features Brought to Mobile */}
+                    <div className="bg-[#121214] border border-[#222] rounded-[2rem] p-5 shadow-lg relative overflow-hidden">
+                        {/* Shimmer Effect */}
+                        <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-rose-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                        <div className="flex items-center gap-4 mb-6 relative z-10">
+                            <div className="w-16 h-16 rounded-full border-2 border-rose-500 overflow-hidden shrink-0">
+                                {user?.image ? (
+                                    <img src={user.image} alt={user.name || "User"} className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="w-full h-full flex items-center justify-center bg-[#1a1a1a] text-slate-500 font-bold text-xl">
+                                        {user?.name?.[0]?.toUpperCase()}
+                                    </div>
+                                )}
+                            </div>
+                            <div>
+                                <h3 className="text-lg font-bold text-white">{user?.name}</h3>
+                                <p className="text-sm text-slate-400">{dbUser?.subscription?.plan || "Free"} Membership</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-3 mb-4 relative z-10">
+                            <Link href="/profile/edit" className="bg-[#1a1a1a] hover:bg-[#222] border border-[#333] rounded-xl p-3 flex flex-col items-center justify-center gap-1 transition-colors active:scale-95">
+                                <span className="text-sm font-bold text-white">Edit Profile</span>
+                            </Link>
+                            <Link href="/profile" className="bg-[#1a1a1a] hover:bg-[#222] border border-[#333] rounded-xl p-3 flex flex-col items-center justify-center gap-1 transition-colors active:scale-95">
+                                <span className="text-sm font-bold text-white">View Profile</span>
+                            </Link>
+
+                            {verificationStatus === "APPROVED" ? (
+                                <div className="col-span-2 bg-[#1a1a1a] border border-[#333] rounded-xl p-3 flex items-center justify-center gap-2">
+                                    <ShieldCheck className="w-5 h-5 text-green-500" />
+                                    <span className="text-sm font-bold text-green-500">Verified Profile</span>
+                                </div>
+                            ) : verificationStatus === "PENDING" ? (
+                                <div className="col-span-2 bg-[#1a1a1a] border border-[#333] rounded-xl p-3 flex items-center justify-center gap-2">
+                                    <Sparkles className="w-5 h-5 text-amber-500" />
+                                    <span className="text-sm font-bold text-amber-500">Verification Pending</span>
+                                </div>
+                            ) : (
+                                <Link href="/verification" className="col-span-2 bg-gradient-to-r from-rose-500 to-pink-600 hover:opacity-90 rounded-xl p-3 flex items-center justify-center gap-2 transition-opacity active:scale-95 text-white shadow-lg shadow-rose-500/25">
+                                    <ShieldCheck className="w-5 h-5 text-white" />
+                                    <span className="text-sm font-bold text-white">Get Verified</span>
+                                </Link>
+                            )}
+                        </div>
+
+                        <form
+                            action={async () => {
+                                "use server";
+                                await signOut();
+                            }}
+                            className="relative z-10"
+                        >
+                            <button type="submit" className="w-full bg-[#1a1a1a] hover:bg-[#222] border border-red-500/20 hover:border-red-500/40 rounded-xl p-3 flex items-center justify-center gap-2 transition-colors group active:scale-95">
+                                <LogOut className="w-4 h-4 text-red-500 group-hover:text-red-400" /> 
+                                <span className="text-sm font-bold text-red-500 group-hover:text-red-400">Sign Out</span>
+                            </button>
+                        </form>
+                    </div>
+
                     <div className="shrink-0 mb-8">
                         <MutualMatches matches={matches} />
                     </div>
