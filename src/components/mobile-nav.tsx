@@ -38,18 +38,18 @@ export function MobileNav({ user }: { user?: any }) {
                                 Dashboard
                             </Link>
                             <Link
-                                href="/matches"
-                                className={`text-sm font-medium transition-colors hover:text-purple-600 ${pathname === "/matches" ? "text-purple-600" : ""}`}
+                                href="/discover"
+                                className={`text-sm font-medium transition-colors hover:text-purple-600 ${pathname === "/discover" ? "text-purple-600" : ""}`}
                                 onClick={toggle}
                             >
-                                Matches
+                                Discover
                             </Link>
                             <Link
                                 href="/search/profession"
                                 className={`text-sm font-medium transition-colors hover:text-purple-600 ${pathname?.startsWith("/search/profession") ? "text-purple-600" : ""}`}
                                 onClick={toggle}
                             >
-                                Search by Professions
+                                Search
                             </Link>
                             <Link
                                 href="/messages"
